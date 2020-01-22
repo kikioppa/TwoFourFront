@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="fragments/member_layout">
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+.has-error,.error{
+color:tomato;
+}
+.has-success{
+color:green;
+}
+.custom{
+    position: absolute;
+    top: 270px;
+    left: 337px;
+    
+
+}
+.gendT{
+text-align: center;
+}
+
+</style>
+<!-- 시큐리티 + 에이젝스 에러 방지 설정 -->
+
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}" />
+<!-- default header name is X-CSRF-TOKEN -->
+<meta id="_csrf_header" name="_csrf_header"
+	th:content="${_csrf.headerName}" />
+
+
+
+</head>
+<body>
+
+<div layout:fragment="member_content">
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-t-90 p-b-30">
+				<form class="login100-form validate-form" action="/member/create" id="frm" method="POST">
+					 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+					<span class="login100-form-title p-b-40">
+						:: 회원가입 ::
+					</span>
+	<div class="text-center p-t-55 p-b-30">
+						<span class="txt1" th:if="${host}">
+							호스트 회원가입
+						</span>
+						<span class="txt1" th:unless="${host}">
+							일반 회원가입
+						</span>
+					</div>
+					
+
+					<div class="wrap-input100 validate-input m-b-16">
+						<input class="input100" type="text" id="name" name="memberName" placeholder="이름">
+						<span class="focus-input100"></span>
+					</div>
+					<p id="nameError" class="error msg"/>
+					<div class="wrap-input100 validate-input m-b-16">
+						<input class="input100" type="text" name="id" id="id" placeholder="Email">
+						<span class="focus-input100"></span>
+					</div>
+					<div class="custom">
+<input type="button" class="btn btn-info btn-sm" id="idck" value="중복확인">
+
+</div>
+<div id="divInputId"><p id="idError"/></div>
+					<div class="wrap-input100 validate-input m-b-20">
+			
+						<input class="input100" type="password" name="password" id="password" placeholder="비밀번호">
+						<span class="focus-input100"></span>
+					</div>
+					<div class="wrap-input100 validate-input m-b-20" data-validate = "Please enter password">
+			
+						<input class="input100" type="password" id="passwordCheck" placeholder="비밀번호 확인">
+						<span class="focus-input100"></span>
+					</div>
+					
+					
+					
+					<div class="wrap-input100 validate-input m-b-16" th:if="${host}">
+						<input class="input100" type="text" name="businessLicense" id="license" placeholder="사업자번호">
+						<span class="focus-input100"></span>
+					</div>
+					
+					<p id="pwError" class="error msg"/>
+					
+					<div class="btn-group btn-group-toggle" data-toggle="buttons">
+						<label class="btn btn-info btn-lg">
+						
+							남자 <input type="radio" name="gender" value="M">
+							</label>
+							<label class="btn btn-info btn-lg">
+							여자 <input type="radio" name="gender" value="F"><br/>
+					</label>
+					
+					</div>
+					
+				
+					<div class="container-login100-form-btn">
+						<button type="button" class="login100-form-btn" onclick="confirm()">
+							회원가입
+						</button>
+					</div>
+					
+					</form>
+					
+			</div>
+		</div>
+	</div>
+	
+	
+		<div layout:fragment="member_script">
+		<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script th:inline="javascript">
+
+<!-- 시큐리티 + 에이젝스 에러 방지 설정222 -->
+
+	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	$(function() {
+		$(document).ajaxSend(function(e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+	});
+	
+	//아이디 체크여부 확인 (아이디 중복일 경우 = 0 , 중복이 아닐경우 = 1 )
+	var idck = 0;
+	
+	
+	
+	$(function() {
+		
+		
+		 
+		
+	    //idck 버튼을 클릭했을 때 
+	    $("#idck").click(function() {
+	    	var id =  $("#id").val();
+	        //userid 를 param.
+	        var getId=RegExp(/^[0-9a-zA-Z]*[@][0-9a-zA-Z]*[.][a-zA-Z]{2,3}$/i);
+	      
+	        if(!getId.test(id)){ //아이디가 형식에 맞지 않는다면
+    			$("#idError").text('이메일형식만 가능합니다.');
+    			$("#divInputId").addClass("has-error");
+                $("#divInputId").removeClass("has-success");
+                $("#id").focus();
+    			return false;}else{
+	        
+	        $.ajax({
+	            async: true,
+	            type : "POST",
+	            data : id,
+	            url : "idcheck.do",
+	            dataType : "json",
+	            contentType: "application/json; charset=UTF-8",
+	            success : function(data) {
+	                if (data.cnt > 0) {
+	                    $("#idError").text('이미 존재하는 아이디입니다.');
+	                    //아이디가 존제할 경우 빨강으로 , 아니면 파랑으로 처리하는 디자인
+	                     $("#divInputId").addClass("has-error");
+	                    $("#divInputId").removeClass("has-success");
+	                    $("#id").focus();
+	                    
+	                
+	                } else {
+	                	
+	                	$("#idError").text('사용 가능한 아이디입니다.');
+	                    //아이디가 존제할 경우 빨강으로 , 아니면 파랑으로 처리하는 디자인
+	                     $("#divInputId").addClass("has-success");
+	                    $("#divInputId").removeClass("has-error") ;
+	                    $("#password").focus();
+	                    //아이디가 중복하지 않으면  idck = 1 
+	                    idck = 1;
+	                    
+	                }
+	            },
+	            error : function(error) {
+	            	$("#idError").text('공백은 입력할 수 없습니다.');
+	            	$("#divInputId").addClass("has-error");
+                    $("#divInputId").removeClass("has-success");
+	            	
+	            }
+	        });
+	        
+    			}
+	    });
+	    
+	    
+	});
+	
+	function confirm(){
+		var getPw = RegExp(/^[^ ]{4,}$/gi);
+		var password = $("#password").val();
+		var passwordCheck = $("#passwordCheck").val();
+		var name = $("#name").val();
+		var host = [[${host}]];
+		
+	
+		
+		 if(idck==0){
+			 $("#idError").text('아이디 중복체크를 해주세요.');
+			 $("#divInputId").addClass("has-error");
+             $("#divInputId").removeClass("has-success");
+             id.focus();
+	            return false;
+	        }else{
+	        	if(name.length<2 || name.length>10){
+	        		$("#pwError").hide();
+	        		$("#nameError").text('이름은 2~10글자이어야 합니다.');
+	        		$("#nameError").show();
+	        		name.focus();
+	        		return false;
+	        	}
+	        	else if(!getPw.test(password)){ //비밀번호가 형식에 맞지 않는다면
+	        		$("#nameError").hide();
+	    			$("#pwError").text('비밀번호는 4글자 이상만 가능합니다.');
+	    			$("#pwError").show();
+	                password.focus();
+	    			return false;
+	    		}else if(password!==passwordCheck){
+	    			$("#nameError").hide();
+	    			$("#pwError").text('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+	    			$("#pwError").show();
+	                password.focus();
+	                return false;
+	    		}else if($("input[name='gender']:checked").val()==undefined){
+	    			$("#nameError").hide();
+	    			$("#pwError").text('성별을 선택해주세요.');
+	    			$("#pwError").show();
+	    			return false;
+	    		}else if(host!==null&&$("#license").val()==""){
+	    			$("#nameError").hide();
+	    			$("#pwError").text('사업자 번호는 필수입니다.');
+	    			$("#pwError").show();
+	    			return false;
+	    		}else{
+	    			$(".msg").hide();
+	    			 $("#frm").submit();
+	    		}
+	        }
+	}
+	</script>
+		
+		
+		
+		</div>
+	
+	
+	</div>
+	
+
+
+	
+	
+	
+	
+</body>
+</html>

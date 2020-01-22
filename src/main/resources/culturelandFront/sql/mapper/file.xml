@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="file">
+
+	<resultMap type="fileVO" id="fileList">
+		<result property="atchFileId"		column="atch_file_id"	/>
+		<result property="fileExtsn"		column="file_extsn"		/>
+		<result property="fileSn"			column="file_sn"		/>
+		<result property="fileMg"			column="file_size"		/>
+		<result property="fileStreCours"	column="file_stre_cours"/>
+		<result property="orignlFileNm"		column="orignl_file_nm"	/>
+		<result property="streFileNm"		column="stre_file_nm"	/>
+		<result property="regDate"			column="reg_date"		typeHandler="dateHandler" />	
+	</resultMap>
+	
+	<resultMap type="fileVO" id="fileDetail">
+		<result property="atchFileId"		column="atch_file_id"	/>
+		<result property="fileExtsn"		column="file_extsn"		/>
+		<result property="fileSn"			column="file_sn"		/>
+		<result property="fileStreCours"	column="file_stre_cours"/>
+		<result property="orignlFileNm" 		column="orignl_file_nm"	/>
+		<result property="streFileNm"		column="stre_file_nm"	/>
+	</resultMap>	
+
+ 	<!-- idgenService 사용 -->
+
+ 	<select id="selectFileList" parameterType="fileVO" resultMap="fileList" >
+ 		<![CDATA[
+			SELECT 
+				a.atch_file_id, b.file_sn, b.file_stre_cours, b.stre_file_nm,
+				b.file_extsn, b.orignl_file_nm, b.file_size, a.creation_date as reg_date
+			FROM
+				CO_Comfile a, CO_ComfileDetail b
+			WHERE
+				a.atch_file_id = #{atchFileId}
+			AND 
+				a.atch_file_id = b.atch_file_id
+			AND 
+				a.use_yn = 'Y'				
+			ORDER BY b.file_sn	
+ 		]]>
+ 	</select>
+ 	
+	<insert id="insertFileMaster" parameterType="fileVO" >
+		<![CDATA[
+			INSERT INTO CO_Comfile
+			(atch_file_id, creation_date, use_yn)
+			VALUES
+			( #{atchFileId}, getDate(), 'Y')			
+		]]>
+	</insert>
+	
+	<insert id="insertFileDetail" parameterType="fileVO" >
+		<![CDATA[
+			INSERT INTO CO_ComfileDetail
+			( atch_file_id, file_sn, file_stre_cours, stre_file_nm, 
+			  orignl_file_nm, file_extsn, file_size )
+			VALUES
+			( #{atchFileId}, #{fileSn}, #{fileStreCours}, #{streFileNm}, 
+			  #{orignlFileNm}, #{fileExtsn}, #{fileMg} )			
+		]]>
+	</insert>	
+	
+	<delete id="deleteFileDetail" parameterType="fileVO" >
+		<![CDATA[
+			DELETE FROM CO_ComfileDetail
+			WHERE
+				atch_file_id = #{atchFileId}
+		]]>	
+			<if test='fileSn != null and fileSn != "" '>
+			AND file_sn = #{fileSn}	
+			</if>		
+	</delete>
+ 	
+	<select id="getMaxFileSN" parameterType="fileVO" resultType="int">
+		<![CDATA[
+			SELECT ISNULL(MAX(file_sn),0)+1 AS fileSn
+			FROM CO_ComfileDetail
+			WHERE atch_file_id =  #{atchFileId}	
+		]]>
+	</select>
+
+ 	<select id="selectFileInf" parameterType="fileVO" resultMap="fileDetail" >
+ 		<![CDATA[
+			SELECT 
+				atch_file_id, file_sn, file_stre_cours, stre_file_nm,
+				file_extsn, orignl_file_nm, file_size
+			FROM
+				CO_ComfileDetail
+			WHERE
+				atch_file_id = #{atchFileId}
+			]]>		
+			<if test='fileSn != null and fileSn != "" '>
+			AND file_sn = #{fileSn}	
+			</if>
+ 	</select>
+
+	<update id="deleteCOMTNFILE" parameterType="fileVO" >
+		<![CDATA[
+			UPDATE CO_Comfile
+			SET use_yn = 'N'
+			WHERE atch_file_id = #{atchFileId}
+		]]>
+	</update>
+
+ 	<select id="selectFileListByFileNm" parameterType="fileVO" resultMap="fileList" >
+ 		<![CDATA[
+			SELECT 
+				a.atch_file_id, b.file_sn, b.file_stre_cours, b.stre_file_nm,
+				b.file_extsn, b.orignl_file_nm, b.file_size, a.creation_date as reg_date				
+			FROM
+				CO_Comfile a, CO_ComfileDetail b
+			WHERE
+				a.atch_file_id = b.atchFileId
+			AND 
+				a.use_yn = 'Y'
+ 		]]>
+ 		
+ 		<if test="searchCnd != null and searchCnd == 'streFileNm' ">
+ 			AND	b.stre_file_nm LIKE '%'+#{searchWrd}+'%' 
+ 		</if>
+ 		<if test="searchCnd != null and searchCnd == 'orignlFileNm' ">
+ 			AND	b.orignl_file_nm LIKE '%'+#{searchWrd}+'%'
+ 		</if> 		
+		<![CDATA[			
+			ORDER BY a.atch_file_id, b.file_sn	
+			BETWEEN #{recordCountPerPage} AND #{firstIndex}
+		]]>		 		
+ 	</select>
+
+ 	<select id="selectFileListCntByFileNm" parameterType="fileVO" resultType="int" >
+ 		<![CDATA[
+			SELECT 
+				COUNT(a.atchFileId)
+			FROM
+				CO_Comfile a, CO_ComfileDetail b
+			WHERE
+				a.atch_file_id = b.atch_file_id
+			AND 
+				a.use_yn = 'Y'				
+ 		]]>
+ 		<if test="searchCnd != null and searchCnd == 'streFileNm' ">
+ 			AND	b.stre_file_nm LIKE '%'+#{searchWrd}+'%'
+ 		</if>
+ 		<if test="searchCnd != null and searchCnd == 'orignlFileNm' ">
+ 			AND	b.orignl_file_nm LIKE '%'+#{searchWrd}+'%'
+ 		</if> 		
+ 	</select>
+ 	
+  	<select id="selectImageFileList" parameterType="fileVO" resultMap="fileList" >
+ 		<![CDATA[
+			SELECT 
+				a.atch_file_id, b.file_sn, b.file_stre_cours, b.stre_file_nm,
+				b.file_extsn, b.orignl_file_nm, b.file_size, a.creation_date as reg_date	
+			FROM
+				CO_Comfile a, CO_ComfileDetail b
+			WHERE
+				a.atch_file_id = #{atchFileId}
+			AND 
+				a.atch_file_id = b.atch_file_id
+			AND
+				UPPER(b.file_extsn) IN ('GIF','JPG','BMP','PNG')
+			AND 
+				a.use_yn = 'Y'				
+			ORDER BY b.file_sn	
+ 		]]>
+ 	</select>	
+ 	
+</mapper>

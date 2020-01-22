@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>개인정보수정</title>
+  <link rel="stylesheet" href="../css/style.css">
+
+  <script src="../js/jquery/jquery-1.12.4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="../js/script.js"></script>
+
+</head>
+
+<body>
+  <!--header-->
+  <div class="header">
+    <div class="wrapper">
+      <div class="left">
+        <h1>
+          <a href="#"><img src="../img/header-logo.png" alt="로고"></a>
+        </h1>
+      </div>
+      <div class="logo">
+        <a href="#">
+          <span> <img src="../img/header-text-logo.png" alt="텍스트로고"></span>
+        </a>
+      </div>
+      <div class="right">
+        <ul>
+          <li>
+            <a href="#">
+              <span class="join"></span>
+              <div>
+                <span>회원가입</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="login"></span>
+              <div>
+                <span>로그인</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="mypage"></span>
+              <div>
+                <span>마이페이지</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!--gnb-->
+  <div class="nav">
+    <ul class="gnb">
+      <li class="li-header"><a href="#">문상1번가특징</a>
+      </li>
+      <li class="li-header"><a href="#">상품권매입신청</a>
+        <ul>
+          <li><a href="#">매입신청내역</a></li>
+          <li><a href="#">계좌인증</a></li>
+          <li><a href="#">매입한도</a></li>
+          <li><a href="#">개인정보수정</a></li>
+        </ul>
+      </li>
+      <li class="li-header"><a href="#">고객센터</a>
+        <ul>
+          <li><a href="#">공지사항</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">1:1 문의</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="section">
+    <div class="wrapper">
+      <div class="buy-header">
+        <h1>개인정보수정</h1>
+      </div>
+      <div class="user-info">
+        <h2>회원정보</h2>
+        <table>
+          <colgroup>
+            <col style="width: 150px;">
+
+          </colgroup>
+          <tr class="thead">
+            <td>아이디</td>
+            <td>hong@naver.com</td>
+          </tr>
+          <tr>
+            <td>이름</td>
+            <td>홍길동</td>
+          </tr>
+          <tr>
+            <td>새비밀번호</td>
+            <td><input type="password"></td>
+          </tr>
+          <tr>
+            <td>비밀번호 확인</td>
+            <td><input type="password"></td>
+          </tr>
+          <tr>
+            <td>휴대폰 번호</td>
+            <td><input type="text" class="phone-number-check"><button type="button">인증하기</button>
+            </td>
+            <tr class="text-td">
+              <td></td>
+              <td>
+                <p>*비밀번호는 영문/숫자/특수문자/ 2가지 이상 조합해서 최소 6자~12자</p>
+                <p>*입력하신 휴대폰번호와 이메일(아이디)로 주요공지사항 및 이벤트에 대한 안내를 받을 수 있습니다.</p>
+                <p>*거래정보와 관련된 내용은 수신동의 여부와 관계없이 발송됩니다.</p>
+              </td>
+            </tr>
+            <tr class="agree-select">
+              <td>SMS 수신동의</td>
+              <td>
+                <div class="radio-wrap">
+                  <input type="radio" id="radio01" name="radio">
+                  <span class="icon-radio"></span>
+                  <label for="radio01">동의함</label>
+                </div>
+                <div class="radio-wrap">
+                  <input type="radio" id="radio02" name="radio">
+                  <span class="icon-radio"></span>
+                  <label for="radio02">동의안함</label>
+                </div>
+              </td>
+            </tr>
+            <tr class="agree-select">
+              <td>이메일 수신동의</td>
+              <td>
+                <div class="radio-wrap">
+                  <!--선택이 되어있을때-->
+                  <input type="radio" id="radio03" name="radio2" checked="checked">
+                  <span class="icon-radio"></span>
+                  <label for="radio03">동의함</label>
+                </div>
+                <div class="radio-wrap">
+                  <input type="radio" id="radio04" name="radio2">
+                  <span class="icon-radio"></span>
+                  <label for="radio04">동의안함</label>
+                </div>
+              </td>
+            </tr>
+        </table>
+        <div class="user-info-btn">
+          <button>회원탈퇴</button>
+          <button>개인정보 수정</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--footer-->
+  <div class="footer">
+    <div class="footer-width">
+      <span>
+            <img src="../img/footer-logo.png " alt="문상1번가로고 ">
+        </span>
+      <div class="footer-nav">
+        <ul>
+          <li>회사명 : 문상1번가
+            <div></div>
+          </li>
+          <li>사업자등록번호 : 215-55-6666
+            <div></div>
+          </li>
+          <li>통신판매업신고 : 제2019-서울 강남-1665
+            <div></div>
+          </li>
+          <li>대표 : 홍길동
+            <div></div>
+          </li>
+          <li>주소 : 서울 강남구 역삼대로 22, xx빌딩 3층</li>
+        </ul>
+        <ul>
+          <li>고객센터 : 02-5555-6666
+            <div></div>
+          </li>
+          <li>근무시간 : 평일/토요일 오전09:00~18:00
+            <div></div>
+          </li>
+          <li>이메일 : help@xxxxx.co.kr</li>
+        </ul>
+        <p>
+          Copyright@2019 문상1번가 All Rights Reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="right-banner">
+    <ul>
+      <li class="buy-ask">
+        <a href="#">
+          <span class="coin"></span>
+          <div>
+            <p>레알 실시간 20초~!</p>
+            <p>상품권 매입신청</p>
+            <span class="arrow"></span>
+          </div>
+        </a>
+      </li>
+      <li class="service">
+        <a href="#">
+          <span class="service-img"></span>
+          <div>
+            <p>고객샌터</p>
+            <p>1234-8654</p>
+          </div>
+        </a>
+      </li>
+      <li class="kakao">
+        <a href="#">
+          <span class="kakao-img"></span>
+          <div>
+            <p>카톡상담</p>
+            <p>moonsang1</p>
+          </div>
+        </a>
+      </li>
+      <li class="naver">
+        <a href="#">
+          <span class="naver-img"></span>
+          <div>
+            <p>네이버 톡톡</p>
+            <p>채팅상담</p>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <script>
+    radioClick();
+  </script>
+</body>
+
+</html>

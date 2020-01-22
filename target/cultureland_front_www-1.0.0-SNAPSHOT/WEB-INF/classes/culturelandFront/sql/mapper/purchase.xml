@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="purchase">
+	
+	<sql id="wherePurchaseListQuery">
+		<if test='startDate != "" and startDate != null'>
+			AND CONVERT(varchar(8),A.CREATION_DATE,112) >= CONVERT(varchar(8),REPLACE(#{startDate},'-',''),112)
+		</if>
+		<if test='endDate != "" and endDate != null'>
+			AND CONVERT(varchar(8),A.CREATION_DATE,112) <![CDATA[ <= ]]> CONVERT(varchar(8),REPLACE(#{endDate},'-',''),112)
+		</if>
+		
+		<if test='searchKeyword != "" and searchKeyword != null'>
+			<choose>
+				<when test='searchCondition == "total"'>AND (B.MEMBER_MAIL_ADDR LIKE '%' + #{searchKeyword} + '%' or A.MEMBER_NAME LIKE '%' + #{searchKeyword} + '%')</when>
+				<when test='searchCondition == "memberName"'>AND A.MEMBER_NAME LIKE '%' + #{searchKeyword} + '%'</when>
+				<when test='searchCondition == "memberId"'>AND B.MEMBER_MAIL_ADDR LIKE '%' + #{searchKeyword} + '%'</when>
+			</choose>
+		</if>
+	</sql>
+	
+	<select id="selectPurchaseListCnt" parameterType="hashmap" resultType="int">
+	 	SELECT COUNT(A.SEQ)
+		FROM CO_Buy A
+		LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+		WHERE 1 = 1
+		AND A.LARGE_YN = #{largeYn}
+		<include refid="wherePurchaseListQuery"/> 
+ 	</select>
+ 	
+ 	<select id="selectPurchaseList" parameterType="hashmap" resultType="hashmap">
+		SELECT 
+			TOP ${cntPerPage}
+			A.SEQ 
+			,A.ACNT_NUMBER
+			,A.BANK_NAME
+			,A.MEMBER_NO
+			,B.MEMBER_MAIL_ADDR
+			,A.MEMBER_NAME
+			,A.ACCEPT_YN
+			,A.DEPOSIT_YN
+			,A.CREATION_DATE
+			,CONVERT(varchar(10), A.CREATION_DATE, 102) as buyDate
+			,CONVERT(varchar(8), A.CREATION_DATE, 108) as buytime
+			
+			<choose>
+				<when test='largeYn == "N"'>
+					,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalMoney
+					,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney
+					,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailMoney
+					,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalRow
+					,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccRow
+					,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailRow
+				</when>
+				<otherwise>
+					,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalMoney
+					,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney
+					,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailMoney
+					,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalRow
+					,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccRow
+					,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailRow
+				</otherwise>
+			</choose>
+			
+		FROM CO_Buy A
+		LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+		WHERE 1 = 1
+		AND A.LARGE_YN = #{largeYn}
+		
+		<include refid="wherePurchaseListQuery"/> 
+		
+		<if test='startNum > 0'>
+							AND seq NOT IN(
+									SELECT TOP ${startNum}  
+										seq
+									FROM CO_Buy A
+									LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+									WHERE 1=1 
+									AND A.LARGE_YN = #{largeYn}
+										<include refid="wherePurchaseListQuery"/> 
+						ORDER BY A.CREATION_DATE DESC
+				)
+		
+		
+		</if>
+		ORDER BY A.CREATION_DATE DESC
+
+ 	</select>
+ 	
+ 	<select id="selectPurchaseDetail" parameterType="hashmap" resultType="hashmap">
+ 		SELECT A.SEQ 
+			,A.ACNT_NUMBER
+			,A.BANK_NAME
+			,A.MEMBER_NO
+			,B.MEMBER_MAIL_ADDR
+			,A.MEMBER_NAME
+			,A.ACCEPT_YN
+			,A.DEPOSIT_YN
+			,A.LARGE_CONTENTS
+			,A.CREATION_DATE
+			,CONVERT(varchar(10), A.CREATION_DATE, 102) as buyDate
+			,CONVERT(varchar(8), A.CREATION_DATE, 108) as buytime
+			,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalMoney
+			,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney
+			,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailMoney
+			,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalRow
+			,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccRow
+			,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailRow
+		FROM CO_Buy A
+		LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+		WHERE A.seq = #{seq}
+ 	</select>
+ 	
+ 	<select id="selectLargePurchaseDetail" parameterType="hashmap" resultType="hashmap">
+ 		SELECT A.SEQ 
+			,A.ACNT_NUMBER
+			,A.BANK_NAME
+			,A.MEMBER_NO
+			,B.MEMBER_MAIL_ADDR
+			,A.MEMBER_NAME
+			,A.ACCEPT_YN
+			,A.DEPOSIT_YN
+			,A.LARGE_CONTENTS
+			,A.CREATION_DATE
+			,CONVERT(varchar(10), A.CREATION_DATE, 102) as buyDate
+			,CONVERT(varchar(8), A.CREATION_DATE, 108) as buytime
+			,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalMoney
+			,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney
+			,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailMoney
+			,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalRow
+			,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccRow
+			,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailRow
+		FROM CO_Buy A
+		LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+		WHERE A.seq = #{seq}
+ 	</select>
+ 	
+ 	<select id="selectPurchaseDetailList" parameterType="hashmap" resultType="hashmap">
+ 		SELECT 
+			  A.SEQ
+			  , A.BUY_SEQ
+			  , A.FIN_NUMBER
+			  , A.REQ_MONEY
+			  , A.SUCCESS_YN
+			  , A.FAIL_CODE
+			  , A.FAIL_REASON
+			  , A.CREATION_DATE
+		FROM CO_BuyDetail A
+		WHERE A.BUY_SEQ = #{seq}
+		ORDER BY A.SEQ, A.CREATION_DATE DESC
+ 	</select>
+ 	
+ 	<select id="selectLargePurchaseDetailListCnt" parameterType="hashmap" resultType="int">
+ 		SELECT 
+			  COUNT(A.SEQ)
+		FROM CO_LargeBuyDetail A
+		WHERE A.BUY_SEQ = #{seq}
+ 	</select>
+ 	
+ 	<select id="selectLargePurchaseDetailList" parameterType="hashmap" resultType="hashmap">
+ 		SELECT TOP ${cntPerPage}
+			  A.SEQ
+			  , A.BUY_SEQ
+			  , A.FIN_NUMBER
+			  , A.REQ_MONEY
+			  , A.SUCCESS_YN
+			  , A.FAIL_CODE
+			  , A.FAIL_REASON
+			  , A.CREATION_DATE
+		FROM CO_LargeBuyDetail A
+		WHERE A.BUY_SEQ = #{seq}
+		<if test='startNum > 0'>
+							AND seq NOT IN(
+									SELECT TOP ${startNum}  
+										seq
+									FROM CO_LargeBuyDetail A
+									WHERE 1=1 
+									AND A.BUY_SEQ = #{seq}
+						ORDER BY A.CREATION_DATE DESC
+				)
+		</if>
+		ORDER BY A.SEQ, A.CREATION_DATE DESC
+ 	</select>
+ 	
+ 	<select id="selectMainPurchaseList" parameterType="hashmap" resultType="hashmap">
+ 		SELECT TOP 10 * FROM(
+			SELECT 
+				A.SEQ 	
+				,A.MEMBER_NAME
+				,A.CREATION_DATE
+				,A.LARGE_YN
+				,CONVERT(varchar(10), A.CREATION_DATE, 102) as buyDate
+				,CONVERT(varchar(8), A.CREATION_DATE, 108) as buytime
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalMoney
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailMoney
+				,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalRow
+				,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccRow
+				,(SELECT COUNT(B.SEQ) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailRow
+			FROM CO_Buy A
+			LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+			WHERE 1 = 1
+			AND A.LARGE_YN = 'N'
+			UNION ALL
+			SELECT 
+				A.SEQ 	
+				,A.MEMBER_NAME
+				,A.CREATION_DATE
+				,A.LARGE_YN
+				,CONVERT(varchar(10), A.CREATION_DATE, 102) as buyDate
+				,CONVERT(varchar(8), A.CREATION_DATE, 108) as buytime
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalMoney
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailMoney
+				,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ ) as reqTotalRow
+				,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccRow
+				,(SELECT COUNT(B.SEQ) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'N' ) as reqFailRow
+			FROM CO_Buy A
+			LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+			WHERE 1 = 1
+			AND A.LARGE_YN = 'Y'
+		)AA
+		ORDER BY AA.CREATION_DATE DESC
+		
+ 	</select>
+ 	
+ 	<update id="updateLargePurchase" parameterType="hashmap">
+ 		UPDATE CO_Buy SET
+ 			<choose>
+ 				<when test='condition == "accept"'>ACCEPT_YN = 'Y'</when>
+ 				<when test='condition == "deposit"'>DEPOSIT_YN = 'Y'</when>
+ 				<when test='condition == "contents"'>LARGE_CONTENTS = #{contents}</when>
+ 			</choose>
+ 			,LASTUPDATE_DATE = getDate()
+ 		WHERE SEQ = #{seq}
+ 	</update>
+ 	
+ 	<insert id="insertGrant" parameterType="hashmap">
+ 		INSERT INTO CO_Culture(
+ 			CUL_ID
+ 			,CUL_PASSWORD
+ 			,CUL_NAME
+ 			,CUL_AUTH
+ 			,CUL_AUTH_LEVEL
+ 			,POSITION
+ 			,LOGIN_FAIL
+ 			,CREATION_USER
+ 			,CREATION_DATE
+ 		)VALUES(
+ 			#{culId}
+ 			,#{culPass}
+ 			,#{culName}
+ 			,#{culAuth}
+ 			,'AUTH2'
+ 			,#{position}
+ 			,0
+ 			,#{creationUser}
+ 			,getDate()
+ 		)
+ 	</insert> 	
+ 	
+ 	<update id="updateGrant" parameterType="hashmap">
+ 		UPDATE CO_Culture SET
+ 			CUL_NAME = #{culName}
+ 			,position = #{position}
+ 			,CUL_AUTH = #{culAuth}
+ 			,CUL_PASSWORD = #{culPass}
+ 			,LASTUPDATE_USER = #{creationUser}
+ 			,LASTUPDATE_DATE = getDate()
+ 		WHERE SEQ = #{seq}
+ 	</update>
+ 	
+ 	<delete id="deleteGrant" parameterType="hashmap">
+ 		DELETE FROM CO_Culture
+ 		WHERE <if test='seq != null and seq != "" '>seq = #{seq}</if>	
+			<if test='seqArray != null and seqArray != "" '>
+				<foreach collection="seqArray" item="seqArray" index="index"  separator=","  open=" seq IN ("  close=") "  >
+					#{seqArray}
+				</foreach>
+			</if>
+ 	</delete>
+ 	
+ 	<select id="selectBoardNext" parameterType="hashmap" resultType="hashmap">
+		 <![CDATA[
+			 SELECT
+			    AA.*
+			FROM
+			(
+			    SELECT
+			        @ROWNUM := @ROWNUM + 1 AS ROWNUM,
+			        A.* ,
+			        B.gubun_name
+			    FROM (select * from TB_BOARD ORDER BY seq) A 
+      				LEFT OUTER JOIN ( (SELECT @ROWNUM := 0) R  )  on 1=1
+      	]]>
+      				<if test='categoryType != null and categoryType != ""'>
+      					LEFT OUTER JOIN TB_CATEGORY B ON A.category = B.gubun AND B.category_type = #{categoryType}
+      				</if> 
+			    WHERE 1=1
+			    AND A.gubun = #{gubun}      		      		   
+          		AND A.use_yn ='Y'	
+		<![CDATA[
+					ORDER BY reg_date ASC , seq ASC
+			) AA
+			WHERE
+			  AA.ROWNUM<=#{rownum}+1 AND  AA.ROWNUM=(select min(AA.ROWNUM) from TB_BOARD where  AA.ROWNUM>#{rownum})	
+		 ]]>
+	</select>
+	<select id="selectBoardPrev" parameterType="hashmap" resultType="hashmap">
+		 <![CDATA[ 
+		  SELECT
+			    AA.*
+			FROM
+			(
+			    SELECT
+			        @ROWNUM := @ROWNUM + 1 AS ROWNUM,
+			        A.*,
+			        B.gubun_name 
+			   FROM (select * from TB_BOARD ORDER BY seq) A 
+      				LEFT OUTER JOIN ( (SELECT @ROWNUM := 0) R  )  on 1=1
+      	 ]]>			
+      				<if test='categoryType != null and categoryType != ""'>
+      					LEFT OUTER JOIN TB_CATEGORY B ON A.category = B.gubun AND B.category_type = #{categoryType}
+      				</if> 
+      				
+			   WHERE 1=1
+			   AND A.gubun = #{gubun}      		      		   
+          	   AND A.use_yn ='Y'	     
+		 <![CDATA[
+					ORDER BY reg_date ASC, seq ASC
+			) AA
+			WHERE
+			  AA.ROWNUM>=#{rownum}-1 AND  AA.ROWNUM=(select max(AA.ROWNUM) from TB_BOARD where  AA.ROWNUM<#{rownum})
+		  ]]>
+	</select>
+	
+ 	<update id="updateBoardClickHit" parameterType="hashmap" >
+		UPDATE TB_BOARD SET 
+			hit = hit+1
+		WHERE seq = #{seq}	
+	</update>
+</mapper>

@@ -1,0 +1,344 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+
+/* HTML5 display-role reset for older browsers */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+body {
+  line-height: 1;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+blockquote,
+q {
+  quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
+/* .header {
+  background-color: slategrey;
+  color: white;
+  min-width: 1200px;
+  max-width: 100%;
+}
+
+.header .header-top {
+  border-bottom: 1px solid white;
+  padding: 10px 10px 10px 10px;
+}
+
+.header .header-top .logo {
+  display: inline-block;
+  font-weight: 500;
+}
+
+.header .header-top .info {
+  display: inline-block;
+  float: right;
+}
+
+.header .header-top .info .personalInfo {
+  display: inline-block;
+}
+
+.header .header-top .info button {
+  background-color: white;
+  border: 1px solid white;
+} */
+
+
+/*header-nav*/
+
+.header .header-nav li {
+  display: inline-block;
+  padding: 10px 0px 10px 0px;
+}
+
+.header .header-nav li:active {
+  color: black;
+  background-color: white;
+}
+
+.header .header-nav li a {
+  text-decoration: none;
+  color: white;
+  padding: 8px 20px 10px 20px;
+}
+
+.header .header-nav li a:focus {
+  color: black;
+  background-color: white;
+  font-weight: 600;
+}
+
+
+/*section*/
+
+.section {
+  width: 1200px;
+  margin: 0 auto;
+  padding-top: 140px;
+  margin-top: 55px;
+  position: relative;
+}
+
+.section .newPurchase {
+  display: inline-block;
+  font-size: 14px;
+  margin-right: 2rem;
+  width: 47%;
+  margin-left: 20px;
+}
+
+.section .section-right {
+  display: inline-block;
+  vertical-align: top;
+  width: 47%;
+}
+
+.section h5 {
+  margin: 0px 0px 15px 10px;
+}
+
+.section .newPurchase .purchase-list .list-name {
+  background-color: cadetblue;
+  color: white;
+}
+
+.section .newPurchase .purchase-list ul {
+  border-bottom: 2px solid gray;
+  padding: 10px 0px;
+}
+
+.section .newPurchase .purchase-list ul:first-child {
+  border-top: 2px solid gray;
+}
+
+.section .newPurchase .purchase-list ul:last-child {
+  border-bottom: 2px solid gray;
+}
+
+.section .purchase-list ul:last-child {
+  border-bottom: none;
+}
+
+.section .newPurchase li {
+  display: inline-block;
+  text-align: center;
+  font-weight: 550;
+  font-size: 15px;
+  width: 135px;
+}
+
+.section p {
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 5px 5px 5px 0px;
+}
+
+.section p a {
+  text-decoration: none;
+  color: black;
+}
+
+.section .section-right .join-statistics {}
+
+.section .section-right .join-statistics div {
+  border: 1px solid gray;
+  height: 150px;
+}
+
+.section .section-right .qa {
+  display: inline-block;
+  margin-top: 30px;
+  width: 100%;
+}
+
+.section .section-right .qa ul:first-child {
+  background-color: cadetblue;
+  color: white;
+}
+
+.section .section-right .qa li {
+  display: inline-block;
+  text-align: center;
+  margin: auto;
+  padding: 5px 0px 5px 0px;
+  font-weight: 600;
+  width: 180px;
+}
+
+.section .section-right .qa ul {
+  border-bottom: 2px solid gray;
+}
+
+.section .section-right .qa ul:last-child {
+  border-bottom: none;
+}
+
+.section .section-right .qa div {
+  border-top: 2px solid gray;
+  border-bottom: 2px solid gray;
+}
+
+.section .section-right .qa p {
+  margin-bottom: 10px;
+}
+
+.breadcrumbs {
+  position: absolute;
+  top: 80px;
+  right: 0;
+}
+
+.breadcrumbs a,
+.breadcrumbs span {
+  font-size: 13px;
+  color: #333;
+  vertical-align: middle
+}
+
+.breadcrumbs a,
+.breadcrumbs span {
+  padding-right: 18px;
+  margin-right: 10px;
+  background: url(../img/bg_breadcrumbs.png) no-repeat right center
+}
+
+.breadcrumbs span:last-child {
+  background: unset;
+  padding-right: unset;
+  margin-right: unset;
+}
+
+.breadcrumbs .home:before {
+  display: inline-block;
+  content: '';
+  width: 14px;
+  height: 13px;
+  margin-top: 2px;
+  background: url(../img/ico_home.png) no-repeat center
+}
+
+.breadcrumbs .home span {
+  font-size: 0;
+  text-indent: -9999em
+}

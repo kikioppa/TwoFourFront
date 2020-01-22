@@ -1,0 +1,90 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>대용량 리스트</title>
+</head>
+
+<body>  <!--section-->
+  <div class="list-section">
+    <div class="purchase-list-header">
+      <input type="radio">날짜 지정 <input type="date">~<input type="date">
+      <select>
+        <option>아이디</option>
+        <option>이름</option>
+        <option>아이디&이름</option>
+      </select>
+      <input type="text" placeholder="전체">
+      <button class="find-btn">검색</button>
+    </div>
+  </div>
+  <div class="info-table-list">
+    <ul class="table-list-ul">
+      <li>매입 신청 날짜</li>
+      <li>아이디</li>
+      <li>이름</li>
+      <li class="amount">총금액</li>
+      <li>총매수</li>
+      <li>접수여부</li>
+      <li>입금여부</li>
+    </ul>
+    <ul class="table-list-ul">
+      <li><a href="javascript:void(0);">yyyy/MM/dd</a></li>
+      <li>Moon</li>
+      <li>김문상</li>
+      <li class="amount">2,500,000</li>
+      <li>323</li>
+      <li><input type="checkbox"><span class="icon-chk"></span></li>
+      <li></li>
+    </ul>
+    <ul class="table-list-ul">
+      <li><a href="javascript:void(0);">yyyy/MM/dd</a></li>
+      <li>Moon</li>
+      <li>김문상</li>
+      <li class="amount">2,500,000</li>
+      <li>323</li>
+      <li><input type="checkbox"><span class="icon-chk"></span></li>
+      <li></li>
+    </ul>
+    <ul class="table-list-ul">
+      <li><a href="javascript:void(0);">yyyy/MM/dd</a></li>
+      <li>Moon</li>
+      <li>김문상</li>
+      <li class="amount">2,500,000</li>
+      <li>323</li>
+      <li><input type="checkbox"><span class="icon-chk"></span></li>
+      <li></li>
+    </ul>
+    <ul class="table-list-ul">
+      <li><a href="javascript:void(0);">yyyy/MM/dd</a></li>
+      <li>Moon</li>
+      <li>김문상</li>
+      <li class="amount">2,500,000</li>
+      <li>323</li>
+      <li><input type="checkbox"><span class="icon-chk"></span></li>
+      <li></li>
+    </ul>
+    <div class="pageSection">
+      <div class="pagenation">
+        <span class="page-arrow"><a href="#" class="arrow first btn-icon m-icon" onclick="go_paging(1)">first</a>
+                          <a href="#" class="arrow prev btn-icon m-icon">prev</a>
+                          </span>
+        <ul class="page-num">
+          <li class="on"><a href="#" class="on">1</a></li>
+        </ul><span class="page-arrow"><a href="#" class="arrow next btn-icon m-icon">next</a>
+                          <a href="#" class="arrow end btn-icon m-icon" onclick="go_paging(1)">end</a>
+                          </span>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>

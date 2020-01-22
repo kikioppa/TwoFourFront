@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="login">
+
+
+	<resultMap type="adminUserVO" id="adminUserMap">
+		<result column="seq" 		property="seq" />
+		<result column="id" 		property="id" />
+		<result column="name" 		property="name" />
+		<result column="position" 		property="position" />
+		<result column="tel" 		property="tel" />
+		<result column="email" 		property="email" />
+		<result column="cellphone" 		property="cellphone" />
+		<result column="auth_level" property="authLevel" />
+	</resultMap>
+	
+	<resultMap type="adminUserVO" id="adminUserDetMap" extends="adminUserMap">
+		<result column="auth" 		property="auth" />
+		<result column="pw" 		property="pw" />
+	</resultMap>
+	
+ 	<select id="selectAdminLogin" parameterType="adminUserVO" resultMap="adminUserDetMap">
+	 	select seq, id, name, auth, pwd, auth_level, position, tel, email, cellphone from TB_ADMINUSER
+	 	where id = #{id}
+	 	and pwd = #{pw}
+
+ 	</select>
+
+ 	<select id="selectAdminLoginCheck" parameterType="hashmap" resultType="int">
+	 	select count(seq) from TB_ADMINUSER
+	 	where id = #{id}
+	 	and pwd = #{pw}
+
+ 	</select>
+ 	 	
+ 	<update id="updatePassword" parameterType="hashmap">
+	
+		UPDATE TB_ADMINUSER
+		SET			 
+<!-- 	   		  pwd = password(#{chg_pwd}) -->
+	   		  pwd = #{chg_pwd}
+	   		, chg_user = #{id}
+	   		, chg_date = now()	
+	   	WHERE id = #{id}
+	   		AND pwd = #{cur_pwd}
+<!-- 	   		AND pwd = password(#{cur_pwd}) -->
+	
+	</update> 	
+ 	
+	 	
+</mapper>

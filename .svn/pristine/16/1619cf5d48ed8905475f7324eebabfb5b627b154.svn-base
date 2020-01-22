@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="file">
+
+	<resultMap type="fileVO" id="fileList">
+		<result property="atchFileId"		column="atch_file_id"	/>
+		<result property="fileMg"			column="file_size"			/>
+		<result property="fileStreCours"		column="file_stre_cours"			/>
+		<result property="streFileNm"		column="stre_file_nm"			/>
+		<result property="regDate"			column="reg_date"		typeHandler="dateHandler" />
+<!-- 		<result property="deviceType"		column="device_type"		/>	 -->
+<!-- 		<result property="downCount"		column="down_count"		/> -->
+		
+	</resultMap>
+	
+	<resultMap type="fileVO" id="fileDetail">
+		<result property="atchFileId"		column="atch_file_id"		/>	
+		<result property="atchIconId"		column="atch_icon_id"		/>		
+		<result property="fileExtsn"		column="file_extsn"			/>
+		<result property="fileMg"			column="file_size"			/>
+		<result property="fileSn"			column="file_sn"			/>
+		<result property="fileStreCours"	column="file_stre_cours"	/>
+		<result property="orignlFileNm" 	column="orignl_file_nm"		/>
+		<result property="streFileNm"		column="stre_file_nm"		/>
+<!-- 		<result property="deviceType"		column="device_type"		/> -->
+<!-- 		<result property="downCount"		column="down_count"		/> -->
+	</resultMap>	
+
+	<!-- 
+ 	<select id="getAddId" parameterType="hashmap">
+			UPDATE t_comseq
+			SET NEXT_ID = NEXT_ID + 1
+			WHERE TABLE_NAME = #{table_name}	
+ 	</select>
+ 	-->
+ 	<select id="getNextStringId" parameterType="hashmap" resultType="int" >
+ 			select nextval(#{table_name})
+ 	</select>
+
+ 	<select id="selectFileList" parameterType="fileVO" resultMap="fileList" >
+ 		<![CDATA[
+			SELECT 
+				a.atch_file_id, a.icon, b.file_sn, b.file_stre_cours, b.stre_file_nm,
+				b.file_extsn, b.orignl_file_nm, b.file_size, a.reg_date
+			FROM
+				TB_COMFILE a, TB_COMFILEDETAIL b
+			WHERE
+				a.atch_file_id = #{atchFileId}
+			AND 
+				a.atch_file_id = b.atch_file_id
+			AND 
+				a.use_yn = 'Y'		
+				]]>	
+				<if test="deviceType != null and deviceType != '' ">
+		 			AND	b.device_type = #{deviceType}
+		 		</if> 		
+		 		
+		 		<if test='fileSn != null and fileSn != "" '>
+					AND b.file_sn = #{fileSn}	
+				</if>	
+		
+			ORDER BY b.FILE_SN	
+ 		
+ 	</select>
+ 	
+	<insert id="insertFileMaster" parameterType="fileVO" >
+		<![CDATA[
+			INSERT INTO TB_COMFILE
+			(atch_file_id, reg_date, use_yn, icon)
+			VALUES
+			( #{atchFileId}, now(), 'Y', #{atchIconId})			
+		]]>
+	</insert>
+	
+	<insert id="insertFileDetail" parameterType="fileVO" >
+		
+			INSERT INTO TB_COMFILEDETAIL
+			( atch_file_id, file_sn, file_stre_cours, stre_file_nm, 
+			  orignl_file_nm, file_extsn, file_size)
+			VALUES
+			( #{atchFileId}, #{fileSn}, #{fileStreCours}, #{streFileNm}, 
+			  #{orignlFileNm}, #{fileExtsn}, #{fileMg})			
+		
+	</insert>	
+	
+	<delete id="deleteFileDetail" parameterType="fileVO" >
+		<![CDATA[
+			DELETE FROM TB_COMFILEDETAIL
+			WHERE
+				atch_file_id = #{atchFileId}
+		]]>		
+			
+			<if test='fileSn != null and fileSn != "" '>
+				AND file_sn = #{fileSn}	
+			</if>	
+			
+			
+	</delete>
+ 	
+	<select id="getMaxFileSN" parameterType="fileVO" resultType="int">
+		<![CDATA[
+			SELECT IFNULL(MAX(file_sn),0)+1 AS file_sn
+			FROM TB_COMFILEDETAIL
+			WHERE atch_file_id =  #{atchFileId}	
+		]]>
+	</select>
+
+ 	<select id="selectFileInf" parameterType="fileVO" resultMap="fileDetail" >
+ 		<![CDATA[
+			SELECT 
+				a.atch_file_id, b.file_sn, b.file_stre_cours, b.stre_file_nm,
+				b.file_extsn, b.orignl_file_nm, b.file_size, a.reg_date
+			FROM
+				TB_COMFILE a, TB_COMFILEDETAIL b
+			WHERE
+				a.atch_file_id = b.atch_file_id
+				AND a.atch_file_id =#{atchFileId}
+			]]>		
+			<if test='fileSn != null and fileSn != "" '>
+			AND file_sn = #{fileSn}	
+			</if>
+ 	</select>
+
+	<update id="deleteCOMTNFILE" parameterType="fileVO" >
+		<![CDATA[
+			UPDATE TB_COMFILE
+			SET use_yn = 'N'
+			WHERE atch_file_id = #{atchFileId}
+		]]>
+	</update>
+	
+	
+	<update id="downCountAddCOMTNFILE" parameterType="fileVO" >
+		<![CDATA[
+			UPDATE TB_COMFILEDETAIL
+				SET down_count = down_count + 1
+			WHERE atch_file_id = #{atchFileId}
+				AND file_sn = #{fileSn}	
+		]]>
+			
+	</update>
+
+ 	<select id="selectFileListByFileNm" parameterType="fileVO" resultMap="fileList" >
+ 		<![CDATA[
+			SELECT 
+				a.atch_file_id, a.icon, b.file_sn, b.file_stre_cours, b.stre_file_nm,
+				b.file_extsn, b.orignl_file_nm, b.file_size, a.reg_date ,  b.down_count
+			FROM
+				TB_COMFILE a, TB_COMFILEDETAIL b
+			WHERE
+				a.atch_file_id = b.atch_file_id
+			AND 
+				a.use_yn = 'Y'
+ 		]]>
+ 		
+ 		<if test="searchCnd != null and searchCnd == 'streFileNm' ">
+ 			AND	b.stre_file_nm LIKE CONCAT ('%', #{searchWrd},'%')
+ 		</if>
+ 		<if test="searchCnd != null and searchCnd == 'orignlFileNm' ">
+ 			AND	b.orignl_file_nm LIKE CONCAT ('%', #{searchWrd},'%')
+ 		</if> 		
+ 		
+ 		<if test="deviceType != null and deviceType != '' ">
+ 			AND	b.device_type = #{deviceType}
+ 		</if> 	
+ 		
+		<![CDATA[			
+			ORDER BY a.atch_file_id, b.FILE_SN	
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>		 		
+ 	</select>
+
+ 	<select id="selectFileListCntByFileNm" parameterType="fileVO" resultType="int" >
+ 		<![CDATA[
+			SELECT 
+				COUNT(a.atch_file_id)
+			FROM
+				TB_COMFILE a, TB_COMFILEDETAIL b
+			WHERE
+				a.atch_file_id = b.atch_file_id
+			AND 
+				a.use_yn = 'Y'				
+ 		]]>
+ 		<if test="searchCnd != null and searchCnd == 'streFileNm' ">
+ 			AND	b.stre_file_nm LIKE CONCAT ('%', #{searchWrd},'%')
+ 		</if>
+ 		<if test="searchCnd != null and searchCnd == 'orignlFileNm' ">
+ 			AND	b.orignl_file_nm LIKE CONCAT ('%', #{searchWrd},'%')
+ 		</if> 		
+ 		
+ 		<if test="deviceType != null and deviceType != '' ">
+ 			AND	b.device_type = #{deviceType}
+ 		</if> 	
+ 	</select>
+ 	
+  	<select id="selectImageFileList" parameterType="fileVO" resultMap="fileList" >
+ 		<![CDATA[
+			SELECT 
+				a.atch_file_id, b.file_sn, b.file_stre_cours, b.stre_file_nm,
+				b.file_extsn, b.orignl_file_nm, b.file_size, a.reg_date, b.down_count 
+			FROM
+				TB_COMFILE a, TB_COMFILEDETAIL b
+			WHERE
+				a.atch_file_id = #{atchFileId}
+			AND 
+				a.atch_file_id = b.ATCH_FILE_ID
+			AND
+				UPPER(b.FILE_EXTSN) IN ('GIF','JPG','JPEG','BMP','PNG')
+			AND 
+				a.use_yn = 'Y'			
+				
+		]]>	
+			<if test="fileSn != null and fileSn != '' ">
+	 			AND	b.file_sn = #{fileSn}
+	 		</if> 	
+	 		
+		<![CDATA[		
+			ORDER BY b.FILE_SN	
+ 		]]>
+ 	</select>	
+ 	
+</mapper>

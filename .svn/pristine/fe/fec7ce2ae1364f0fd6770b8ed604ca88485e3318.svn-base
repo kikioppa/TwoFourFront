@@ -1,0 +1,24 @@
+#URL
+web.server.url=http://127.0.0.1:8080
+web.nomal.url=http://127.0.0.1:8080
+web.ssl.url=http://127.0.0.1:8080
+
+
+
+#DB connection
+#db.url=jdbc:mysql://182.162.141.125/jeonbuk_www
+#db.id=jeonbuk_www
+#db.pwd=spc2017)(*&
+db.url=jdbc:sqlserver://192.168.0.49;databaseName=cultureParhase
+db.id=ticket01
+db.pwd=friver131@@
+
+
+#\uc774\ubbf8\uc9c0 \uc5c5\ub85c\ub4dc \uacbd\ub85c
+image.web.upload.path=D:\\jeonbuk\\upload
+image.web.upload.url=http://127.0.0.1:8080/upload
+
+
+#db.url=jdbc:mysql://221.139.3.45:3306/jeonbuk
+#db.id=friver
+#db.pwd=1234qwer

@@ -1,0 +1,19 @@
+package culturelandFront.service;
+
+import java.util.Map;
+
+import culturelandFront.vo.AdminUserVO;
+import culturelandFront.vo.HistoryAdminloginVO;
+
+public interface LoginService {
+	
+	public AdminUserVO getAdminLogin(AdminUserVO adminUserVO);
+	
+	public int getAdminLoginCheck(Map param);
+	
+	public int insertAdminLogin(HistoryAdminloginVO adminLoginVO);
+	
+	public int insertAdminPageHis(Map param);
+	
+	public int updatePassword(Map param);
+}

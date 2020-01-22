@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>sitemap</title>
+  <link rel="stylesheet" href="../admin/css/style.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+  <style>
+    body,
+    html {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .sitemap-menu {
+      position: absolute;
+      display: inline-block;
+      overflow-y: scroll;
+      padding-top: 58px;
+      width: 270px;
+      box-sizing: border-box;
+      height: 100%;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .sitemap-menu::-webkit-scrollbar {
+      width: 5px;
+    }
+    
+    .sitemap-menu::-webkit-scrollbar-thumb {
+      background-color: #eee;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    
+    .sitemap-menu.mobile {
+      display: none;
+    }
+    
+    .viewersize {
+      position: fixed;
+      padding: 10px 0px;
+      background: #3f6b9d;
+      border-radius: 5px;
+      width: 230px;
+      margin: 10px;
+      left: 0;
+      top: 0;
+      color: #fff;
+      z-index: 10;
+      cursor: pointer;
+    }
+    
+    .sitemap-menu .tabs-btn {
+      padding: 0 10px 10px;
+      ;
+    }
+    
+    .sitemap-menu .tabs-btn li {
+      display: inline-block;
+      margin: 0 5px 5px 0;
+      text-align: center;
+      padding: 5px 10px;
+      background: #aaa;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 13px;
+    }
+    
+    .sitemap-menu .tabs-btn li:last-child {
+      margin-right: 0;
+    }
+    
+    .sitemap-menu .tabs-btn li.on {
+      background: #328ff6;
+    }
+    
+    .sitemap-menu .tabs-btn li a {
+      display: block;
+    }
+    
+    .range-wrap {
+      display: none;
+    }
+    
+    .range-wrap.on {
+      display: block;
+    }
+    
+    .range-wrap .range {
+      margin-bottom: 20px;
+    }
+    
+    .range-wrap .range h4 {
+      padding: 10px;
+      font-size: 15px;
+      padding: 10px 10px 20px;
+      color: #6363ab;
+    }
+    
+    .range-wrap .range>ul {
+      border-top: 1px solid #ddd;
+      background: #eeffff;
+      margin-bottom: 20px;
+    }
+    
+    .range-wrap:nth-of-type(2) .range>ul {
+      background: #fff2f2
+    }
+    
+    .range-wrap:nth-of-type(3) .range>ul {
+      background: #f4efff;
+    }
+    
+    .range-wrap .range li {
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+      color: #666;
+      font-size: 13px;
+    }
+    
+    .range-wrap .range li:after {
+      display: block;
+      content: '';
+      clear: both;
+    }
+    
+    .range-wrap .range li .sub-title {
+      display: block;
+    }
+    
+    .range-wrap .range li .btn-wrap {
+      float: right;
+      padding-top: 10px;
+    }
+    
+    .range-wrap .range li .btn-wrap .new-win {
+      display: inline-block;
+      border: 1px solid #666;
+      padding: 3px;
+      font-size: 11px;
+    }
+    
+    .range-wrap .range li .btn-wrap a.on {
+      color: #f00;
+    }
+    
+    iframe {
+      width: calc(100% - 270px);
+      position: absolute;
+      left: 270px;
+      top: 0;
+      height: 100%;
+      box-sizing: border-box;
+      display: inline-block;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    iframe.mobile {
+      width: 392px;
+      height: 667px;
+      padding: 0;
+      overflow: scroll;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sitemap-menu">
+    <button class="viewersize">모바일size보기</button>
+    <ul class="tabs-btn">
+      <li><a href="../admin/sitemap.html">amdin</a></li>
+      <li class="on"><a href="javascript:void(0)">pc</a></li>
+      <li><a href="javascript:void(0)">moblie</a></li>
+    </ul>
+    <div class="range-wrap on">
+      <div class="range">
+        <h4>메인페이지</h4>
+        <ul>
+          <li>
+            <span class="sub-title">메인</span>
+            <div class="btn-wrap">
+              <a href="../front/html/main.html" target="viewer">main.html</a>
+              <a href="../front/html/main.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="range">
+        <h4>회원가입</h4>
+        <ul>
+          <li>
+            <span class="sub-title">회원가입</span>
+            <div class="btn-wrap">
+              <a href="../front/html/join.html" target="viewer"> join.html</a>
+              <a href="../front/html/join.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="range">
+        <h4>로그인</h4>
+        <ul>
+          <li>
+            <span class="sub-title">로그인</span>
+            <div class="btn-wrap">
+              <a href="../front/html/LO-LO-01.html" target="viewer"> LO-LO-01.html</a>
+              <a href="../front/html/LO-LO-01.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">아이디 찾기</span>
+            <div class="btn-wrap">
+              <a href="../front/html/LO-LO-02.html" target="viewer">LO-LO-02.html</a>
+              <a href="../front/html/LO-LO-02.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">비번밀번호 찾기</span>
+            <div class="btn-wrap">
+              <a href="../front/html/LO-LO-02-p2.html" target="viewer">LO-LO-02-p2.html</a>
+              <a href="../front/html/LO-LO-02-p2.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="range">
+        <h4>고객센터</h4>
+        <ul>
+          <li>
+            <span class="sub-title">공지사항</span>
+            <div class="btn-wrap">
+              <a href="../front/html/service_center/notice.html" target="viewer"> notice.html</a>
+              <a href="../front/html/service_center/notice.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">공지사항 상세</span>
+            <div class="btn-wrap">
+              <a href="../front/html/service_center/notice-view.html" target="viewer"> notice-view.html</a>
+              <a href="../front/html/service_center/notice-view.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">FAQ</span>
+            <div class="btn-wrap">
+              <a href="../front/html/service_center/faq.html" target="viewer"> FAQ.html</a>
+              <a href="../front/html/service_center/faq.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">1:1문의</span>
+            <div class="btn-wrap">
+              <a href="../front/html/service_center/question.html" target="viewer"> question.html</a>
+              <a href="../front/html/service_center/question.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="range">
+        <h4>마이페이지</h4>
+        <ul>
+          <li>
+            <span class="sub-title">매입 신청내역</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MY-MY-01.html" target="viewer">MY-MY-01.html</a>
+              <a href="../front/html/MY-MY-01.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">계좌인증</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MY-MY-02.html" target="viewer">MY-MY-02.html</a>
+              <a href="../front/html/MY-MY-02.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">계좌인증상세</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MY-MY-02-p2.html" target="viewer">MY-MY-02-p2.html</a>
+              <a href="../front/html/MY-MY-02-p2.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">계좌인증상세</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MY-MY-02-p3.html" target="viewer">MY-MY-02-p3.html</a>
+              <a href="../front/html/MY-MY-02-p3.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">매입 한도</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MY-MY-03.html" target="viewer">MY-MY-03.html</a>
+              <a href="../front/html/MY-MY-03.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">개인정보수정</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MY-MY-04.html" target="viewer">MY-MY-04.html</a>
+              <a href="../front/html/MY-MY-04.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">개인정보수정상세</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MY-MY-04-p2.html" target="viewer">MY-MY-04-p2.html</a>
+              <a href="../front/html/MY-MY-04-p2.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="range">
+        <h4>상품권 매입신청</h4>
+        <ul>
+          <li>
+            <span class="sub-title">상품권매입신청01</span>
+            <div class="btn-wrap">
+              <a href="../front/html/apply/apply01.html" target="viewer"> apply01.html</a>
+              <a href="../front/html/apply/apply01.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">상품권매입신청02</span>
+            <div class="btn-wrap">
+              <a href="../front/html/apply/apply02.html" target="viewer"> apply02.html</a>
+              <a href="../front/html/apply/apply02.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+          <li>
+            <span class="sub-title">상품권매입신청03</span>
+            <div class="btn-wrap">
+              <a href="../front/html/apply/apply03.html" target="viewer"> apply03.html</a>
+              <a href="../front/html/apply/apply03.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="range">
+        <h4>문상1번가 특징</h4>
+        <ul>
+          <li>
+            <span class="sub-title">문상1번가 특징</span>
+            <div class="btn-wrap">
+              <a href="../front/html/MN-MN-01.html" target="viewer"> MN-MN-01.html</a>
+              <a href="../front/html/MN-MN-01.html" target="_blank" class="new-win">새창</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+  </div>
+  <iframe src="" name="viewer" class="" style="overflow:hidden;"></iframe>
+
+  <script>
+    // link
+    var links = $('.range a');
+    for (i = 0; i < links.length; i++) {
+      links[i].addEventListener("click", function() {
+        for (i = 0; i < links.length; i++) {
+          links[i].classList.remove('on');
+
+        }
+        this.classList.add('on');
+      })
+
+    }
+    // tab
+    $('.tabs-btn a').click(function() {
+      $(this).parent('li').addClass('on').siblings().removeClass('on');
+      var index = $(this).parent('li').index();
+      $('.range-wrap').eq(index).addClass('on').siblings().removeClass('on');;
+    });
+
+    $('.viewersize').click(function() {
+
+      $('iframe').toggleClass('mobile');
+    });
+
+
+    $('.title.lg').click(function() {
+      $(this).toggleClass('on');
+      $(this).next("div.range").slideToggle();
+    });
+    $('.title.lg').click();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="statistic">
+	
+ 	<select id="selectJoinList" parameterType="hashmap" resultType="hashmap">
+	 	<choose>
+	 		<when test='gubun == "D"'>
+	 			SELECT * FROM(
+					SELECT A.CODE_VAL AS JOINDATE , COUNT(B.MEMBER_NO) AS JOINCNT
+					FROM CC_STATISTICCODE A
+					LEFT OUTER JOIN CO_MEMBER B ON REPLICATE('0',2 -  LEN(A.CODE_VAL))+ CODE_VAL = RIGHT(CONVERT(CHAR(8), B.CREATION_DATE, 112),2)  
+												   AND CONVERT(CHAR(6), B.CREATION_DATE, 112) = #{searchDate}
+					WHERE A.GUBUN = 'D'
+					GROUP BY A.CODE_VAL
+				)AA 
+				ORDER BY CONVERT(INT, AA.JOINDATE)
+	 		</when>
+	 		<when test='gubun == "M"'>
+	 			SELECT * FROM(
+					SELECT A.CODE_VAL AS JOINDATE , COUNT(B.MEMBER_NO) AS JOINCNT
+					FROM CC_STATISTICCODE A
+					LEFT OUTER JOIN CO_MEMBER B ON REPLICATE('0',2 -  LEN(A.CODE_VAL))+ CODE_VAL = SUBSTRING(CONVERT(CHAR(8), CREATION_DATE, 112),5,2)  
+												AND CONVERT(CHAR(4), B.CREATION_DATE, 112) = #{searchDate}
+					WHERE A.GUBUN = 'M'
+					GROUP BY A.CODE_VAL
+				)AA 
+				ORDER BY CONVERT(INT, AA.JOINDATE)
+	 		</when>
+	 		<otherwise>
+	 			SELECT CONVERT(VARCHAR(4),A.CREATION_DATE,112) AS JOINDATE, COUNT(A.MEMBER_NO) AS JOINCNT
+				FROM CO_MEMBER A
+				GROUP BY CONVERT(VARCHAR(4),A.CREATION_DATE,112)
+				ORDER BY CONVERT(VARCHAR(4),A.CREATION_DATE,112)
+	 		</otherwise>
+	 	</choose>
+ 	</select>
+ 	
+ 	<select id="selectPurchaseList" parameterType="hashmap" resultType="hashmap">
+	 	<choose>
+	 		<when test='gubun == "D"'>
+	 			SELECT SUM(purMoney)/1000 AS purMoney, CODE_VAL as purDate  from(
+					SELECT A.CODE_VAL, ISNULL(B.purMoney,0) as purMoney
+					FROM CC_STATISTICCODE A
+					LEFT OUTER JOIN (	SELECT SUM(B.REQ_MONEY) as purMoney, RIGHT(CONVERT(varchar(8),A.CREATION_DATE,112),2) as purDate
+										FROM CO_Buy A
+										LEFT OUTER JOIN CO_BuyDetail B ON A.SEQ = B.BUY_SEQ AND B.SUCCESS_YN = 'Y'
+										WHERE LARGE_YN = 'N'
+										AND B.BUY_SEQ is not null
+										AND CONVERT(varchar(6),A.CREATION_DATE,112) = #{searchDate}
+										GROUP BY RIGHT(CONVERT(varchar(8),A.CREATION_DATE,112),2)
+									) B ON REPLICATE('0',2 -  LEN(A.CODE_VAL))+ CODE_VAL = B.purDate
+					WHERE A.GUBUN = 'D'
+					UNION ALL
+					SELECT A.CODE_VAL, ISNULL(B.purMoney,0) as purMoney
+					FROM CC_STATISTICCODE A
+					LEFT OUTER JOIN (	SELECT SUM(B.REQ_MONEY) as purMoney, RIGHT(CONVERT(varchar(8),A.CREATION_DATE,112),2) as purDate
+										FROM CO_Buy A
+										LEFT OUTER JOIN CO_LargeBuyDetail B ON A.SEQ = B.BUY_SEQ AND B.SUCCESS_YN = 'Y'
+										WHERE LARGE_YN = 'Y'
+										AND B.BUY_SEQ is not null
+										AND CONVERT(varchar(6),A.CREATION_DATE,112) = #{searchDate}
+										GROUP BY RIGHT(CONVERT(varchar(8),A.CREATION_DATE,112),2)
+									) B ON REPLICATE('0',2 -  LEN(A.CODE_VAL))+ CODE_VAL = B.purDate
+					WHERE A.GUBUN = 'D'
+				)AA
+				GROUP BY CODE_VAL
+				ORDER BY CONVERT(INT, AA.CODE_VAL)
+	 		</when>
+	 		<when test='gubun == "M"'>
+	 			SELECT SUM(purMoney)/1000 AS purMoney, CODE_VAL AS purDate  FROM(
+					SELECT A.CODE_VAL, ISNULL(B.purMoney,0) as purMoney
+					FROM CC_STATISTICCODE A
+					LEFT OUTER JOIN (	SELECT SUM(B.REQ_MONEY) as purMoney, SUBSTRING(CONVERT(varchar(8),A.CREATION_DATE,112),5,2) as purDate
+										FROM CO_Buy A
+										LEFT OUTER JOIN CO_BuyDetail B ON A.SEQ = B.BUY_SEQ AND B.SUCCESS_YN = 'Y'
+										WHERE LARGE_YN = 'N'
+										AND B.BUY_SEQ is not null
+										AND CONVERT(varchar(4),A.CREATION_DATE,112) = #{searchDate}
+										GROUP BY SUBSTRING(CONVERT(varchar(8),A.CREATION_DATE,112),5,2)
+									) B ON REPLICATE('0',2 -  LEN(A.CODE_VAL))+ CODE_VAL = B.purDate
+					WHERE A.GUBUN = 'M'
+					UNION ALL
+					SELECT A.CODE_VAL, ISNULL(B.purMoney,0) as purMoney
+					FROM CC_STATISTICCODE A
+					LEFT OUTER JOIN (	SELECT SUM(B.REQ_MONEY) as purMoney, SUBSTRING(CONVERT(varchar(8),A.CREATION_DATE,112),5,2) as purDate
+										FROM CO_Buy A
+										LEFT OUTER JOIN CO_LargeBuyDetail B ON A.SEQ = B.BUY_SEQ AND B.SUCCESS_YN = 'Y'
+										WHERE LARGE_YN = 'Y'
+										AND B.BUY_SEQ is not null
+										AND CONVERT(varchar(4),A.CREATION_DATE,112) = #{searchDate}
+										GROUP BY SUBSTRING(CONVERT(varchar(8),A.CREATION_DATE,112),5,2)
+									) B ON REPLICATE('0',2 -  LEN(A.CODE_VAL))+ CODE_VAL = B.purDate
+					WHERE A.GUBUN = 'M'
+				)AA
+				GROUP BY CODE_VAL
+				ORDER BY CONVERT(INT, AA.CODE_VAL)
+	 		</when>
+	 		<otherwise>
+	 			SELECT SUM(AA.purMoney)/1000 AS purMoney, AA.purDate FROM(
+					SELECT SUM(B.REQ_MONEY) AS purMoney, CONVERT(VARCHAR(4),A.CREATION_DATE,112) AS purDate
+					FROM CO_Buy A
+					LEFT OUTER JOIN CO_BuyDetail B ON A.SEQ = B.BUY_SEQ AND B.SUCCESS_YN = 'Y'
+					WHERE LARGE_YN = 'N'
+					AND B.BUY_SEQ is not null
+					GROUP BY CONVERT(varchar(4),A.CREATION_DATE,112)
+					UNION ALL
+					SELECT SUM(B.REQ_MONEY) AS purMoney, CONVERT(VARCHAR(4),A.CREATION_DATE,112) AS purDate
+					FROM CO_Buy A
+					LEFT OUTER JOIN CO_LargeBuyDetail B ON A.SEQ = B.BUY_SEQ AND B.SUCCESS_YN = 'Y'
+					WHERE LARGE_YN = 'Y'
+					AND B.BUY_SEQ is not null
+					GROUP BY CONVERT(varchar(4),A.CREATION_DATE,112)
+				)AA
+				GROUP BY AA.purDate
+				ORDER BY AA.purDate
+	 		</otherwise>
+	 	</choose>
+ 	</select>
+ 	
+ 	<select id="selectMainJoinList" parameterType="hashmap" resultType="hashmap">
+ 		SELECT * FROM(
+			SELECT A.CODE_VAL AS JOINDATE , COUNT(B.MEMBER_NO) AS JOINCNT
+			FROM CC_STATISTICCODE A
+			LEFT OUTER JOIN CO_MEMBER B ON REPLICATE('0',2 -  LEN(A.CODE_VAL))+ CODE_VAL = RIGHT(CONVERT(CHAR(8), B.CREATION_DATE, 112),2)  
+									   AND CONVERT(CHAR(6), B.CREATION_DATE, 112) = convert(varchar(6),getdate(),112)
+			WHERE A.GUBUN = 'D'
+			GROUP BY A.CODE_VAL
+		)AA 
+		WHERE REPLICATE('0',2 -  LEN(AA.JOINDATE))+ AA.JOINDATE BETWEEN RIGHT(CONVERT(CHAR(8), getdate()-7, 112),2)
+			  AND RIGHT(CONVERT(CHAR(8), getdate(), 112),2)
+		ORDER BY CONVERT(INT, AA.JOINDATE)
+ 	</select>
+ 	
+</mapper>

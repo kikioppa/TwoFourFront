@@ -1,0 +1,55 @@
+package culturelandFront.service;
+
+import java.util.List;
+import java.util.Map;
+
+import culturelandFront.core.helper.ListHelper;
+
+public interface BoardService {
+	
+	public ListHelper getSelectNoticeBoardList(ListHelper listHelper);
+	
+	public ListHelper getSelectInquiryBoardList(ListHelper listHelper);
+	
+	public ListHelper getSelectFaqBoardList(ListHelper listHelper);
+	
+	public List<Map> getSelectCategoryList(Map param);
+
+	public Map getSelectNoticeBoardDetail(Map param);
+
+	public Map getSelectInquiryBoardDetail(Map param);
+	
+	public Map getSelectBoardFrontDetail(Map param);
+	
+	public int insertNoticeBoard(Map param);
+	
+	public int insertInquiryAnswerBoard(Map param);
+	
+	public int insertCategoryBoard(Map param);
+	
+	public int insertFaqBoard(Map param);
+	
+	public int updateNoticeBoard(Map param);
+	
+	public int updateInquiryBoardYn(Map param);
+	
+	public int deleteNoticeBoard(Map param);
+	
+	public int deleteCategoryBoard(Map param);
+	
+	public int deleteFaqBoard(Map param);
+	
+	public ListHelper getSelectPushList(ListHelper listHelper);
+	
+	public Map getSelectPushDetail(Map param);
+	
+	public int insertPush(Map param);
+	
+	public int updatePush(Map param);
+	
+	public int deletePush(Map param);
+	
+	public Map selectPushMsg(Map param);
+	
+	public List selectPushDevice(Map param);
+}

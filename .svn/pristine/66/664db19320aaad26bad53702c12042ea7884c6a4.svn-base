@@ -1,0 +1,64 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>대용량 상세</title>
+</head>
+<body> 
+<!--seciton-->
+  <div class="list-section">
+    <table class="detail-talbe">
+      <tr>
+        <th>아이디</th>
+        <td>Moon</td>
+        <th>이름</th>
+        <td>김문상</td>
+        <th colspan="2">매입 신청 날짜</th>
+        <td colspan="2">yyyy-MM-dd </td>
+      </tr>
+      <tr>
+        <th>은행</th>
+        <td colspan="3">신한</td>
+        <th colspan="2">계좌번호</th>
+        <td colspan="2">123456789101 </td>
+      </tr>
+      <tr>
+        <th>은행</th>
+        <td colspan="3">신한</td>
+        <th colspan="2">계좌번호</th>
+        <td colspan="2">123456789101 </td>
+      </tr>
+      <tr>
+        <th>총매수</th>
+        <td colspan="3">126</td>
+        <th colspan="2">총금액</th>
+        <td colspan="2">2,500,000 </td>
+      </tr>
+      <tr>
+        <th>유효 매수</th>
+        <td colspan="3">1234</td>
+        <th colspan="2">유효 금액</th>
+        <td colspan="2">2,300,000 </td>
+      </tr>
+      <tr>
+        <th>접수여부</th>
+        <td colspan="3"><input type="checkbox"><span class="icon-chk"></span><button class="gray-btn">접수 확인</button></td>
+        <th colspan="2">입금 여부</th>
+        <td colspan="2">
+          <button class="gray-btn">입금 확인</button>
+      </tr>
+    </table>
+    <div class="memo-form">
+      <div class="memo-header">메모</div>
+      <div><textarea name="" id="" cols="40" rows="30" p></textarea></div>
+      <div class="gray-btn save-btn"><button class="gray-btn"> 저장</button></div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>관리자 페이지-FAQ</title>
+</head>
+
+<body>
+  <div class="section">
+    <div class="section-main">
+      <div class="faq-table">
+        <div class="category-box">
+          카테고리 설정
+          <select name="" id="">
+            <option value="">매입FAQ</option>
+            <option value="">회원FAQ</option>
+          </select>
+        </div>
+        <table>
+          <tr>
+            <td>질문</td>
+          </tr>
+          <tr class="quertion-title">
+            <td>상품권 매입 수수료는 얼마인가요?</td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td>답변</td>
+          </tr>
+          <tr>
+            <td><input type="text"></td>
+          </tr>
+        </table>
+      </div>
+      <button class="faq-button">확인</button>
+    </div>
+  </div>
+</body>
+
+</html>

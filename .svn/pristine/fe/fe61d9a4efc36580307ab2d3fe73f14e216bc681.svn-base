@@ -1,0 +1,173 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="info-section">
+    <div class="breadcrumbs">
+      <a href="# " class="home"><span>home</span></a>
+      <span>전시관리</span>
+    </div>
+    <div class="wa-title">
+      <h1>관리할 플랫폼을 선택해주세요</h1>
+    </div>
+    <div class="banner-btns">
+      <button class="gray-btn pc-btn" onclick="modalOpen('pc');">PC</button>
+      <button class="gray-btn mobile-btn" onclick="modalOpen('moblie');">Moblie</button>
+    </div>
+  </div>
+  <div class="modal-wrap pc">
+    <div class="modal">
+      <h3 class="title left">
+        PC 배너등록
+      </h3>
+      <form>
+        <div class="con txt-wrap">
+          <div class="next-img"><img src="${web_server_url}/images/next.png" alt="화살표"> </div>
+          <col style="width: 100px;">
+          </colgroup>
+          <table class="left-banner">
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>번호</th>
+              <th>순서</th>
+              <th>파일명</th>
+              <th>사용유무</th>
+            </tr>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>1</th>
+              <th>1</th>
+              <th>1.jpg</th>
+              <th>사용</th>
+            </tr>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>2</th>
+              <th>2</th>
+              <th>2.jpg</th>
+              <th>사용</th>
+            </tr>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>3</th>
+              <th>3</th>
+              <th>3.jpg</th>
+              <th>미사용</th>
+            </tr>
+          </table>
+          <table class="right-banner">
+            <colgroup>
+              <col style="width: 100px;">
+            </colgroup>
+            <tr>
+              <th>파일찾기</th>
+              <td><input type="file" /></td>
+            </tr>
+            <tr>
+              <th>링크</th>
+              <td><input type="url"></td>
+            </tr>
+            <tr>
+              <th>순서</th>
+              <td><input type="text"></td>
+            </tr>
+            <tr>
+              <th>사용유무</th>
+              <td><input type="radio">사용 <input type="radio">미사용</td>
+            </tr>
+          </table>
+          <div class="wa-btns">
+            <button class="gray-btn wa-btn">취소</button>
+            <button class="gray-btn wa-btn" onclick="delbtn()">삭제</button>
+            <button class="gray-btn wa-btn">저장</button>
+          </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-wrap moblie">
+    <div class="modal">
+      <h3 class="title left">
+        Mobile 배너등록
+      </h3>
+      <form>
+        <div class="con txt-wrap center-img">
+          <col style="width: 100px;">
+          </colgroup>
+          <table class="left-banner">
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>번호</th>
+              <th>순서</th>
+              <th>파일명</th>
+              <th>사용유무</th>
+            </tr>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>1</th>
+              <th>1</th>
+              <th>1.jpg</th>
+              <th>사용</th>
+            </tr>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>2</th>
+              <th>2</th>
+              <th>2.jpg</th>
+              <th>사용</th>
+            </tr>
+            <tr>
+              <th><input type="checkbox"></th>
+              <th>3</th>
+              <th>3</th>
+              <th>3.jpg</th>
+              <th>미사용</th>
+            </tr>
+          </table>
+          <div class="next-img"><img src="${web_server_url}/images/next.png" alt="화살표"> </div>
+          <table class="right-banner">
+            <colgroup>
+              <col style="width: 100px;">
+            </colgroup>
+            <tr>
+              <th>파일찾기</th>
+              <td><input type="file" /></td>
+            </tr>
+            <tr>
+              <th>링크</th>
+              <td><input type="url"></td>
+            </tr>
+            <tr>
+              <th>순서</th>
+              <td><input type="text" style="border: unset;"></td>
+            </tr>
+            <tr>
+              <th>사용유무</th>
+              <td><input type="radio">사용 <input type="radio">미사용</td>
+            </tr>
+          </table>
+          <div class="wa-btns">
+            <button class="gray-btn wa-btn">취소</button>
+            <button class="gray-btn wa-btn" onclick="delbtn()">삭제</button>
+            <button class="gray-btn wa-btn">저장</button>
+          </div>
+      </form>
+      </div>
+    </div>
+
+    <script>
+      modalClose();
+    </script>
+
+</body>
+
+</html>

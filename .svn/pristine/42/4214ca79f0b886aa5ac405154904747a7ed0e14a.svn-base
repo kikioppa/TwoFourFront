@@ -1,0 +1,46 @@
+가입일조회:createdDate
+시작일자:startDate
+종료일자:endDate
+당일 :today
+1주일 : weekly
+1개월 : monthly
+3개월 : threeMonthly
+날짜지정 :datePick
+메일수신 : mailYn
+계좌인증 : 전체 :actAll
+		인증완료 : authorized
+		인증대기 : authorYet
+조회 : search
+
+회원번호 :memberSeq
+이메일(아이디): memberId
+이름 : 		memberName
+전화번호: 		memberPhone
+가입일시: 		memberDate
+전체 : total
+
+상단고정여부: topYn
+제목: title
+글쓴이: adminName
+답변여부: answerYn
+문의자: memberName
+답변자: answerName
+
+검색어: searchKeyword
+검색옵션: searchCondition
+날짜지정검색 여부: dateYn
+검색여부: searchYn
+문의글 번호: inqId
+
+추가될 카테고리 이름: newCategory
+카테고리 추가자: categoryWriter
+카테고리 번호: categorySeq
+질문내용: inquiryContent
+답변내용: ansewrContent
+FAQ글번호: faqId
+
+플랫폼: platform
+링크: url
+순서: order
+사용, 미사용: use
+배너 추가자: bannerAdder

@@ -1,0 +1,66 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>관리자 페이지-권한관리</title>
+</head>
+
+<body>
+  <!--section-->
+  <div class="grant-list">
+    <div class="info-header">
+      <h2>권한관리</h2>
+    </div>
+    <div class="breadcrumbs">
+      <a href="#" class="home"><span>home</span></a>
+      <span>권한관리</span>
+    </div>
+    <div class="user-list">
+      <ul class="list-header">
+        <li>번호</li>
+        <li>권한명</li>
+        <li>맴버</li>
+        <li>권한 수정</li>
+        <li>삭제 처리</li>
+      </ul>
+      <ul>
+        <li>1</li>
+        <li>관리자</li>
+        <li>Admin</li>
+        <li><a href="#">수정</a></li>
+        <li><a href="#">삭제</a></li>
+      </ul>
+      <ul>
+        <li>2</li>
+        <li>부관리자</li>
+        <li>김문상,박문상</li>
+        <li><a href="#">수정</a></li>
+        <li><a href="#">삭제</a></li>
+      </ul>
+    </div>
+    <div class="grant-btn">
+      <a href="/admin/grant/write.do" class="add-grant">권한 추가</a>
+    </div>
+    <div class="pageSection">
+      <div class="pagenation">
+        <span class="page-arrow"><a href="#" class="arrow first btn-icon m-icon" onclick="go_paging(1)">first</a>
+                            <a href="#" class="arrow prev btn-icon m-icon">prev</a>
+                            </span>
+        <ul class="page-num">
+          <li class="on"><a href="#" class="on">1</a></li>
+        </ul><span class="page-arrow"><a href="#" class="arrow next btn-icon m-icon">next</a>
+                            <a href="#" class="arrow end btn-icon m-icon" onclick="go_paging(1)">end</a>
+                            </span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

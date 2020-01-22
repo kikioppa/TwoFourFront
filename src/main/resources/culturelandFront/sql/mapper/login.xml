@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="login">
+
+
+	<resultMap type="userVO" id="userMap">
+		<result column="MEMBER_NO" 		property="memberNo" />
+		<result column="MEMBER_MAIL_ADDR" 		property="id" />
+		<result column="MEMBER_NAME" 		property="name" />
+		<result column="MEMBER_PHONE" 		property="cellphone" />
+		<result column="SMS_YN" 		property="smsYn" />
+		<result column="MAIL_YN" 		property="mailYn" />
+		<result column="MEMBER_STAT" 		property="memberStat" />
+		<result column="CREATION_DATE" 		property="frstDate" />
+		<result column="LASTUPDATE_DATE" 		property="lastDate" />
+	</resultMap>
+	
+ 	<select id="selectUserLogin" parameterType="userVO" resultMap="userMap">
+	 	SELECT A.MEMBER_NO
+			  ,A.MEMBER_MAIL_ADDR
+			  ,A.MEMBER_NAME
+			  ,A.MEMBER_PHONE
+			  ,A.SMS_YN
+			  ,A.MAIL_YN
+			  ,A.MEMBER_STAT
+			  ,A.CREATION_DATE
+			  ,A.LASTUPDATE_DATE
+		FROM CO_Member A
+		WHERE MEMBER_MAIL_ADDR = #{id}
+		AND MEMBER_PASSWORD = #{pw}
+
+ 	</select>
+ 	
+	<insert id="insertUserPageHis" parameterType="hashmap">
+	INSERT INTO ch_userpagehistory (
+	     member_no
+	  	, action_url
+	  	, access_date
+		, access_ip
+		,creation_date
+	) VALUES (
+		  #{memberNo}
+		, #{action}
+		, getDate()
+		, #{ip}
+		, getDate()
+	)
+	</insert>
+	
+ 	<select id="selectAdminLoginCheck" parameterType="hashmap" resultType="int">
+	 	select count(CUL_ID) from CO_Culture
+	 	where CUL_ID = #{id}
+	 	and CUL_PASSWORD = #{pw}
+
+ 	</select>
+ 	 	
+ 	<update id="updatePassword" parameterType="hashmap">
+	
+		UPDATE CO_Culture
+		SET			 
+<!-- 	   		  pwd = password(#{chg_pwd}) -->
+	   		  CUL_PASSWORD = #{chg_pwd}
+	   		, LASTUPDATE_USER = #{id}
+	   		, LASTUPDATE_DATE = now()	
+	   	WHERE CUL_ID = #{id}
+	   		AND CUL_PASSWORD = #{cur_pwd}
+<!-- 	   		AND pwd = password(#{cur_pwd}) -->
+	
+	</update> 	
+ 	
+	 	
+</mapper>

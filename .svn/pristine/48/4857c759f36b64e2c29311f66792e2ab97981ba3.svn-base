@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	
+	<sql id="whereBoard">
+		<if test='searchKeyword != null and searchKeyword != ""'>
+			<choose>
+				<when test='searchCondition == "total"'>AND (A.title LIKE CONCAT('%', #{searchKeyword}, '%') OR A.contents LIKE CONCAT('%', #{searchKeyword}, '%'))</when>
+				<when test='searchCondition == "title"'>AND A.title LIKE CONCAT('%', #{searchKeyword}, '%')</when>
+				<when test='searchCondition == "content"'>AND A.contents LIKE CONCAT('%', #{searchKeyword}, '%')</when>
+			</choose>
+			
+		</if>
+		
+	</sql>
+	
+	<sql id="wherePush">
+		<if test='searchKeyword != null and searchKeyword != ""'>
+			<choose>
+				<when test='searchCondition == "title"'>AND A.message LIKE CONCAT('%', #{searchKeyword}, '%')</when>
+			</choose>
+			
+		</if>
+		
+	</sql>
+	
+	<select id="selectNoticeBoardListCnt" parameterType="hashmap" resultType="int">
+	 	SELECT COUNT(A.seq) 
+	 	FROM CO_Notice A	 	
+	 	WHERE 1 = 1
+		<if test="searchYn != null and  searchYn != '' ">
+			<if test="searchKeyword != null and  searchKeyword != '' ">
+				<choose>
+					<when test="searchCondition == 'title' ">
+						AND A.title LIKE '%'+#{searchKeyword}+'%'
+					</when>
+					<otherwise>
+						AND (A.creation_user LIKE '%'+#{searchKeyword}+'%')
+					</otherwise>
+				</choose>
+			</if>
+			<if test="topYn != null and  topYn != '' ">
+				AND (A.notice_yn = 'Y')
+			</if>
+			<if test="dateYn != null and  dateYn != '' ">
+				<![CDATA[
+					AND (A.creation_date >= #{startDate} AND A.creation_date <= #{endDate})
+				]]>
+			</if>
+		</if>
+		<include refid="whereBoard" />
+ 	</select>
+ 	
+ 	<select id="selectNoticeBoardList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+	 		   TOP ${cntPerPage}
+	 		   A.seq,
+	 		   A.title, 
+	 		   A.notice_yn, 
+	 		   A.atch_file_id, 
+	 		   A.creation_user, 
+	 		   A.creation_date,
+			   B.STRE_FILE_NM
+		FROM CO_Notice A 
+		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id 
+		WHERE 1 = 1
+		<include refid="whereBoard" />
+		<if test='startNum > 0'>
+			AND A.seq NOT IN(
+				SELECT TOP ${startNum}  
+					B.seq
+				FROM CO_Notice B
+				WHERE 1=1 
+					<include refid="whereBoard"/> 
+				ORDER BY B.creation_date DESC
+			)
+		</if>
+		<if test="searchYn != null and  searchYn != '' ">
+			<if test="searchKeyword != null and  searchKeyword != '' ">
+				<choose>
+					<when test="searchCondition == 'title' ">
+						AND A.title LIKE '%'+#{searchKeyword}+'%'
+					</when>
+					<otherwise>
+						AND (A.creation_user LIKE '%'+#{searchKeyword}+'%')
+					</otherwise>
+				</choose>
+			</if>
+			<choose>
+				<when test="topYn != null and  topYn != ''">
+					AND (A.notice_yn = 'Y')
+				</when>
+				<otherwise>
+					AND (A.notice_yn is null)
+				</otherwise>
+			</choose>
+			<if test="startDate != null and startDate != '' and endDate != '' and endDate != ''">
+				<![CDATA[
+					AND (A.creation_date >= #{startDate} AND A.creation_date <= #{endDate})
+				]]>
+			</if>
+		</if>
+		ORDER BY A.creation_date desc
+		<!-- LIMIT #{startNum}, #{endNum}  2020-01-03-->
+ 	</select>
+	
+	<select id="selectInquiryBoardListCnt" parameterType="hashmap" resultType="int">
+	 	SELECT COUNT(A.seq) 
+	 	FROM CO_Inquiry A	 	
+	 	WHERE 1 = 1
+		<include refid="whereBoard" />
+		<if test="searchYn != null and  searchYn != '' ">
+			<if test="searchKeyword != null and  searchKeyword != '' ">
+				<choose>
+					<when test="searchCondition == 'title' ">
+						AND A.title LIKE '%'+#{searchKeyword}+'%'
+					</when>
+					<otherwise>
+						AND (A.creation_user LIKE '%'+#{searchKeyword}+'%')
+					</otherwise>
+				</choose>
+			</if>
+			<if test="answerYn != null and  answerYn != '' ">
+				AND (A.inq_yn = 'Y')
+			</if>
+			<if test="startDate != null and startDate != '' and endDate != '' and endDate != ''">
+				<![CDATA[
+					AND (A.creation_date >= #{startDate} AND A.creation_date <= #{endDate})
+				]]>
+			</if>
+		</if>
+ 	</select>
+ 	
+ 	<select id="selectInquiryBoardList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+	 		   TOP ${cntPerPage} 
+	 		   A.seq,
+	 		   A.title, 
+	 		   A.inq_yn, 
+	 		   A.creation_user, 
+	 		   A.creation_date
+		FROM CO_Inquiry A
+		WHERE 1 = 1
+		<include refid="whereBoard" />
+		<if test='startNum > 0'>
+			AND A.seq NOT IN(
+				SELECT TOP ${startNum}  
+					B.seq
+				FROM CO_Inquiry B
+				WHERE 1=1 
+					<include refid="whereBoard"/> 
+				ORDER BY B.creation_date DESC
+			)
+		</if>
+		<if test="searchYn != null and  searchYn != '' ">
+			<if test="searchKeyword != null and  searchKeyword != '' ">
+				<choose>
+					<when test="searchCondition == 'title' ">
+						AND A.title LIKE '%'+#{searchKeyword}+'%'
+					</when>
+					<otherwise>
+						AND (A.creation_user LIKE '%'+#{searchKeyword}+'%')
+					</otherwise>
+				</choose>
+			</if>
+			<if test="answerYn != null and  answerYn != '' ">
+				AND (A.inq_yn = 'Y')
+			</if>
+			<if test="startDate != null and startDate != '' and endDate != '' and endDate != ''">
+				<![CDATA[
+					AND (A.creation_date >= #{startDate} AND A.creation_date <= #{endDate})
+				]]>
+			</if>
+		</if>
+		ORDER BY A.creation_date desc
+		<!-- LIMIT #{startNum}, #{endNum}  2020-01-03-->
+ 	</select>
+	
+	<select id="selectFaqBoardListCnt" parameterType="hashmap" resultType="int">
+	 	SELECT COUNT(A.seq) 
+	 	FROM CO_FAQNotice A	 	
+	 	WHERE 1 = 1
+		<include refid="whereBoard" />
+ 	</select>
+ 	
+ 	<select id="selectFaqBoardList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+	 		   TOP ${cntPerPage} 
+	 		   ROW_NUMBER() OVER(ORDER BY A.SEQ ASC) AS ROWNUM, 
+	 		   A.SEQ,
+	 		   A.CATE_SEQ, 
+	 		   A.INQUIRY_CONTENTS, 
+	 		   A.ANSWER_CONTENTS, 
+	 		   A.creation_user, 
+	 		   A.creation_date, 
+			   B.CATE_NAME 
+		FROM CO_FAQNotice A 
+		LEFT OUTER JOIN CO_FAQCategory B ON B.SEQ = A.CATE_SEQ
+		WHERE 1 = 1 
+		<include refid="whereBoard" />
+		<choose>
+			<when test="categorySeq!=null and !categorySeq.equals('')">
+				 AND CATE_SEQ = ${categorySeq} 
+			</when>
+			<otherwise>
+				AND CATE_SEQ = (
+							SELECT 
+								   TOP 1 
+	 							   A.SEQ
+							FROM CO_FAQCategory A 
+							ORDER BY A.SEQ ASC
+						) 
+			</otherwise>
+		</choose> 
+		<if test='startNum > 0'>
+			AND A.seq NOT IN(
+				SELECT TOP ${startNum}  
+					B.seq
+				FROM CO_FAQNotice B
+				WHERE 1=1 
+					<include refid="whereBoard"/> 
+				ORDER BY B.creation_date DESC
+			)
+		</if>
+		ORDER BY A.creation_date DESC, ROWNUM DESC
+		<!-- LIMIT #{startNum}, #{endNum}  2020-01-03-->
+ 	</select>
+	
+	<select id="selectCategoryList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+			A.SEQ, 
+			A.CATE_NAME, 
+			A.CREATION_USER, 
+			A.CREATION_DATE 
+	 	FROM CO_FAQCategory A	 	
+	 	WHERE 1 = 1
+		<include refid="whereBoard" />
+ 	</select>
+ 	
+	<select id="selectPushListCnt" parameterType="hashmap" resultType="int">
+	 	SELECT COUNT(A.seq) 
+	 	FROM TB_PUSH_MSG A	 	
+	 	WHERE 1 = 1
+		<include refid="wherePush" />
+ 	</select>
+ 	
+ 	<select id="selectPushList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT A.seq,
+	 		   A.title, 
+	 		   A.message, 
+	 		   A.reserve_time, 
+	 		   A.atch_file_id, 
+	 		   A.push_flag,
+	 		   A.contents_flag,
+	 		   A.push_url,
+	 		   A.reg_date,
+	 		   I.file_stre_cours,
+	           I.stre_file_nm,
+	           I.orignl_file_nm 
+		FROM TB_PUSH_MSG A
+		LEFT OUTER JOIN TB_COMFILE B ON B.atch_file_id = A.atch_file_id
+		LEFT OUTER JOIN TB_COMFILEDETAIL I ON I.atch_file_id = A.atch_file_id AND I.file_sn = 0
+		WHERE 1 = 1
+		<include refid="wherePush" />
+		ORDER BY reg_date desc
+		LIMIT #{startNum}, #{endNum}
+ 	</select>
+ 	
+ 	<select id="selectNoticeBoardDetail" parameterType="hashmap" resultType="hashmap">
+ 		SELECT 
+ 			A.seq, 
+ 			A.title, 
+ 			A.contents, 
+ 			A.atch_file_id,
+ 			A.notice_yn, 
+ 			A.creation_user, 
+ 			A.creation_date, 
+			B.FILE_SN, 
+			B.FILE_STRE_COURS, 
+			B.ORIGNL_FILE_NM, 
+			B.FILE_EXTSN, 
+			round(convert(float,B.FILE_SIZE)/1024, 2) as FILE_SIZE 
+		FROM CO_Notice A 
+		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id
+		WHERE A.seq = #{seq}
+ 	</select>
+ 	
+ 	<select id="selectInquiryBoardDetail" parameterType="hashmap" resultType="hashmap">
+ 		SELECT 
+ 			A.seq, 
+ 			A.title, 
+ 			A.contents as userContent, 
+ 			A.INQ_YN, 
+ 			A.creation_user, 
+ 			A.creation_date, 
+			B.CONTENTS 
+		FROM CO_Inquiry A 
+		LEFT OUTER JOIN CO_InquiryAnswer B ON B.inq_seq = A.seq
+		WHERE A.seq = #{seq}
+ 	</select>
+ 	
+ 	<select id="selectPushDetail" parameterType="hashmap" resultType="hashmap">
+ 		SELECT 
+ 			A.seq,
+	 		A.title, 
+	 		A.message, 
+	 		A.reserve_time, 
+	 		A.atch_file_id, 
+	 		A.push_flag,
+	 		A.contents_flag,
+	 		A.push_url,
+	 		A.reg_date
+		FROM TB_PUSH_MSG A
+		WHERE A.seq = #{seq}
+ 	</select>
+ 	
+ 	<insert id="insertNoticeBoard" parameterType="hashmap">
+		INSERT INTO CO_Notice(
+ 			title
+ 			,contents
+			,notice_yn
+ 			,atch_file_id
+ 			,creation_user
+ 			,creation_date
+ 		)VALUES(
+			#{title}
+			,#{contents}
+			,#{topYn}
+			,#{atchFileId}
+			,#{adminName}
+ 			,getdate()
+ 		);
+ 	</insert> 	
+ 	
+ 	<insert id="insertInquiryAnswerBoard" parameterType="hashmap">
+		INSERT INTO CO_InquiryAnswer(
+ 			INQ_SEQ
+ 			,CONTENTS
+			,CREATION_USER 
+			,CREATION_DATE 
+ 		)VALUES(
+			#{inqId}
+			,#{contents}
+			,#{answerName}
+ 			,getdate()
+ 		);
+ 	</insert> 
+ 	
+ 	<insert id="insertCategoryBoard" parameterType="hashmap">
+		INSERT INTO CO_FAQCategory(
+ 			CATE_NAME
+			,CREATION_USER 
+			,CREATION_DATE 
+ 		)VALUES(
+			#{newCategory}
+			,#{categoryWriter}
+ 			,getdate()
+ 		);
+ 	</insert> 	
+ 	
+ 	<insert id="insertFaqBoard" parameterType="hashmap">
+		INSERT INTO CO_FAQNotice(
+ 			CATE_SEQ
+	 		,INQUIRY_CONTENTS
+	 		,ANSWER_CONTENTS
+			,CREATION_USER 
+			,CREATION_DATE 
+ 		)VALUES(
+			#{categorySeq}
+			,#{inquiryContent}
+			,#{ansewrContent}
+			,#{adminName}
+ 			,getdate()
+ 		);
+ 	</insert> 		
+ 	
+ 	<insert id="insertPush" parameterType="hashmap">
+ 		INSERT INTO TB_PUSH_MSG(
+ 			seq,
+	 		title, 
+	 		message, 
+	 		reserve_time, 
+	 		atch_file_id, 
+	 		push_flag,
+	 		contents_flag,
+	 		push_url,
+	 		reg_date
+ 		)VALUES(
+ 			nextVal('TB_PUSH_MSG')
+ 			,#{title} 
+ 			,#{message} 
+	 		,#{reserveTime} 
+	 		,#{atchFileId} 
+	 		,#{pushFlag}
+	 		,#{contentsFlag}
+	 		,#{pushUrl}
+ 			,now()
+ 		)
+ 	</insert> 	
+ 	
+ 	<update id="updateNoticeBoard" parameterType="hashmap">
+  		UPDATE CO_Notice SET
+ 			title = #{title}
+ 			,contents = #{contents}
+			,NOTICE_YN = #{topYn}
+			,atch_file_id = #{atchFileId}
+			,LASTUPDATE_USER = #{adminName}
+			,LASTUPDATE_DATE = GETDATE()
+ 		WHERE SEQ = #{seq};
+ 	</update>
+ 	
+ 	<update id="updateInquiryBoardYn" parameterType="hashmap">
+  		UPDATE CO_Inquiry SET
+ 			INQ_YN = 'Y'
+ 		WHERE SEQ = #{inqId};
+ 	</update> 	
+ 	
+ 	<update id="updatePush" parameterType="hashmap">
+ 		UPDATE TB_PUSH_MSG SET
+ 			message = #{message}
+ 			,title = #{title}
+ 			,reserve_time = #{reserveTime}
+ 			,atch_file_id = #{atchFileId}
+ 			,push_flag = #{pushFlag}
+ 			,contents_flag = #{contentsFlag}
+ 			,push_url = #{pushUrl}
+ 		WHERE SEQ = #{seq}
+ 	</update>
+ 	
+ 	<delete id="deleteNoticeBoard" parameterType="hashmap">
+ 		DELETE FROM CO_Notice
+ 		WHERE <if test='seq != null and seq != "" '>seq = #{seq}</if>
+ 	</delete>
+ 	
+ 	<delete id="deleteCategoryBoard" parameterType="hashmap">
+ 		DELETE FROM CO_FAQCategory
+ 		WHERE <if test='seq != null and seq != "" '>seq = #{seq}</if>
+			<if test='seqArray != null and seqArray != "" '>
+				<foreach collection="seqArray" item="seqArray" index="index"  separator=","  open=" seq IN ("  close=") "  >
+					#{seqArray}
+				</foreach>
+			</if>
+ 	</delete>
+ 	
+ 	<delete id="deleteFaqBoard" parameterType="hashmap">
+ 		DELETE FROM CO_FAQNotice
+ 		WHERE <if test='faqId != null and faqId != "" '>seq = #{faqId}</if>
+ 	</delete>
+ 	
+ 	<delete id="deletePush" parameterType="hashmap">
+ 		DELETE FROM TB_PUSH_MSG
+ 		WHERE <if test='seq != null and seq != "" '>seq = #{seq}</if>	
+			<if test='seqArray != null and seqArray != "" '>
+				<foreach collection="seqArray" item="seqArray" index="index"  separator=","  open=" seq IN ("  close=") "  >
+					#{seqArray}
+				</foreach>
+			</if>
+ 	</delete>
+ 	
+ 	<select id="selectBoardNext" parameterType="hashmap" resultType="hashmap">
+		 <![CDATA[
+			 SELECT
+			    AA.*
+			FROM
+			(
+			    SELECT
+			        @ROWNUM := @ROWNUM + 1 AS ROWNUM,
+			        A.* ,
+			        B.gubun_name
+			    FROM (select * from TB_BOARD ORDER BY seq) A 
+      				LEFT OUTER JOIN ( (SELECT @ROWNUM := 0) R  )  on 1=1
+      	]]>
+      				<if test='categoryType != null and categoryType != ""'>
+      					LEFT OUTER JOIN TB_CATEGORY B ON A.category = B.gubun AND B.category_type = #{categoryType}
+      				</if> 
+			    WHERE 1=1
+			    AND A.gubun = #{gubun}      		      		   
+          		AND A.use_yn ='Y'	
+		<![CDATA[
+					ORDER BY reg_date ASC , seq ASC
+			) AA
+			WHERE
+			  AA.ROWNUM<=#{rownum}+1 AND  AA.ROWNUM=(select min(AA.ROWNUM) from TB_BOARD where  AA.ROWNUM>#{rownum})	
+		 ]]>
+	</select>
+	<select id="selectBoardPrev" parameterType="hashmap" resultType="hashmap">
+		 <![CDATA[ 
+		  SELECT
+			    AA.*
+			FROM
+			(
+			    SELECT
+			        @ROWNUM := @ROWNUM + 1 AS ROWNUM,
+			        A.*,
+			        B.gubun_name 
+			   FROM (select * from TB_BOARD ORDER BY seq) A 
+      				LEFT OUTER JOIN ( (SELECT @ROWNUM := 0) R  )  on 1=1
+      	 ]]>			
+      				<if test='categoryType != null and categoryType != ""'>
+      					LEFT OUTER JOIN TB_CATEGORY B ON A.category = B.gubun AND B.category_type = #{categoryType}
+      				</if> 
+      				
+			   WHERE 1=1
+			   AND A.gubun = #{gubun}      		      		   
+          	   AND A.use_yn ='Y'	     
+		 <![CDATA[
+					ORDER BY reg_date ASC, seq ASC
+			) AA
+			WHERE
+			  AA.ROWNUM>=#{rownum}-1 AND  AA.ROWNUM=(select max(AA.ROWNUM) from TB_BOARD where  AA.ROWNUM<#{rownum})
+		  ]]>
+	</select>
+	
+ 	<update id="updateBoardClickHit" parameterType="hashmap" >
+		UPDATE TB_BOARD SET 
+			hit = hit+1
+		WHERE seq = #{seq}	
+	</update>
+	
+	<select id="selectPushMsg" parameterType="hashmap" resultType="hashmap">
+		SELECT A.seq
+		      , A.title
+		      , A.message
+		      , A.reserve_time
+		      , A.atch_file_id 
+		      , A.push_flag
+		      , A.contents_flag
+		      , A.push_url
+		      , A.reg_date
+		      , CONCAT(B.file_stre_cours, B.stre_file_nm) as img_url
+		      , DATE_FORMAT(A.reserve_time, '%Y%m%d%H%i') as dateTest
+		      , DATE_FORMAT(now(), '%Y%m%d%H%i') as dateTest2
+		FROM TB_PUSH_MSG A
+		LEFT OUTER JOIN TB_COMFILEDETAIL B ON A.atch_file_id = B.atch_file_id
+		WHERE 1 = 1 
+		AND DATE_FORMAT(A.reserve_time, '%Y%m%d%H%i') = DATE_FORMAT(now(), '%Y%m%d%H%i')
+		ORDER BY A.reg_date
+		LIMIT 1 
+	</select>
+	
+	<select id="selectPushDevice" parameterType="hashmap" resultType="hashmap">
+		SELECT A.seq
+		      ,A.push_token
+		      ,A.dev_type
+		      ,A.push_yn
+		      ,A.reg_date
+		FROM TB_DEVICE_INFO A
+		WHERE A.push_yn = 'Y'
+<!-- 		AND A.seq = 42 -->
+		ORDER BY A.reg_date DESC
+	</select>
+	
+</mapper>

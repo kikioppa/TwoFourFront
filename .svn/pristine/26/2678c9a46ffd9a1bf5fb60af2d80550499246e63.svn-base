@@ -1,0 +1,91 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>로그인</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/jquery/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="../js/script.js"></script>
+  
+  
+  <script>
+$(function(){
+
+	$("#pw").on('keypress', function(e) {
+		if (e.which == 13) {/* 13 == enter key@ascii */
+			goLogin();
+		}
+	});
+	
+});
+
+function goLogin(){
+	if ( isValid() ){
+		$("#pw").val(CryptoJS.SHA256(pwEncode($('#id').val().trim(), $('#pw').val().trim())).toString());		
+		$("#adminUserVO").submit();
+	}
+}
+
+
+function isValid(){
+	var returnStr = true;
+	
+	if(  returnStr  &&  trimNvl( $("#id").val() )){
+		alert('아이디를 입력해 주십시요');
+		$('#id').focus();
+		returnStr = false;
+	}	
+	
+	
+	if(  returnStr  &&  trimNvl( $("#pw").val() )){
+		alert('비밀번호를 입력해 주십시요');
+		$('#pw').focus();
+		returnStr = false;
+	}	
+	
+	return returnStr;	
+}
+
+
+
+</script>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</head>
+
+<body>
+
+  <div class="section login-page">
+    <div class="wrapper">
+      <h1 class="login-header">로그인</h1>
+      <div class="login-form">
+        <form action="post" name="login">
+          <input type="text" placeholder="아이디" name="id">
+          <input type="password" placeholder="비밀번호" name="pw">
+          <button type="button" class="red-btn" onclick="go_login()">로그인</button>
+        </form>
+        <ul>
+          <li><a href="/front/member/findId.do">아이디 찾기</a></li>
+          <li><a href="/front/member/findPw.do">비밀번호찾기</a></li>
+          <li><a href="/front/member/join.do">회원가입</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+</body>
+
+</html>

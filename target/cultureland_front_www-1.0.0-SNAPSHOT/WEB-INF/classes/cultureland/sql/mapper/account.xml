@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="account">
+	
+
+	<sql id="whereAccountListQuery">
+		<if test='mailYn != null and mailYn != ""'>
+			AND MAIL_YN = #{mailYn}
+		</if>
+		
+		<if test='confirmYn != null and confirmYn != ""'>
+			AND CONFIRM_YN = #{confirmYn}
+		</if>
+		
+		<if test='searchKeyword != null and searchKeyword != ""'>
+			<choose>
+				<when test='searchCondition == "memberName"'>AND A.member_Name LIKE '%'+#{searchKeyword}+'%'</when>
+				<when test='searchCondition == "memberId"'>AND A.member_mail_addr LIKE '%'+#{searchKeyword}+'%'</when>
+			</choose>
+		</if>
+		
+		<if test='createdDate != null and createdDate != ""'>
+		<choose>
+			<when test='createdDate == "today"'>AND CONVERT(varchar(8),A.creation_date,112) = convert(varchar(8),getdate(), 112)</when>		
+			<when test='createdDate == "weekly"'>AND CONVERT(varchar(8),A.creation_date,112) > convert(varchar(8),getdate() -7, 112)</when>		
+			<when test='createdDate == "monthly"'>AND CONVERT(varchar(8),A.creation_date,112) > convert(varchar(8),getdate() -30, 112)</when>		
+			<when test='createdDate == "threeMonthly"'>AND CONVERT(varchar(8),A.creation_date,112) > convert(varchar(8),getdate() -90, 112)</when>		
+			<when test='createdDate == "datePick"'>AND CONVERT(varchar(8),A.creation_date,112) 
+							BETWEEN CONVERT(varchar(8),REPLACE(#{startDate},'-',''),112) AND CONVERT(varchar(8),REPLACE(#{endDate},'-',''),112)
+			</when>		
+		
+		</choose>
+		
+		</if>
+		
+	</sql>
+	
+	
+	<select id="selectAccountListCnt" parameterType="hashmap" resultType="int">
+	 	SELECT COUNT(A.member_no),COUNT(B.confirm_Yn)
+	 	FROM CO_member A
+	 	left outer join CO_Account b on A.MEMBER_NO = B.MEMBER_NO
+	 	WHERE 1 = 1
+	 	<include refid="whereAccountListQuery"/>
+	 
+ 	</select>
+ 	
+ 	
+<select id="selectAccountList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT TOP ${cntPerPage} A.MEMBER_NO,
+	 			A.MEMBER_MAIL_ADDR,
+	 			A.MEMBER_NAME,
+	 			B.CONFIRM_YN,
+	 			A.MEMBER_PHONE,
+	 			A.CREATION_DATE
+	 			FROM CO_member A
+		left outer join CO_Account b on A.MEMBER_NO = B.MEMBER_NO
+		WHERE 1 = 1
+		<include refid="whereAccountListQuery"/>
+		<if test='startNum > 0'>
+						AND A.MEMBER_NO NOT IN(
+								SELECT TOP ${startNum}  
+									B.MEMBER_NO
+								FROM CO_member B
+								WHERE 1=1 
+									<include refid="whereAccountListQuery"/>
+								
+								ORDER BY B.CREATION_DATE DESC
+						)
+		</if>				
+		ORDER BY A.CREATION_DATE DESC
+		<!-- LIMIT #{startNum}, #{endNum} -->
+ 	</select>
+
+
+	<select id="selectAccountPurchaseList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT TOP 3 AA.SEQ, AA.MEMBER_NO, AA.buyDate, AA.buytime, AA.reqSuccMoney from(
+			SELECT 
+				A.SEQ 
+				,A.MEMBER_NO
+				,CONVERT(varchar(10), A.CREATION_DATE, 102) as buyDate
+				,CONVERT(varchar(8), A.CREATION_DATE, 108) as buytime
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_BuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney	
+			FROM CO_Buy A
+			LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+			WHERE 1 = 1
+			AND A.LARGE_YN = 'N'
+			AND A.MEMBER_NO = #{seq}
+			UNION ALL
+			SELECT 
+				A.SEQ 	
+				,A.MEMBER_NO
+				,CONVERT(varchar(10), A.CREATION_DATE, 102) as buyDate
+				,CONVERT(varchar(8), A.CREATION_DATE, 108) as buytime
+				,(SELECT ISNULL(sum(B.REQ_MONEY),0) from CO_LargeBuyDetail B where B.BUY_SEQ = A.SEQ and B.SUCCESS_YN = 'Y' ) as reqSuccMoney
+			FROM CO_Buy A
+			LEFT OUTER JOIN CO_Member B ON A.MEMBER_NO = B.MEMBER_NO
+			WHERE 1 = 1
+			AND A.LARGE_YN = 'Y'
+			AND A.MEMBER_NO = #{seq}
+		)AA
+		ORDER BY AA.buyDate DESC, AA.buytime DESC
+ 	
+ 	</select>
+
+
+
+
+ 	<select id="selectAccountDetail" parameterType="hashmap" resultType="hashmap">
+ 		SELECT	A.MEMBER_MAIL_ADDR,
+	 			A.MEMBER_NAME,
+	 			A.MEMBER_PHONE,
+	 			A.MEMBER_STAT,
+	 			B.ACNT_NUMBER,
+	 			B.BANK_NAME,
+	 			A.MAIL_YN,
+	 			A.MEMBER_NO,
+	 			A.MEMBER_PASSWORD
+		FROM CO_MEMBER A
+		left outer join CO_Account b on A.MEMBER_NO = B.MEMBER_NO
+			WHERE A.MEMBER_NO = #{seq}
+		<include refid="whereAccountListQuery"/>
+
+ 	</select>
+ 	
+ 	
+	
+ 	
+ 	<insert id="insertAccount" parameterType="hashmap">
+ 		INSERT INTO TB_ADMINUSER(
+ 			seq
+ 			,id
+ 			,name
+ 			,pwd
+ 			,auth
+ 			,auth_level
+ 			,tel
+ 			,cellphone
+ 			,position
+ 			,email
+ 			,reg_user
+ 			,reg_date
+ 		)VALUES(
+ 			nextVal('TB_ADMINUSER')
+ 			,#{id}
+ 			,#{name}
+ 			,#{pwd}
+ 			,'1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|'
+ 			,'AUTH2'
+ 			,#{tel}
+ 			,#{cellphone}
+ 			,#{position}
+ 			,#{email}
+ 			,#{regUser}
+ 			,now()
+ 		)
+ 	</insert> 	
+ 	
+ 	<update id="updateAccount" parameterType="hashmap">
+ 		UPDATE CO_MEMBER SET
+ 			MEMBER_NAME = #{name}
+ 			,MEMBER_PHONE = #{tel}
+ 			,cellphone = #{cellphone}
+ 			,position = #{position}
+ 			,email = #{email}
+ 		WHERE SEQ = #{seq}
+ 	</update>
+ 	
+ 	<update id="updateAccountPassChange" parameterType="hashmap">
+ 		UPDATE TB_ADMINUSER SET
+ 			pwd = #{pwd}
+ 		WHERE SEQ = #{seq}
+ 	</update>
+ 	
+ 	<delete id="deleteAccount" parameterType="hashmap">
+ 		DELETE FROM TB_ADMINUSER
+ 		WHERE <if test='seq != null and seq != "" '>seq = #{seq}</if>	
+			<if test='seqArray != null and seqArray != "" '>
+				<foreach collection="seqArray" item="seqArray" index="index"  separator=","  open=" seq IN ("  close=") "  >
+					#{seqArray}
+				</foreach>
+			</if>
+ 	</delete>
+ 	
+ 	<select id="selectBoardNext" parameterType="hashmap" resultType="hashmap">
+		 <![CDATA[
+			 SELECT
+			    AA.*
+			FROM
+			(
+			    SELECT
+			        @ROWNUM := @ROWNUM + 1 AS ROWNUM,
+			        A.* ,
+			        B.gubun_name
+			    FROM (select * from TB_BOARD ORDER BY seq) A 
+      				LEFT OUTER JOIN ( (SELECT @ROWNUM := 0) R  )  on 1=1
+      	]]>
+      				<if test='categoryType != null and categoryType != ""'>
+      					LEFT OUTER JOIN TB_CATEGORY B ON A.category = B.gubun AND B.category_type = #{categoryType}
+      				</if> 
+			    WHERE 1=1
+			    AND A.gubun = #{gubun}      		      		   
+          		AND A.use_yn ='Y'	
+		<![CDATA[
+					ORDER BY reg_date ASC , seq ASC
+			) AA
+			WHERE
+			  AA.ROWNUM<=#{rownum}+1 AND  AA.ROWNUM=(select min(AA.ROWNUM) from TB_BOARD where  AA.ROWNUM>#{rownum})	
+		 ]]>
+	</select>
+	<select id="selectBoardPrev" parameterType="hashmap" resultType="hashmap">
+		 <![CDATA[ 
+		  SELECT
+			    AA.*
+			FROM
+			(
+			    SELECT
+			        @ROWNUM := @ROWNUM + 1 AS ROWNUM,
+			        A.*,
+			        B.gubun_name 
+			   FROM (select * from TB_BOARD ORDER BY seq) A 
+      				LEFT OUTER JOIN ( (SELECT @ROWNUM := 0) R  )  on 1=1
+      	 ]]>			
+      				<if test='categoryType != null and categoryType != ""'>
+      					LEFT OUTER JOIN TB_CATEGORY B ON A.category = B.gubun AND B.category_type = #{categoryType}
+      				</if> 
+      				
+			   WHERE 1=1
+			   AND A.gubun = #{gubun}      		      		   
+          	   AND A.use_yn ='Y'	     
+		 <![CDATA[
+					ORDER BY reg_date ASC, seq ASC
+			) AA
+			WHERE
+			  AA.ROWNUM>=#{rownum}-1 AND  AA.ROWNUM=(select max(AA.ROWNUM) from TB_BOARD where  AA.ROWNUM<#{rownum})
+		  ]]>
+	</select>
+	
+	
+
+	
+ 	<update id="updateBoardClickHit" parameterType="hashmap" >
+		UPDATE TB_BOARD SET 
+			hit = hit+1
+		WHERE seq = #{seq}	
+	</update>
+	
+	<update id="updateAccountStatus" parameterType="hashmap">
+		UPDATE CO_MEMBER set MEMBER_STAT = #{memberStat}
+		WHERE MEMBER_NO =#{memberNO}
+	</update>
+	
+	<update id="resetPassword" parameterType="hashmap">
+	UPDATE CO_MEMBER set MEMBER_PASSWORD = #{reset}
+	WHERE MEMBER_NO=#{memberNO}
+	</update>
+</mapper>

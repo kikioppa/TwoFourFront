@@ -1,0 +1,186 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>관리자 페이지-FAQ</title>
+</head>
+
+<body>
+  <div class="section">
+    <div class="section-main">
+      <ul class="menu-list">
+
+      </ul>
+      <div class="section-in sec-question">
+        <ul class="sub-menu">
+          <li class="sub-list on">매입FAQ</li>
+          <li class="sub-list">회원FAQ</li>
+        </ul>
+        <div class="button">
+          <button>카테고리 추가</button>
+          <button>현재 카테고리 삭제</button>
+        </div>
+        <ul class="purchase-list">
+          <li class="list-title list">
+            <ul>
+              <li class="number">번호</li>
+              <li class="q center">제목</li>
+              <li class="day">등록일</li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list main1">
+              <li class="number">13</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list sub1">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+
+          <li class="list">
+            <ul class="main-list main2">
+              <li class="number">12</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list sub2">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list  main3">
+              <li class="number">11</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list sub3">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list  main4">
+              <li class="number">10</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list  sub4">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list  main5">
+              <li class="number">9</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list  sub5">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list main6">
+              <li class="number">8</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list  sub6">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list  main7">
+              <li class="number">7</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list  sub7">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list  main8">
+              <li class="number">6</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list  sub8">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list  main9">
+              <li class="number">5</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list  sub9">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+          <li class="list">
+            <ul class="main-list main10">
+              <li class="number">4</li>
+              <li class="q">상품권 매입 수수료는 얼마인가요?</li>
+              <li class="day">2019.12.31</li>
+              <li class="down-arrow"></li>
+            </ul>
+            <ul class="sub-list sub10">
+              <li class="answer">상품권 매입 수수료는 회사 정책에 따라 변경 될 수 있으며, 고지사항을 통해 고지해드리고 있습니다.</li>
+              <li><button>삭제</button></li>
+              <li class="up-arrow"></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="pageSection ">
+        <div class="pagenation ">
+          <span class="page-arrow "><a href="# " class="arrow first btn-icon m-icon " onclick="go_paging(1) ">first</a>
+                          <a href="# " class="arrow prev btn-icon m-icon ">prev</a>
+                          </span>
+          <ul class="page-num ">
+            <li class="on "><a href="# " class="on ">1</a></li>
+          </ul><span class="page-arrow "><a href="# " class="arrow next btn-icon m-icon ">next</a>
+                          <a href="# " class="arrow end btn-icon m-icon " onclick="go_paging(1) ">end</a>
+                          </span>
+        </div>
+      </div>
+      <div class="writing"><a href="/admin/board/FAQ/write.do">자주하는 질문 글쓰기</a></div>
+    </div>
+  </div>
+</body>
+
+</html>

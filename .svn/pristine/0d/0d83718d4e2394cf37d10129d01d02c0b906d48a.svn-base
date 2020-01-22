@@ -1,0 +1,121 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="robots" content="noindex, nofollow">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel="Shortcut Icon" href="../../images/favicon.ico">
+
+  <title>관리자 페이지-회원리스트</title>
+</head>
+
+<body>
+  <div class="contWarp">
+    <div class="contents noTab">
+      <!-- contents  -->
+      <form>
+        <div class="conditionSearch">
+          <div class="conditions">
+            <dl>
+              <dt>가입일 조회 </dt>
+              <dd>
+                <input type="radio" value=" ">당일
+              </dd>
+              <dd>
+                <input type="radio" value=" ">1주일
+              </dd>
+              <dd>
+                <input type="radio" value=" ">1개월
+              </dd>
+              <dd>
+                <input type="radio" value=" ">3개월
+              </dd>
+              <dd>
+                <input type="radio" value=" ">날짜지정 <input type="date">~<input type="date">
+              </dd>
+            </dl>
+            <dl>
+              <dt>메일수신</dt>
+              <dd>
+                <select>
+                  <option>전채</option>
+                  <option>허용</option>
+                  <option>거부</option>
+                </select>
+              </dd>
+              <dt>계좌인증</dt>
+              <dd>
+                <select>
+                  <option>전채</option>
+                  <option>인증완료</option>
+                  <option>인증대기</option>
+                </select>
+              </dd>
+            </dl>
+            <dl>
+              <dt>회원 이름 검색</dt>
+              <dd>
+                <input type="text " size="30 ">
+              </dd>
+              <dt>아이디검색</dt>
+              <dd><input type="text " size="30 "></dd>
+            </dl>
+          </div>
+          <div class="searchBtns ">
+            <button type="button " onclick="go_search(); " class="btnSearchLarge ">조회</button>
+          </div>
+        </div>
+        <table class="tableSt_01 ">
+          <colgroup>
+            <col style="width:100px; ">
+            <col style="width:100px; ">
+            <col style="width:100px; ">
+            <col style="width:100px; ">
+            <col style="width:150px; ">
+            <col style="width:150px; ">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>회원번호</th>
+              <th>이메일</th>
+              <th>이름</th>
+              <th>계좌인증</th>
+              <th>SMS</th>
+              <th>가입일시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="mainNotice ">
+              <td>20298</td>
+              <td onclick=" " style="cursor:pointer ">
+                asdf@gmail.com
+              </td>
+              <td>장선호</td>
+              <td>인증완료</td>
+              <td>010-1234-5678</td>
+              <td>2019-12-03</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pageSection ">
+          <div class="pagenation ">
+            <span class="page-arrow "><a href="# " class="arrow first btn-icon m-icon " onclick="go_paging(1) ">first</a>
+                            <a href="# " class="arrow prev btn-icon m-icon ">prev</a>
+                            </span>
+            <ul class="page-num ">
+              <li class="on "><a href="# " class="on ">1</a></li>
+            </ul><span class="page-arrow "><a href="# " class="arrow next btn-icon m-icon ">next</a>
+                            <a href="# " class="arrow end btn-icon m-icon " onclick="go_paging(1) ">end</a>
+                            </span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

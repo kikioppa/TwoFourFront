@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>매입한도</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/jquery/jquery-1.12.4.min.js"></script>
+  <script src="../js/script.js"></script>
+</head>
+
+<body>
+  <div class="header">
+    <div class="wrapper">
+      <div class="left">
+        <h1>
+          <a href="#"><img src="../img/header-logo.png" alt="로고"></a>
+        </h1>
+      </div>
+      <div class="logo">
+        <a href="#">
+          <span> <img src="../img/header-text-logo.png" alt="텍스트로고"></span>
+        </a>
+      </div>
+      <div class="right">
+        <ul>
+          <li>
+            <a href="#">
+              <span class="join"></span>
+              <div>
+                <span>회원가입</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="login"></span>
+              <div>
+                <span>로그인</span>
+              </div>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <span class="mypage"></span>
+              <div>
+                <span>마이페이지</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!--gnb-->
+  <div class="nav">
+    <ul class="gnb">
+      <li class="li-header"><a href="#">문상1번가특징</a>
+      </li>
+      <li class="li-header hover on"><a href="#">상품권매입신청</a>
+        <ul>
+          <li><a href="#">매입신청내역</a></li>
+          <li><a href="#">계좌인증</a></li>
+          <li class="on"><a href="#">매입한도</a></li>
+          <li><a href="#">개인정보수정</a></li>
+        </ul>
+      </li>
+      <li class="li-header"><a href="#">고객센터</a>
+        <ul>
+          <li><a href="#">공지사항</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">1:1 문의</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="section">
+    <div class="wrapper">
+      <div class="buy-header">
+        <h1>매입한도</h1>
+      </div>
+      <div class="limit-info">
+        <p>*매입금액 한도 정책입니다. 완독하시기 바랍니다.</p>
+        <ul>
+          <li class="one-count">
+            <dl>
+              <dt>1회</dt>
+              <dd class="none">1회최소/최대금액</dd>
+              <dd>최소 1만원 이상, <br>최대 500만원 이하</dd>
+            </dl>
+          </li>
+          <li class="one-day">
+            <dl>
+              <dt>1일</dt>
+              <dd class="none">1일 누적 매입한도</dd>
+              <dd>최대 10,000,000원</dd>
+            </dl>
+          </li>
+          <li class="one-month">
+            <dl>
+              <dt>1개월</dt>
+              <dd class="none">1개월 누적 매입 한도</dd>
+              <dd>최대 20,000,000원</dd>
+            </dl>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!--footer-->
+  <div class="footer">
+    <div class="footer-width">
+      <span>
+            <img src="../img/footer-logo.png " alt="문상1번가로고 ">
+        </span>
+      <div class="footer-nav">
+        <ul>
+          <li>회사명 : 문상1번가
+            <div></div>
+          </li>
+          <li>사업자등록번호 : 215-55-6666
+            <div></div>
+          </li>
+          <li>통신판매업신고 : 제2019-서울 강남-1665
+            <div></div>
+          </li>
+          <li>대표 : 홍길동
+            <div></div>
+          </li>
+          <li>주소 : 서울 강남구 역삼대로 22, xx빌딩 3층</li>
+        </ul>
+        <ul>
+          <li>고객센터 : 02-5555-6666
+            <div></div>
+          </li>
+          <li>근무시간 : 평일/토요일 오전09:00~18:00
+            <div></div>
+          </li>
+          <li>이메일 : help@xxxxx.co.kr</li>
+        </ul>
+        <p>
+          Copyright@2019 문상1번가 All Rights Reserved.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="right-banner">
+    <ul>
+      <li class="buy-ask">
+        <a href="#">
+          <span class="coin"></span>
+          <div>
+            <p>레알 실시간 20초~!</p>
+            <p>상품권 매입신청</p>
+            <span class="arrow"></span>
+          </div>
+        </a>
+      </li>
+      <li class="service">
+        <a href="#">
+          <span class="service-img"></span>
+          <div>
+            <p>고객샌터</p>
+            <p>1234-8654</p>
+          </div>
+        </a>
+      </li>
+      <li class="kakao">
+        <a href="#">
+          <span class="kakao-img"></span>
+          <div>
+            <p>카톡상담</p>
+            <p>moonsang1</p>
+          </div>
+        </a>
+      </li>
+      <li class="naver">
+        <a href="#">
+          <span class="naver-img"></span>
+          <div>
+            <p>네이버 톡톡</p>
+            <p>채팅상담</p>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,137 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>문화 1번가 - 공지사항 상세</title>
+</head>
+
+<body>
+  <!--section-->
+  <div class="section">
+    <div class="section-main notice-view">
+      <h2>공지사항</h2>
+      <table class="view-table">
+        <tr class="list-title urgent">
+          <!-- urgent는 긴급공지때 사용된 css 클래스명-->
+          <td class="number">점검</td>
+          <td class="title">긴급점검에 관련된 공지사항입니다.</td>
+          <td class="sub">
+            <p class="writer">관리자</p>
+            <div></div>
+            <p class="date">2019.12.04</p>
+          </td>
+        </tr>
+        <tr class="file">
+          <td colspan="3">
+            <a href="#"><img src="${web_server_url}/images/front/notice-view-forma.png" alt="파일첨부 클립 이미지"> 파일명</a>
+          </td>
+        </tr>
+        <tr class="contents">
+          <td colspan="3">안녕하세요. 문상 1번가 운영자입니다.<br>긴급 서비스 점검 관련 공지내용입니다.<br>긴급 서비스 점검 관련 공지내용입니다.<br>긴급 서비스 점검 관련 공지내용입니다.<br>긴급 서비스 점검 관련 공지내용입니다.<br></td>
+        </tr>
+      </table>
+      <div class="list-mv">
+        <div class="re-list">
+          <a href="/board/notice/list.do">목록</a>
+        </div>
+        <ul class="link">
+          <li>
+            <ul>
+              <li><img src="${web_server_url}/images/front/up.png" alt="페이징 화살표 이미지">이전글</li>
+              <li class="border"></li>
+              <li class="prev"><a href="#">이전글 제목입니다.</a></li>
+            </ul>
+            <ul>
+              <li><img src="${web_server_url}/images/front/down.png" alt="페이징 화살표 이미지">다음글</li>
+              <li class="border"></li>
+              <li><a href="#">다음글 제목입니다.</a></li>
+            </ul>
+          </li>
+          <li></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+
+<!-- 
+
+이전 글
+
+<select id="selectBoardNext" parameterType="hashmap" resultType="hashmap">
+	
+		 <![CDATA[
+			SELECT TOP 1 
+						n.seq
+						,n.board_div
+						,n.title 
+						,n.rownum
+			FROM (
+				SELECT aa.*
+				FROM (SELECT row_number() over (ORDER BY a.reg_date DESC) AS rownum, a.*
+				      FROM tb_board a
+				      WHERE 1 = 1
+			]]>	  
+				      <include refid="whereBoardListQuery"/>
+			<![CDATA[    
+				      ) aa
+				WHERE aa.rownum < #{rownum}
+			)n ORDER BY  n.rownum desc
+		]]>
+			
+	</select>
+
+
+다음 글
+
+<select id="selectBoardPrev" parameterType="hashmap" resultType="hashmap">
+	
+	
+		 <![CDATA[
+			SELECT TOP 1 
+ 						p.seq
+						,p.board_div
+						,p.title 
+						,p.rownum
+			FROM (
+				SELECT aa.*
+				FROM (SELECT row_number() over (ORDER BY a.reg_date DESC) AS rownum, a.*
+				      FROM tb_board a
+				      WHERE 1 = 1
+			]]>	  
+				      <include refid="whereBoardListQuery"/>
+			<![CDATA[    
+				      ) aa
+				WHERE aa.rownum > #{rownum}
+			)p ORDER BY  p.rownum
+		]]>	
+	</select>
+
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

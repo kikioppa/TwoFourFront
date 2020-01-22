@@ -1,0 +1,46 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>관리자 페이지-매입통계</title>
+</head>
+
+<body onLoad="setDate(document.forms[0])">
+  <div class="section">
+    <h2>회원가입 통계</h2>
+    <div class="breadcrumbs">
+      <a href="#" class="home"><span>home</span></a>
+      <span>통계관리</span>
+      <span>회원가입 통계</span>
+    </div>
+    <div class="graph">
+      <form name="example">
+        <div>
+          년 <select name="year" onChange="setDate(this.form, this.value, this.form.month.value)">
+        </select>
+        </div>
+        <div>
+          월
+          <select name="month" onChange="setDate(this.form, this.form.year.value, this.value)">
+          </select>
+        </div>
+        <div>
+          일
+          <select name="day"></select>
+        </div>
+        <button>확인</button>
+      </form>
+      <div class="main-graph">
+
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
