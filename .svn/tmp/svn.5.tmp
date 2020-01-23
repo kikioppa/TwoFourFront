@@ -13,9 +13,8 @@ function fn_test(){
 	  key: "stMyAHwTh",
 	  service:4,
 	  auto:false,
-	  verify:true,
 	  user:$("#tel").val()
- 	  ,action: "http://127.0.0.1:8092/test2.do"
+ 	  ,action: "http://127.0.0.1:8080/test2.do"
 	  
 	};
 	logintalk(options);

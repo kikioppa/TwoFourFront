@@ -137,7 +137,7 @@ public class UserController extends NdnAbstractController{
 		if(idcheck > 0){
 			obj.put("result", "idError");
 		}else{
-			result = accountService.insertAccount(param);
+			//result = accountService.insertAccount(param);
 			System.out.println("param "+ param.toString());
 			obj.put("result", "success");
 		}

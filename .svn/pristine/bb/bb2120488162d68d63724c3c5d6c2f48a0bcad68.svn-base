@@ -15,7 +15,7 @@ function fn_test(){
 	  auto:false,
 	  verify:true,
 	  user:$("#tel").val()
- 	  ,action: "http://127.0.0.1:8092/test2.do"
+ 	  ,action: "http://127.0.0.1:8080/test2.do"
 	  
 	};
 	logintalk(options);
@@ -35,7 +35,7 @@ function fn_test(){
 <form name="frm" id="frm" method="post">
 <input type="hidden" name="token" id="token" value="" />
 <!-- <input type="text" name="tel" id="tel" value="01063765509" /> -->
-<input type="text" name="tel" id="tel" value="01044951809" />
+<input type="text" name="tel" id="tel" value="01094108608" />
 테스트123
 <!-- <button name="logintalk_ars2" data-tel="01063765509">ARS 인증11</button> -->
 <button type="button" onclick="fn_test()">본인인증601</button>

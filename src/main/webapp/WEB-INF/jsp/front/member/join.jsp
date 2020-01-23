@@ -10,7 +10,9 @@
     <title>문화 1번가 - 회원가입</title>
     <script src="https://auth.logintalk.io/js/logintalk.js"></script>
 	<script type="text/javascript">
-
+	function fn_test2(){
+		console.log('테스트입디나다122');
+	}
 	function fn_join(){
 	
 
@@ -25,8 +27,10 @@
 			},
 			success : function(data) {
 				if (data.result == 'success'){
-					alert('성공하였습니다.');
-					window.location.reload();
+					fn_test();
+					<!--alert('성공하였습니다.');-->
+					<!--return fn_test();-->
+				<!--	window.location.reload(); -->
 				}else if(data.result == 'idError'){
 					alert('중복아이디.');
 					return ;
@@ -150,44 +154,31 @@
 </script>
 
 <script>
-function fn_test(){
-	
-	var options = {
-	  key: "stMyAHwTh",
-	  service:4,
-	  auto:false,
-	  user:$("#memberPhone").val()
- 	  ,action: "http://127.0.0.1:8080/test2.do"
-	  
-	};
-	logintalk(options);
-	
-	function cb(token){
-		console.log("token : " + token);
-		$("#token").val(token);
-		$("#frm").attr('action','/test2.do');
-		$("#frm").submit();
+
+	function fn_test() {
+
+		var options = {
+			key : "stMyAHwTh",
+			service : 4,
+			auto : false,
+			verify:true,
+			user : $("#memberPhone").val(),
+			action : "http://127.0.0.1:8092/test2.do"
+
+		};
+		logintalk(options);
+		
+
+		function cb(token) {
+			console.log("token : " + token);
+			$("#token").val(token);
+			$("#frm").attr('action', '/test2.do');
+			$("#frm").submit();
+		}
+		logintalk.callback(cb);
 	}
-	logintalk.callback(cb);
-}
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		 </script>
+  
 
 
 
@@ -442,7 +433,7 @@ function fn_test(){
       </div>
       <div class="join-btn">
 
-     	    <button type="button"  onclick="fn_test()">회원가입</button> 
+     	    <button type="button"  onclick="fn_join()">회원가입</button> 
       </div>
     </div>
   </div>
