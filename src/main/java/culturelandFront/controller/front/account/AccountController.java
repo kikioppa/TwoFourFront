@@ -192,7 +192,7 @@ public class AccountController extends NdnAbstractController{
 		
 		JSONObject obj = new JSONObject();
 		
-		AdminUserVO adminUser = (AdminUserVO)request.getSession().getAttribute(PropUtil.get("session.admin"));
+		//AdminUserVO adminUser = (AdminUserVO)request.getSession().getAttribute(PropUtil.get("session.admin"));
 		
 		int result = 0;
 		

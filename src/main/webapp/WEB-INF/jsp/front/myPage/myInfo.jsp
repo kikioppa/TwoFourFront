@@ -31,11 +31,11 @@
           </colgroup>
           <tr class="thead">
             <td>아이디</td>
-            <td>hong@naver.com</td>
+            <td><input type="text" value="${sessionScope.ID}" id="memberId" name="memberId" disabled><br></td>
           </tr>
           <tr>
             <td>이름</td>
-            <td>홍길동</td>
+            <td><input type="text" value="${sessionScope.NAME}" id="memberName" name="memberName" disabled><br></td>
           </tr>
           <tr>
             <td>새비밀번호</td>
@@ -52,7 +52,7 @@
             <tr class="text-td">
               <td></td>
               <td>
-                <p>*비밀번호는 영문/숫자/특수문자/ 2가지 이상 조합해서 최소 6자~12자</p>
+                <p>*비밀번호는 영문/숫자/특수문자/ 3가지 이상 조합해서 최소 6자~12자</p>
                 <p>*입력하신 휴대폰번호와 이메일(아이디)로 주요공지사항 및 이벤트에 대한 안내를 받을 수 있습니다.</p>
                 <p>*거래정보와 관련된 내용은 수신동의 여부와 관계없이 발송됩니다.</p>
               </td>

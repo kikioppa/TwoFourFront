@@ -8,6 +8,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-실패했습니다.
+
+
+
+
+	<c:out value="${idList}"/>
+     
 </body>
 </html>

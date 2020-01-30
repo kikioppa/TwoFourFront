@@ -11,23 +11,41 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import culturelandFront.service.AccountService;
 import culturelandFront.core.abstr.NdnAbstractController;
+import culturelandFront.core.util.NdnUtil;
+import culturelandFront.core.util.PropUtil;
 import culturelandFront.service.BoardService;
+import culturelandFront.service.LoginService;
 import culturelandFront.service.PurchaseService;
 import culturelandFront.service.StatisticsService;
+import culturelandFront.vo.AdminUserVO;
+import culturelandFront.vo.UserVO;
 @Controller
 public class IndexController extends NdnAbstractController {
 	
+	
+	@Resource
+	private LoginService loginService;
 	
 	@Resource
 	private AccountService accountService;
@@ -77,10 +95,82 @@ public class IndexController extends NdnAbstractController {
 		
 	}	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * 아이디 찾기
+	 * 
+	 * 
+	 * */
+
+	@RequestMapping( "/test3.do")
+	public String tes3	(
+			HttpServletRequest request
+			, Model model
+			, @RequestParam Map param) {
+
+		ObjectMapper mapper = new ObjectMapper();
+		Map resultMap = new HashMap();
+		int result = 0;
+		List idList = new ArrayList();
+	
+		try {
+		    String apiURL = "https://auth.logintalk.io/exchange?token="+param.get("token");
+		      URL url = new URL(apiURL);
+		      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		      con.setRequestMethod("GET");
+		      int responseCode = con.getResponseCode();
+		      BufferedReader br;
+		      System.out.print("responseCode="+responseCode);
+		      if(responseCode==200) {
+		        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		        //result = accountService.insertAccount(param);
+		      } else {
+		        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+		      }
+		      
+		      String inputLine;
+		      StringBuffer res = new StringBuffer();
+		      while ((inputLine = br.readLine()) != null) {
+		    	System.out.println("inputLine : " + inputLine);
+		        res.append(inputLine);
+		    
+		      }
+		      br.close();
+		      if(responseCode==200) {
+		    			idList = accountService.findId(param);
+		     
+						model.addAttribute("idList", idList);
+		    			System.out.println("아이디 :  "+ param.toString());
+		    			System.out.println("아이디 22:  " +idList);
+		    
+		       }
+		     }catch (Exception e) {
+		      System.out.println(e);
+		    }
+
+		
+		
+		model.addAttribute("param", param);
+		model.addAttribute("menu_id", "03");
+		model.addAttribute("sub_menu_id", "22");
+		
+		
+		return  "/front/test3";
+	}	
+	
 	/**
 	 * front 메인 
 	 * 
-	 */
+	 *//*
 	@RequestMapping( "/test.do")
 	public String test	(
 						HttpServletRequest request
@@ -94,10 +184,10 @@ public class IndexController extends NdnAbstractController {
 
 		
 		return  "/front/test";
-	}	
+	}	*/
 	
 	/**
-	 * front 메인 
+	 * 회원가입 본인인증 
 	 * 
 	 */
 	@RequestMapping( "/test2.do")
@@ -106,13 +196,14 @@ public class IndexController extends NdnAbstractController {
 			, Model model
 			, @RequestParam Map param) {
 		
-		JSONObject obj = new JSONObject();
-	
-		System.out.println("param : " + param.toString() + "    param token : " + param.get("token"));
+
+
+		System.out.println("테테param : " + param.toString() + "    테토param token : " + param.get("token"));
 		
 		System.out.println();
 	
-		
+		ObjectMapper mapper = new ObjectMapper();
+		Map resultMap = new HashMap();
 		int result = 0;
 		
 	
@@ -130,26 +221,38 @@ public class IndexController extends NdnAbstractController {
 		      } else {
 		        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
 		      }
+		      
 		      String inputLine;
 		      StringBuffer res = new StringBuffer();
 		      while ((inputLine = br.readLine()) != null) {
+		    	System.out.println("inputLine : " + inputLine);
 		        res.append(inputLine);
-
+		    
 		      }
-		   /*   Map<String, Object> rs = new ObjectMapper().readValue(res.toString(), Map.class) ;
-		      Map<String, Object> name = (Map)rs.get("name") ;
-		    */  br.close();
-		      if(responseCode==200) {
-		        System.out.println("res.toString() : " + res.toString());
-		        System.out.println(param.get("memberName"));
-		    /*    if(name == (param.get("memberName"))){
-		    */    	 result = accountService.insertAccount(param);
-		       }
-		        System.out.println(obj);
 		      
-		    } catch (Exception e) {
+		      br.close();
+		   
+		    	resultMap = mapper.readValue(res.toString(), new TypeReference<Map>(){});
+		        System.out.println("res.toString() : " + res.toString());
+		        System.out.println("resultMap : " + resultMap.toString());  
+		        System.out.println(param.get("memberName"));
+		        System.out.println(resultMap.get("name"));
+		        System.out.println("birthday : " + resultMap.get("birthday"));
+		        System.out.println("sex : " + resultMap.get("sex"));
+		       /*
+		        * 이름유효성 확인먼저하고 insert
+		        * **/
+		    
+		        if(resultMap.get("name").equals(param.get("memberName"))){
+		    		  System.out.println("성성성성");
+		    		  result = accountService.insertAccount(param);
+		        }else{
+		        	 System.out.println(("ㄲㅈ"));
+		        }
+		}catch (Exception e) {
 		      System.out.println(e);
-		    }
+		}
+
 
 		
 		
@@ -160,4 +263,7 @@ public class IndexController extends NdnAbstractController {
 		
 		return  "/front/test2";
 	}	
+	
+
+	
 }

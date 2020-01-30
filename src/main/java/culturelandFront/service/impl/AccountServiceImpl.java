@@ -32,6 +32,14 @@ public class AccountServiceImpl implements AccountService{
 		return accountDAO.getSelectAccountPurchaseList(param);
 	}
 	
+	public List findId(Map param){
+		return accountDAO.findId(param);
+	}
+	
+	public Map selectParam(Map param){
+		return accountDAO.selectParam(param);
+	}
+	
 	public Map getSelectAccountDetail(Map param){
 		return accountDAO.getSelectAccountDetail(param);
 	}
@@ -61,9 +69,19 @@ public class AccountServiceImpl implements AccountService{
 	}
 	public int idCheck(Map param){
 		return accountDAO.idCheck(param);
-			
-				
+	}
+	public int acCheck(Map param){
+		return accountDAO.acCheck(param);
+	}
+	public int findIdCount(Map param){
+		return accountDAO.findIdCount(param);
+					
+	}
+	
+	public int findIdTrueCount(Map param){
+		return accountDAO.findIdTrueCount(param);
+					
 	}
 
-
+	
 }

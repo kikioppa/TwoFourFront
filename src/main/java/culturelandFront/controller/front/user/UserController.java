@@ -1,5 +1,9 @@
 package culturelandFront.controller.front.user;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +24,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import culturelandFront.core.abstr.NdnAbstractController;
 import culturelandFront.core.helper.ListHelper;
@@ -111,7 +118,7 @@ public class UserController extends NdnAbstractController{
 	
 	
 	
-	@RequestMapping("/join_user.json")
+	@RequestMapping(value={"/join_user.json","/m/join_user.json"})
 	@ResponseBody
 	public String join( 
 			HttpSession session,
@@ -127,20 +134,261 @@ public class UserController extends NdnAbstractController{
 		String returnUrl = ""; 
 		String subMenu = "";
 		
+		ListHelper listHelper = new ListHelper(param);
+		
+		listHelper = accountService.getSelectAccountList(listHelper);
+		
 		
 		int result = 0;
+		int accheck = 0;
 		int idcheck =0;
 		
 		System.out.println("param "+ param.toString());
 		idcheck = accountService.idCheck(param);
-		
+		accheck = accountService.acCheck(param);
 		if(idcheck > 0){
+			System.out.println("냥1"+param);
 			obj.put("result", "idError");
+		}else if(accheck >0){
+			System.out.println("냥냥"+ accheck);
+			obj.put("result", "acError");
 		}else{
-			//result = accountService.insertAccount(param);
-			System.out.println("param "+ param.toString());
+			System.out.println("성공");
 			obj.put("result", "success");
 		}
+		
+		return obj.toString();
+	}
+	
+	
+	/**
+	 * 
+	 * 아이디 찾기 유효성 검증
+	 * 
+	 * */
+	@RequestMapping(value={"/user_findId.json","/m/user_findId.json"})
+	@ResponseBody
+	public String findId( 
+			HttpSession session,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@RequestParam Map param ,
+			@RequestParam(value="seq",  defaultValue="") String seq,
+			Model model
+			) throws Exception{
+		
+	
+		List idList = new ArrayList();
+		idList = accountService.findId(param);
+		
+	
+		int findidcount =0;
+		List findid;
+		JSONObject obj = new JSONObject();
+		
+		String returnUrl = ""; 
+		String subMenu = "";
+		
+		findidcount = accountService.findIdCount(param);
+		System.out.println("param "+ param.toString());
+		
+		if(findidcount == 0){
+			obj.put("result", "idError");
+		}else{
+			obj.put("result", "success");
+		}
+		
+		return obj.toString();
+	}
+	
+	
+	
+
+
+	
+	/**
+	 * 
+	 * 아이디 인증 결과
+	 * 
+	 * 
+	 * */
+/*
+	@RequestMapping(value ={"/test3.do","/m/test3.do"})
+	public String tes3	(
+			HttpServletRequest request
+			, Model model
+			, @RequestParam Map param) {
+
+		ObjectMapper mapper = new ObjectMapper();
+		Map resultMap = new HashMap();
+		int result = 0;
+		List idList = new ArrayList();
+	
+		try {
+		    String apiURL = "https://auth.logintalk.io/exchange?token="+param.get("token");
+		      URL url = new URL(apiURL);
+		      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		      con.setRequestMethod("GET");
+		      int responseCode = con.getResponseCode();
+		      BufferedReader br;
+		      System.out.print("responseCode="+responseCode);
+		      if(responseCode==200) {
+		        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		        //result = accountService.insertAccount(param);
+		      } else {
+		        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+		      }
+		      
+		      String inputLine;
+		      StringBuffer res = new StringBuffer();
+		      while ((inputLine = br.readLine()) != null) {
+		    	System.out.println("inputLine : " + inputLine);
+		        res.append(inputLine);
+		    
+		      }
+		      br.close();
+		      if(responseCode==200) {
+		    			idList = accountService.findId(param);
+		     
+						model.addAttribute("idList", idList);
+		    			System.out.println("아이디 :  "+ param.toString());
+		    			System.out.println("아이디 22:  " +idList);
+		    
+		       }
+		     }catch (Exception e) {
+		      System.out.println(e);
+		    }
+
+		
+		
+		model.addAttribute("param", param);
+		model.addAttribute("menu_id", "03");
+		model.addAttribute("sub_menu_id", "22");
+		
+		
+		return  "/front/test3";
+	}	
+	
+*/	
+	
+	/**
+	 * 비밀번호 찾기 유효성 체크
+	 * */
+	@RequestMapping(value={"/user_findPwCheck.json","/m/user_findPwCheck.json"})
+	@ResponseBody
+	public String user_findPwCheck( 
+			HttpSession session,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@RequestParam Map param ,
+			Model model
+			) throws Exception{
+		
+		
+		int tidcount = 0;
+		JSONObject obj = new JSONObject();
+		
+		tidcount = accountService.findIdTrueCount(param);
+		System.out.println("param "+ param.toString());
+		
+		if(tidcount == 0){
+			obj.put("result", "idError");
+		}else{
+			obj.put("result", "success");
+		}
+		
+		return obj.toString();
+	}
+	
+	
+	/**
+	 * 비밀번호 본인 인증(로그인톡 인증)
+	 * 
+	 * */
+	@RequestMapping(value={"/user_findPw.json", "/m/user_findPw.json"})
+	@ResponseBody
+	public String findPw( 
+			HttpSession session,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@RequestParam Map param ,
+			Model model
+			) throws Exception{
+		
+		JSONObject obj = new JSONObject();
+		ObjectMapper mapper = new ObjectMapper();
+		Map resultMap = new HashMap();
+		UserVO user = new UserVO();
+		HashMap memberInfo = new HashMap();
+		
+		try {
+		    String apiURL = "https://auth.logintalk.io/exchange?token="+param.get("token");
+		      URL url = new URL(apiURL);
+		      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		      con.setRequestMethod("GET");
+		      int responseCode = con.getResponseCode();
+		      BufferedReader br;
+		      System.out.print("responseCode="+responseCode);
+		      if(responseCode==200) {
+		        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		        //result = accountService.insertAccount(param);
+		      } else {
+		        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+		      }
+		      
+		      String inputLine;
+		      StringBuffer res = new StringBuffer();
+		      while ((inputLine = br.readLine()) != null) {
+		    	System.out.println("inputLine : " + inputLine);
+		        res.append(inputLine);
+		    
+		      }
+		      br.close();
+		      if(responseCode==200) {
+		    	resultMap = mapper.readValue(res.toString(), new TypeReference<Map>(){});
+		        System.out.println("res.toString() : " + res.toString());
+		        System.out.println("resultMap : " + resultMap.toString());  
+		        System.out.println("paramFindPw : " + param.toString());
+		        System.out.println(param.get("memberName"));
+		        System.out.println(resultMap.get("name"));
+		        System.out.println("birthday : " + resultMap.get("birthday"));
+		        System.out.println("sex : " + resultMap.get("sex"));
+		        
+		        
+		        System.out.println("양양펀치");
+		        
+		        
+		        if(resultMap.get("mobile_number").equals(param.get("memberPhone")) 
+		        		&& resultMap.get("name").equals(param.get("memberName"))){
+		        	
+		        	memberInfo = (HashMap)accountService.selectParam(param);
+		        	
+		        	user.setId(param.get("memberId").toString());
+			        user.setPw(memberInfo.get("MEMBER_PASSWORD").toString());
+			        
+			        user = loginService.getUserLogin(user);
+			        
+			        session.setAttribute(PropUtil.get("session.user"), user);
+			        
+			        logUser(request, "LOGIN");
+					
+					// 사용자 세션 삭제
+					session.setAttribute("loginVO", null);
+					
+					obj.put("result", "success");
+			        
+		        }else{
+		        	obj.put("result", "error");
+			    	return obj.toString();
+		        }
+		        
+		       }else{
+		    	   obj.put("result", "error");
+		    	   return obj.toString();
+		       }
+		     }catch (Exception e) {
+		      System.out.println(e);
+		    }
 		
 		return obj.toString();
 	}
@@ -283,6 +531,7 @@ public class UserController extends NdnAbstractController{
 			, @RequestParam Map param
 			) {
 		JSONObject obj = new JSONObject();
+
 		
 		UserVO user = loginService.getUserLogin(userVO);
 		
@@ -295,6 +544,10 @@ public class UserController extends NdnAbstractController{
 				obj.put("result", "black");
 			}else{
 				session.setAttribute(PropUtil.get("session.user"), user);
+				session.setAttribute("ID",user.getId());
+				session.setAttribute("NAME",user.getName());
+				
+				System.out.println("파파람"+user.getId());
 //				logAdmin(request, "LOGIN");
 				
 				logUser(request, "LOGIN");
@@ -401,6 +654,7 @@ public class UserController extends NdnAbstractController{
 		
 	}
 	
+		
 	
 	
 }

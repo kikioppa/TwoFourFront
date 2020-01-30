@@ -1,20 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>문화 1번가 - 회원가입</title>
     <script src="https://auth.logintalk.io/js/logintalk.js"></script>
 	<script type="text/javascript">
 	function fn_test2(){
 		console.log('테스트입디나다122');
 	}
-	function fn_join(){
 	
+	
+	function fn_join(){
 
 	if(isValid() && confirm('회원가입 하시겠습니까?')){
 		var option = {
@@ -28,11 +26,12 @@
 			success : function(data) {
 				if (data.result == 'success'){
 					fn_test();
-					<!--alert('성공하였습니다.');-->
-					<!--return fn_test();-->
-				<!--	window.location.reload(); -->
 				}else if(data.result == 'idError'){
-					alert('중복아이디.');
+					alert('중복아이디.');			
+				}else if(data.result == 'acError'){
+					alert('가입된 회원입니다.');	
+				}else{
+					alert('오류');
 					return ;
 				}
 			},
@@ -163,7 +162,7 @@
 			auto : false,
 			verify:true,
 			user : $("#memberPhone").val(),
-			action : "http://127.0.0.1:8092/test2.do"
+			action : "./test2.do"
 
 		};
 		logintalk(options);
@@ -191,7 +190,7 @@
 
 <body>
  <!--section-->
-   <form name="frm" id="frm" action="post">
+   <form name="frm" id="frm" method="post">
   	  	<input type="hidden" name="mailYn" id="mailYn" value="" />
   	  	<input type="hidden" name="smsYn" id="smsYn" value="" />
   		<input type="hidden" name="memberStat" id="memberStat" value="A" />

@@ -259,4 +259,30 @@
       WHERE MEMBER_MAIL_ADDR = #{memberId}
 </select>
 	
+	<select id="acCheck" parameterType="hashmap" resultType="java.lang.Integer">
+      SELECT COUNT(*) FROM CO_MEMBER
+      WHERE MEMBER_PHONE = #{memberPhone}
+</select>
+
+	<select id="findIdCount" parameterType="hashmap" resultType="java.lang.Integer">
+      SELECT COUNT(*) from CO_MEMBER
+	  WHERE MEMBER_PHONE = #{memberPhone}
+</select>
+
+<select id="findIdTrueCount" parameterType="hashmap" resultType="java.lang.Integer">
+      SELECT COUNT(*) from CO_MEMBER
+	  WHERE MEMBER_PHONE = #{memberPhone} AND MEMBER_NAME =#{memberName} AND MEMBER_MAIL_ADDR = #{memberId}
+</select>
+	
+	<select id="findId" parameterType="hashmap" resultType="hashmap">
+      SELECT MEMBER_MAIL_ADDR from CO_MEMBER
+	  WHERE MEMBER_PHONE = #{memberPhone}
+</select>
+
+	<select id="selectParam" parameterType="hashmap" resultType="hashmap">
+      SELECT MEMBER_MAIL_ADDR,MEMBER_PASSWORD from CO_MEMBER
+	   WHERE MEMBER_PHONE = #{memberPhone} AND MEMBER_NAME =#{memberName} AND MEMBER_MAIL_ADDR = #{memberId}
+</select>
+	
+
 </mapper>

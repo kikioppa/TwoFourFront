@@ -57,5 +57,25 @@ public class AccountDAO extends NdnAbstractMapper{
 	public int idCheck(Map param){
 		return selectInt("account.idCheck", param);
 	}
+	
+	public int acCheck(Map param){
+		return selectInt("account.acCheck", param);
+	}
+	
+	public int findIdCount(Map param){
+		return selectInt("findIdCount", param);
+	}
+	
+	public int findIdTrueCount(Map param){
+		return selectInt("findIdTrueCount", param);
+	}
+	public List findId(Map param){
+		return list("account.findId", param);
+	}
+	public Map selectParam(Map param){
+		return (Map) selectOne("account.selectParam", param);
+	}
+
+
 }
 

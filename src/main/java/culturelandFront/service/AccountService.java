@@ -11,8 +11,11 @@ public interface AccountService {
 
 	public List getSelectAccountPurchaseList(Map param);
 	
-	
 	public Map getSelectAccountDetail(Map param);
+	
+	public List findId(Map param);
+	
+	public Map selectParam(Map param);
 	
 	public int insertAccount(Map param);
 	
@@ -27,4 +30,10 @@ public interface AccountService {
 	public int resetPassword(Map param);
 	
 	public int idCheck(Map param);
+	
+	public int findIdCount(Map param);
+	
+	public int findIdTrueCount(Map param);
+
+	public int acCheck(Map param);
 }
