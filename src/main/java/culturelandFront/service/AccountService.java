@@ -1,5 +1,6 @@
 package culturelandFront.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,4 +37,6 @@ public interface AccountService {
 	public int findIdTrueCount(Map param);
 
 	public int acCheck(Map param);
+
+	public Map selectMemberInfo(Map param);
 }

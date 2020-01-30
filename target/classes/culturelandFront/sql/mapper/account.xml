@@ -284,5 +284,11 @@
 	   WHERE MEMBER_PHONE = #{memberPhone} AND MEMBER_NAME =#{memberName} AND MEMBER_MAIL_ADDR = #{memberId}
 </select>
 	
+	<select id="selectMemberInfo" parameterType="hashmap" resultType="hashmap">
+      SELECT * from CO_MEMBER
+	   WHERE MEMBER_NO = #{memberNo}
+</select>
+
+
 
 </mapper>

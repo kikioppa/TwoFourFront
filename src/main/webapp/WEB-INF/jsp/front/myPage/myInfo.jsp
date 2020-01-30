@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -7,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>개인정보수정</title>
+  <script src="http://malsup.github.com/jquery.form.js"></script> 
   <link rel="stylesheet" href="../css/style.css">
 
   <script src="../js/jquery/jquery-1.12.4.min.js"></script>
@@ -31,23 +33,27 @@
           </colgroup>
           <tr class="thead">
             <td>아이디</td>
-            <td><input type="text" value="${sessionScope.ID}" id="memberId" name="memberId" disabled><br></td>
-          </tr>
+            <td><c:out value="${memberInfo.MEMBER_MAIL_ADDR}"/></td>
+          </tr>				
           <tr>
             <td>이름</td>
-            <td><input type="text" value="${sessionScope.NAME}" id="memberName" name="memberName" disabled><br></td>
+            <td><input type="text" value="<c:out value="${memberInfo.MEMBER_MAIL_ADDR}"/>"id="memberName" name="memberName" disabled><br></td>
           </tr>
           <tr>
             <td>새비밀번호</td>
-            <td><input type="password"></td>
+            <td>
+            	<input id="memberPw" name="memberPw" type ="password" placeholder="비밀번호를 입력하세요.">
+            </td>
           </tr>
           <tr>
             <td>비밀번호 확인</td>
-            <td><input type="password"></td>
+            <td>
+            	<input id="memberPw2" name = "memberPw2" type="password" placeholder="비밀번호 확인합니다.">
+            </td>
           </tr>
           <tr>
             <td>휴대폰 번호</td>
-            <td><input type="text" class="phone-number-check"><button type="button">인증하기</button>
+            <td><input type="text" value="${sessionScope.cellphone}" class="phone-number-check"><button type="button">인증하기</button>
             </td>
             <tr class="text-td">
               <td></td>

@@ -23,9 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import culturelandFront.core.abstr.NdnAbstractController;
 import culturelandFront.core.helper.ListHelper;
 import culturelandFront.core.util.PropUtil;
+import culturelandFront.service.AccountService;
 import culturelandFront.service.FileMngService;
 import culturelandFront.service.PurchaseService;
 import culturelandFront.vo.AdminUserVO;
+import culturelandFront.vo.UserVO;
 import egovframework.rte.fdl.idgnr.EgovIdGnrService;
 
 
@@ -36,6 +38,10 @@ import egovframework.rte.fdl.idgnr.EgovIdGnrService;
 public class MyPageController extends NdnAbstractController{
 
 	private final Logger logger = Logger.getLogger(this.getClass());
+	
+	
+	@Resource
+	private AccountService accountService;
 	
 	@Resource
 	private PurchaseService purchaseService;
@@ -137,7 +143,15 @@ public class MyPageController extends NdnAbstractController{
 			@RequestParam Map param ,
 			Model model
 			) {
+		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
+		System.out.println(user.getMemberNo());
+		param.put("memberNo", user.getMemberNo());
+		Map memberInfo = (Map) accountService.selectMemberInfo(param);
 		
+		System.out.println("개인정보"+memberInfo);
+		
+		
+		model.addAttribute("memberInfo", memberInfo);
 		//매입 상세
 //		HashMap detail = (HashMap)purchaseService.getSelectLargePurchaseDetail(param);
 				

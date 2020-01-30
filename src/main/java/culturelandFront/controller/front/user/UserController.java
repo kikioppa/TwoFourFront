@@ -531,8 +531,8 @@ public class UserController extends NdnAbstractController{
 			, @RequestParam Map param
 			) {
 		JSONObject obj = new JSONObject();
-
-		
+		Map memberInfo;
+		memberInfo = accountService.selectMemberInfo(param);
 		UserVO user = loginService.getUserLogin(userVO);
 		
 		if( user == null) {
@@ -544,10 +544,11 @@ public class UserController extends NdnAbstractController{
 				obj.put("result", "black");
 			}else{
 				session.setAttribute(PropUtil.get("session.user"), user);
-				session.setAttribute("ID",user.getId());
-				session.setAttribute("NAME",user.getName());
+		//		session.setAttribute("ID",user.getId());
+		//		session.setAttribute("NAME",user.getName());
 				
-				System.out.println("파파람"+user.getId());
+				System.out.println("파파람"+user.getMemberNo());
+				System.out.println("회원정보 param~"+memberInfo);
 //				logAdmin(request, "LOGIN");
 				
 				logUser(request, "LOGIN");

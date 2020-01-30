@@ -35,9 +35,17 @@ public class AccountServiceImpl implements AccountService{
 	public List findId(Map param){
 		return accountDAO.findId(param);
 	}
-	
+	/**
+	 * 아이디 찾기 parameter
+	 * */
 	public Map selectParam(Map param){
 		return accountDAO.selectParam(param);
+	}
+	/**
+	 * 회원정보수정 session 대용 쿼리
+	 * */
+	public Map selectMemberInfo(Map param){
+		return accountDAO.selectMemberInfo(param);
 	}
 	
 	public Map getSelectAccountDetail(Map param){

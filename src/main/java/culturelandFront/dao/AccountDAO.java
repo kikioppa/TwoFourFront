@@ -76,6 +76,11 @@ public class AccountDAO extends NdnAbstractMapper{
 		return (Map) selectOne("account.selectParam", param);
 	}
 
+	public Map selectMemberInfo(Map param) {
+		
+		return (Map) selectOne("account.selectMemberInfo", param);
+	}
+
 
 }
 
