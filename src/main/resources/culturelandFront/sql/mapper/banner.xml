@@ -4,22 +4,30 @@
 	
 	<select id="selectBannerList" parameterType="hashmap" resultType="hashmap">
 	 	SELECT 
-	 		   ROW_NUMBER() OVER(ORDER BY A.ORDER_SORT ASC, A.creation_date ASC, A.SEQ DESC) AS ROWNUM, 
-	 		   A.seq,
-	 		   A.PLAY_GUBUN, 
-	 		   A.ORDER_SORT, 
 	 		   A.LINK_URL, 
-	 		   A.USE_YN, 
-	 		   A.atch_file_id, 
-	 		   A.creation_user, 
-	 		   A.creation_date,
 			   B.file_stre_cours,
-			   B.stre_file_nm,
-			   B.orignl_file_nm
+			   B.stre_file_nm
 		FROM CO_BannerManage A 
 		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id 
 		WHERE 1 = 1
-		ORDER BY A.ORDER_SORT ASC, A.creation_date ASC, A.SEQ DESC;
+			AND A.USE_YN = 'Y'
+			AND A.IMG_GUBUN = 'B'
+			AND PLAY_GUBUN = #{PLAY_GUBUN}
+		ORDER BY A.ORDER_SORT ASC, A.CREATION_DATE DESC;
+ 	</select> 
+	
+	<select id="selectLogo" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+	 		   TOP 1 
+			   B.file_stre_cours,
+			   B.stre_file_nm
+		FROM CO_BannerManage A 
+		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id 
+		WHERE 1 = 1
+			AND A.USE_YN = 'Y'
+			AND A.IMG_GUBUN = 'S'
+			AND PLAY_GUBUN = #{PLAY_GUBUN}
+		ORDER BY A.CREATION_DATE DESC;
  	</select> 
 	
 	<select id="selectBanner" parameterType="hashmap" resultType="hashmap">

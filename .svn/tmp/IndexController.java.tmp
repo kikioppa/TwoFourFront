@@ -1,0 +1,159 @@
+package culturelandFront.controller.front;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+<<<<<<< .mine
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+=======
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+>>>>>>> .r112
+
+import org.json.simple.JSONObject;
+import org.springframework.mobile.device.Device;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import culturelandFront.service.AccountService;
+import culturelandFront.core.abstr.NdnAbstractController;
+<<<<<<< .mine
+import culturelandFront.core.util.NdnUtil;
+import culturelandFront.core.util.PropUtil;
+=======
+import culturelandFront.core.util.PropUtil;
+import culturelandFront.service.BannerService;
+>>>>>>> .r112
+import culturelandFront.service.BoardService;
+import culturelandFront.service.LoginService;
+import culturelandFront.service.PurchaseService;
+import culturelandFront.service.StatisticsService;
+<<<<<<< .mine
+import culturelandFront.vo.AdminUserVO;
+import culturelandFront.vo.UserVO;
+=======
+import culturelandFront.vo.AdminUserVO;
+>>>>>>> .r112
+@Controller
+public class IndexController extends NdnAbstractController {
+	
+	
+	@Resource
+	private LoginService loginService;
+	
+	@Resource
+	private AccountService accountService;
+	
+	@Resource
+	private BoardService boardService;
+	
+	@Resource
+	private BannerService bannereService;
+	
+	@Resource
+	private PurchaseService purchaseService;
+	
+	@Resource
+	private StatisticsService statisticsService;
+	
+	/**
+	 * front 메인 
+	 * 
+	 */
+	@RequestMapping(value={"/index.do", "/m/index.do"})
+	public String index	(
+						HttpServletRequest request
+						, Model model
+						, @RequestParam Map param
+						,Device device) {
+
+		List<Map> bannerList = new ArrayList<Map>();
+		List<Map> purchaseList = new ArrayList<Map>();
+		List<Map> noticeList = new ArrayList<Map>();
+		List<Map> faqList = new ArrayList<Map>();
+		
+		if(device.isMobile()){	//모바일 화면
+			param.put("PLAY_GUBUN", "M");
+		}else{					//WEB 화면
+			param.put("PLAY_GUBUN", "P");
+		}
+
+		bannerList = bannereService.getSelectBannerList(param);
+		purchaseList = purchaseService.getSelectIndexPurchaseList(param);
+		noticeList = boardService.getSelectIndexNoticeBoardList(param);
+		faqList = boardService.getSelectIndexFaqBoardList(param);
+		double charge = boardService.selectCharge(param);
+
+		model.addAttribute("bannerList", bannerList);
+		model.addAttribute("purchaseList", purchaseList);
+		model.addAttribute("noticeList", noticeList);
+		model.addAttribute("faqList", faqList);
+		model.addAttribute("charge", charge);
+		
+		System.out.println("index입니다.");
+		model.addAttribute("menu_id", "03");
+		model.addAttribute("sub_menu_id", "22");
+		System.out.println("device.isMobile() : " + device.isMobile());
+		 
+		
+		if(device.isMobile()){	//모바일 화면
+			return  "/mobile/index";
+		}else{					//WEB 화면
+			return  "/front/index";
+		}
+		
+	}	
+	
+	
+	
+	/**
+	 * front_gnb 로고 붙이기
+	 * */
+	@RequestMapping("/logo.json")
+	@ResponseBody
+	public String logo(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@RequestParam Map param ,
+			Device device, 
+			Model model
+			) throws Exception{
+		
+		JSONObject obj = new JSONObject();
+		
+		if(device.isMobile()){	//모바일 화면
+			param.put("PLAY_GUBUN", "M");
+		}else{					//WEB 화면
+			param.put("PLAY_GUBUN", "P");
+		}
+		
+		obj.putAll((HashMap)bannereService.selectLogo(param));
+
+		model.addAttribute("menu_id", "03");
+		model.addAttribute("sub_menu_id", "22");
+		
+		return obj.toString();
+	}
+}

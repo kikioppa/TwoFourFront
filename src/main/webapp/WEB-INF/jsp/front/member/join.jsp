@@ -152,6 +152,7 @@
 			  }
 </script>
 
+<!-- 로그인톡 클라이언트 -->
 <script>
 
 	function fn_test() {
@@ -162,7 +163,7 @@
 			auto : false,
 			verify:true,
 			user : $("#memberPhone").val(),
-			action : "./test2.do"
+			action : "/front/member/joined.do"
 
 		};
 		logintalk(options);
@@ -171,7 +172,7 @@
 		function cb(token) {
 			console.log("token : " + token);
 			$("#token").val(token);
-			$("#frm").attr('action', '/test2.do');
+			$("#frm").attr('action', '/front/member/joined.do');
 			$("#frm").submit();
 		}
 		logintalk.callback(cb);

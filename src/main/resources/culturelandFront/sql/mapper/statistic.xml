@@ -131,4 +131,16 @@
 		ORDER BY CONVERT(INT, AA.JOINDATE)
  	</select>
  	
+ 	<select id="selectCodeList" parameterType="hashmap" resultType="hashmap">
+ 		SELECT
+		 		GUBUN
+		 		, CODE_VAL
+		 		, CODE_NAME
+ 		FROM	CC_STATISTICCODE
+ 		WHERE	1 = 1
+ 		AND		GUBUN = #{gubun}
+ 		ORDER BY CODE_VAL
+ 	</select> 	
+ 	
+ 	
 </mapper>

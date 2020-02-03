@@ -130,30 +130,31 @@
 	<select id="selectInquiryBoardListCnt" parameterType="hashmap" resultType="int">
 	 	SELECT COUNT(A.seq) 
 	 	FROM CO_Inquiry A
-		LEFT OUTER JOIN CO_Member B ON B.MEMBER_NO = A.creation_user	 	
+		LEFT OUTER JOIN CO_InquiryAnswer B ON B.INQ_SEQ = A.seq 	
 	 	WHERE 1 = 1
-		<include refid="whereInquiryBoard" />
+			AND A.CREATION_USER = ${memberNo} 
  	</select>
  	
  	<select id="selectInquiryBoardList" parameterType="hashmap" resultType="hashmap">
 	 	SELECT 
 	 		   TOP ${cntPerPage} 
+	 		   ROW_NUMBER() OVER(ORDER BY A.SEQ ASC) AS rownum, 
 	 		   A.seq,
 	 		   A.title, 
 	 		   A.inq_yn, 
-			   B.MEMBER_MAIL_ADDR, 
-	 		   A.creation_date
+	 		   A.creation_date, 
+	 		   B.contents, 
+	 		   B.creation_date AS answerDate
 		FROM CO_Inquiry A
-		LEFT OUTER JOIN CO_Member B ON B.MEMBER_NO = A.creation_user
+		LEFT OUTER JOIN CO_InquiryAnswer B ON B.INQ_SEQ = A.seq
 		WHERE 1 = 1
-		<include refid="whereInquiryBoard" />
+			AND A.CREATION_USER = ${memberNo} 
 		<if test='startNum > 0'>
 			AND A.seq NOT IN(
 				SELECT TOP ${startNum}  
 					B.seq
 				FROM CO_Inquiry B
 				WHERE 1=1 
-					<include refid="whereInquiryBoard" />
 				ORDER BY B.creation_date DESC
 			)
 		</if>
@@ -213,6 +214,7 @@
 	<select id="selectIndexNoticeBoardList" parameterType="hashmap" resultType="hashmap">
 	 	SELECT 
 			TOP 6
+	 		ROW_NUMBER() OVER(ORDER BY A.NOTICE_YN, A.CREATION_DATE) AS rownum, 
 			A.SEQ, 
 			A.TITLE, 
 			A.NOTICE_YN, 
@@ -351,7 +353,7 @@
 			#{title}
 			,#{contents}
 			,'N'
-			,#{memberName}
+			,#{memberNo}
  			,getdate()
  		);
  	</insert> 

@@ -11,6 +11,8 @@
 		<result column="SMS_YN" 		property="smsYn" />
 		<result column="MAIL_YN" 		property="mailYn" />
 		<result column="MEMBER_STAT" 		property="memberStat" />
+		<result column="BIRTHDAY" 		property="birthday" />
+		<result column="GENDER" 		property="gender" />
 		<result column="CREATION_DATE" 		property="frstDate" />
 		<result column="LASTUPDATE_DATE" 		property="lastDate" />
 	</resultMap>
@@ -23,6 +25,8 @@
 			  ,A.SMS_YN
 			  ,A.MAIL_YN
 			  ,A.MEMBER_STAT
+			  ,A.BIRTHDAY
+			  ,A.GENDER
 			  ,A.CREATION_DATE
 			  ,A.LASTUPDATE_DATE
 		FROM CO_Member A

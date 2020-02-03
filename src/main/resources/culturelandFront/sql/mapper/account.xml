@@ -113,6 +113,7 @@
 	 			A.MEMBER_STAT,
 	 			B.ACNT_NUMBER,
 	 			B.BANK_NAME,
+	 			B.CONFIRM_YN,
 	 			A.MAIL_YN,
 	 			A.MEMBER_NO,
 	 			A.MEMBER_PASSWORD
@@ -171,15 +172,6 @@
  		WHERE SEQ = #{seq}
  	</update>
  	
- 	<delete id="deleteAccount" parameterType="hashmap">
- 		DELETE FROM TB_ADMINUSER
- 		WHERE <if test='seq != null and seq != "" '>seq = #{seq}</if>	
-			<if test='seqArray != null and seqArray != "" '>
-				<foreach collection="seqArray" item="seqArray" index="index"  separator=","  open=" seq IN ("  close=") "  >
-					#{seqArray}
-				</foreach>
-			</if>
- 	</delete>
  	
  	<select id="selectBoardNext" parameterType="hashmap" resultType="hashmap">
 		 <![CDATA[
@@ -289,6 +281,11 @@
 	   WHERE MEMBER_NO = #{memberNo}
 </select>
 
+<delete id="deleteAccount" parameterType="hashmap">
+ 		DELETE FROM CO_MEMBER
+ 		WHERE MEMBER_PASSWORD = #{memberPw} AND MEMBER_NAME =#{memberName} AND MEMBER_MAIL_ADDR = #{memberId}
+ 	</delete>
+ 	
 
 
 </mapper>
