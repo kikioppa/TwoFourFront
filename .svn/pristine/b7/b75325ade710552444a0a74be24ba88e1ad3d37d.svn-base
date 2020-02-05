@@ -1,0 +1,59 @@
+.btn {
+  display: block;
+  text-align: center;
+  &.lg {
+    width: 100%;
+    padding: rem(35) 0;
+    font-size: rem(32);
+  }
+  &.md {
+    width: 100%;
+    padding: rem(30) 0;
+    font-size: rem(24);
+  }
+  &.sm {
+    padding: rem(10);
+  }
+  &.primary {
+    color: #ffffff;
+    background-color: $primary-color;
+  }
+  &.third {
+    color: $default-font-gray;
+    background-color: #ffffff;
+    border: 1px solid #999999;
+  }
+  &.minor {
+    color: $default-font-gray;
+    background-color: #ffffff;
+    border: 1px solid #999999;
+  }
+  &.square {
+    @include border-radius;
+  }
+  &.more{
+    font-size: rem(24);
+    color: $font-gray-lighten;
+    border: rem(1) solid $default-border-gray;
+  }
+  &.text {
+    display: inline-block;
+    background-color: unset;
+    &.primary{
+      color: $primary-color;
+    }
+    &.sm{
+      font-size: rem(24);
+    }
+  }
+  &.toggle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: rem(18);
+    font-size: rem(24);
+    font-weight: 300;
+    border: rem(1) solid $default-border-gray;
+    @include border-radius;
+  }
+}

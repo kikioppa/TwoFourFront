@@ -1,0 +1,51 @@
+@charset "UTF-8";
+.buy-info{
+  section{
+    &.notice{
+      @include layout-side-pad;
+      @include layout-topbottom-pad;
+      
+      .topper{
+        margin-bottom: rem(50);
+        color: $default-font-gray;
+        font-size: rem(26);
+        vertical-align: middle;
+        svg{
+          margin-right: rem(20);
+          vertical-align: middle;
+        }
+        em{
+          color: $primary-color;
+          font-weight: 500;
+        }
+      }
+      .ladder-list{
+        @include ladder-list;
+        .tr{
+          display: flex;
+          align-items: center;
+          .profile{
+            @include profile-circle;
+            color: $primary-color;
+            width: rem(130);
+            height: rem(130);
+            font-size: rem(32);
+            font-weight: 500;
+          }
+          .content{
+            margin-left: rem(45);
+            font-size: rem(24);
+            color: $default-font-gray;
+            .bold{
+              display: block;
+              font-size: rem(26);
+              font-weight: 500;
+              margin-top: rem(22);
+              line-height: 1.3;
+            }
+          }
+        }
+      }
+    }
+  }
+}

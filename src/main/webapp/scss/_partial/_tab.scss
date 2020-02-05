@@ -1,0 +1,38 @@
+@charset "UTF-8";
+.tab-index{
+  @include border-radius;
+  border: rem(2) solid $default-border-gray;
+  overflow: hidden;
+  >ul{
+    display: flex;
+    >li{
+      flex: 1 auto;
+      border-right: rem(2) solid $default-border-gray;
+      &:last-child{
+        border-right: 0;
+      }
+      a{
+        &.item{
+          display: flex;
+          width: 100%;
+          height: 100%;
+          padding: rem(27);
+          justify-content: center;
+          align-items: center;
+          background-color: $default-bg-gray-lighten;
+          font-size: rem(28);
+          color: $default-font-gray;
+        }
+      }
+      &.on{
+        a{
+          &.item{
+            background-color: $toggle-radio-checked-color;
+            font-size: rem(28);
+            color: #ffffff;
+          }
+        }
+      }
+    }
+  }
+}

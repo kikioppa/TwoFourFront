@@ -1,0 +1,34 @@
+@charset "UTF-8";
+.my-question{
+  section{
+    &.input-form{
+      @include input-form;
+    }
+    &.editor-form{
+
+      .input-text-wrap{
+        border-bottom: 1px solid $default-border-gray;
+        input{
+          padding: rem(30);
+        }
+        input, textarea{
+          padding-left: $outer-padding-side;
+          padding-right: $outer-padding-side;
+        }
+      }
+    }
+    &.submit-btn{
+      @include submit-btn;
+    }
+    .anchor{
+      @include layout-side-pad;
+      padding-top: rem(50);
+      text-align: right;
+      .btn{
+        >span,svg{
+          vertical-align: middle;
+        }
+      }
+    }
+  }  
+}

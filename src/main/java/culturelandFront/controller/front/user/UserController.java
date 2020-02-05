@@ -43,7 +43,7 @@ import culturelandFront.vo.UserVO;
 import egovframework.rte.fdl.idgnr.EgovIdGnrService;
 
 @Controller
-@RequestMapping("/front/member")
+@RequestMapping({"/front/member", "/m/member"})
 public class UserController extends NdnAbstractController{
 
 	private final Logger logger = Logger.getLogger(this.getClass());
@@ -70,7 +70,7 @@ public class UserController extends NdnAbstractController{
 	 * 회원가입 
 	 * 
 	 * */	
-	@RequestMapping(value={"/join_user.json","/m/join_user.json"})
+	@RequestMapping("/join_user.json")
 	@ResponseBody
 	public String join( 
 			HttpSession session,
@@ -113,7 +113,7 @@ public class UserController extends NdnAbstractController{
 	 * 
 	 * 아이디 찾기 유효성 검증
 	 * 
-	 * */
+	 * */		
 	@RequestMapping(value={"/user_findId.json","/m/user_findId.json"})
 	@ResponseBody
 	public String findId( 
@@ -134,6 +134,7 @@ public class UserController extends NdnAbstractController{
 		if(findidcount == 0){
 			obj.put("result", "idError");
 		}else{
+			System.out.println("성공1");
 			obj.put("result", "success");
 		}
 		
@@ -149,7 +150,7 @@ public class UserController extends NdnAbstractController{
 	 * 
 	 * 
 	 * */
-	@RequestMapping( value ={"/foundid.do","/m/foundid.do"})
+	@RequestMapping(value={"/foundid.do","/m/foundid.do"})
 	public String tes3	(
 			HttpServletRequest request
 			, Model model
@@ -190,11 +191,11 @@ public class UserController extends NdnAbstractController{
 	      System.out.println(e);
 	    }
 		
+		System.out.println("성공2");
+		
 		model.addAttribute("param", param);
-		model.addAttribute("menu_id", "03");
-		model.addAttribute("sub_menu_id", "22");
-		
-		
+
+			
 		
 		if(device.isMobile()){			//모바일에서 접속 시
 			return "/mobile/member/foundid";
@@ -212,13 +213,13 @@ public class UserController extends NdnAbstractController{
 	
 	/**
 	 * 
-	 * 아이디 인증 결과
+	 * 개인정보페이지 핸드폰번호 인증
 	 * 
 	 * 
 	 * */
-/*
-	@RequestMapping(value ={"/test3.do","/m/test3.do"})
-	public String tes3	(
+
+	@RequestMapping("/phoneValid.jason")
+	public String phoneValid	(
 			HttpServletRequest request
 			, Model model
 			, @RequestParam Map param) {
@@ -252,9 +253,9 @@ public class UserController extends NdnAbstractController{
 		      }
 		      br.close();
 		      if(responseCode==200) {
-		    			idList = memberService.findId(param);
+		    			//idList = memberService.findId(param);
 		     
-						model.addAttribute("idList", idList);
+						//model.addAttribute("idList", idList);
 		    			System.out.println("아이디 :  "+ param.toString());
 		    			System.out.println("아이디 22:  " +idList);
 		    
@@ -266,19 +267,15 @@ public class UserController extends NdnAbstractController{
 		
 		
 		model.addAttribute("param", param);
-		model.addAttribute("menu_id", "03");
-		model.addAttribute("sub_menu_id", "22");
+
 		
-		
-		return  "/front/test3";
+		return  "/front/myPage/myInfo.do";
 	}	
-	
-*/	
-	
+		
 	/**
 	 * 비밀번호 찾기 유효성 체크
 	 * */
-	@RequestMapping(value={"/user_findPwCheck.json","/m/user_findPwCheck.json"})
+	@RequestMapping("/user_findPwCheck.json")
 	@ResponseBody
 	public String user_findPwCheck( 
 			HttpSession session,
@@ -308,7 +305,7 @@ public class UserController extends NdnAbstractController{
 	 * 비밀번호 본인 인증(로그인톡 인증)
 	 * 
 	 * */
-	@RequestMapping(value={"/user_findPw.json", "/m/user_findPw.json"})
+	@RequestMapping("/user_findPw.json")
 	@ResponseBody
 	public String findPw( 
 			HttpSession session,
@@ -353,7 +350,7 @@ public class UserController extends NdnAbstractController{
 		        		&& resultMap.get("name").equals(param.get("memberName"))){
 		        	
 		        	memberInfo = (HashMap)memberService.selectParam(param);
-		        	System.out.println(memberInfo);
+		        	
 		        	user.setId(param.get("memberId").toString());
 			        user.setPw(memberInfo.get("MEMBER_PASSWORD").toString());
 			        
@@ -460,7 +457,7 @@ public class UserController extends NdnAbstractController{
 	/**
 	 * 회원가입페이지
 	 * */
-	@RequestMapping(value={"/join.do","/m/join.do"})
+	@RequestMapping("/join.do")
 	public String write(
 			HttpSession session,
 			HttpServletRequest request,
@@ -477,9 +474,7 @@ public class UserController extends NdnAbstractController{
 			model.addAttribute("detail", detail);
 		}
 		
-		model.addAttribute("menu_id", "04");
-		model.addAttribute("sub_menu_id", "31");
-		
+	
 		
 		if(device.isMobile()){
 		return "/mobile/member/join";
@@ -496,19 +491,16 @@ public class UserController extends NdnAbstractController{
 	 * 회원가입 본인인증 
 	 * 
 	 */
-	@RequestMapping( value ={"/joined.do","/m/joined.do"})
-	public String tes2	(
-			HttpServletRequest request
-			, Model model
-			, Device device
-			, @RequestParam Map param) {
+	@RequestMapping( value ={"/join_valid.json","/m/join_valid.json"})
+	@ResponseBody
+	public String join_valid(HttpServletRequest request, Model model, @RequestParam Map param) {
 		
 
 
 		System.out.println("테테param : " + param.toString() + "    테토param token : " + param.get("token"));
 		
 		System.out.println();
-	
+		JSONObject obj = new JSONObject();
 		ObjectMapper mapper = new ObjectMapper();
 		Map resultMap = new HashMap();
 		int result = 0;
@@ -564,26 +556,25 @@ public class UserController extends NdnAbstractController{
 
 
 		model.addAttribute("param", param);
-		model.addAttribute("menu_id", "03");
-		model.addAttribute("sub_menu_id", "22");
+	
 		
+		if(result > 0){	
+			obj.put("result", "success");
+			}else{			
+			obj.put("result","failed");
 		
-		if(device.isMobile()){	//모바일 화면
-			return  "/mobile/member/joined";
-		}else{					//WEB 화면
-			return  "/front/member/joined";
 		}
 		
+		return obj.toString();
+	
 	}	
 
-
-	
 	/**
 	* ***** 로그인페이지 *****
 	* 		
 	**/
 	
-	@RequestMapping( value={"/login.do", "/m/login.do"})
+	@RequestMapping("/login.do")
 	public String login	(
 						HttpServletRequest request
 						, Model model
@@ -604,7 +595,7 @@ public class UserController extends NdnAbstractController{
 	 * ***** 로그인페이지 *****
 	 * 		로그인 액션
 	 **/
-	@RequestMapping(value={"/loginAction.do", "/m/loginAction.do"})
+	@RequestMapping("/loginAction.do")
 	@ResponseBody
 	public String loginAction	(
 			@Valid UserVO userVO
@@ -656,7 +647,7 @@ public class UserController extends NdnAbstractController{
 	 * @param modl
 	 * @return
 	 */
-	@RequestMapping(value={"/logout.do", "/m/logout.do"})
+	@RequestMapping("/logout.do")
 	public String logout(HttpServletRequest request, HttpSession session,
 			Model modl,
 			Device device) {
@@ -668,10 +659,10 @@ public class UserController extends NdnAbstractController{
 		
 		
 		if(device.isMobile()){
-			return goPage("/m/index.do");
+			return "redirect:/m/index.do";
 
 		}else{
-			return goPage("/index.do");
+			return "redirect:/index.do";
 
 		}
 
@@ -680,41 +671,27 @@ public class UserController extends NdnAbstractController{
 	/**
 	 * 비밀번호 찾기 페이지
 	 * */
-	
-	@RequestMapping( value={"/findPw.do","/m/findPw.do"})
+	@RequestMapping("/findPw.do")
 	public String findPw	(
 						HttpServletRequest request
 						, Model model
 						, @RequestParam Map param
 						, Device device) {
 
-		
-			System.out.println("findPw 페이지.");
-			model.addAttribute("menu_id", "03");
-			model.addAttribute("sub_menu_id", "22");
-			
-			
 			if(device.isMobile()){
 				return  "/mobile/member/findPw";
-
 			}else{
 				return  "/front/member/findPw";
 
 			}		
 	}
 	
-	@RequestMapping(value={ "/findId.do","/m/findId.do"})
+	@RequestMapping("/findId.do")
 	public String findId	(
 						HttpServletRequest request
 						, Model model
 						, @RequestParam Map param
 						, Device device) {
-
-		
-			System.out.println("findId 페이지.");
-			model.addAttribute("menu_id", "03");
-			model.addAttribute("sub_menu_id", "22");
-
 
 			
 			if(device.isMobile()){
@@ -735,7 +712,7 @@ public class UserController extends NdnAbstractController{
 	 * 
 	 * */
 	
-	@RequestMapping( value={"/myPage.do","/m/myPage.do"})
+	@RequestMapping("/myPage.do")
 	public String myPage	(
 						HttpServletRequest request
 						, Model model

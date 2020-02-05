@@ -8,33 +8,56 @@
     <Loggers>
     
     
-       <Logger name="java.sql" level="DEBUG" additivity="false">
+        <Logger name="java.sql" level="DEBUG" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
-        <Logger name="egovframework" level="INFO" additivity="false">
+        <Logger name="egovframework" level="info" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
-        <Logger name="academy" level="DEBUG" additivity="false">
+        <Logger name="culturelandFront" level="debug" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
-
-        <Logger name="jdbc.sqltiming" level="INFO" additivity="false">
+        <Logger name="jdbc.sqltiming" level="info" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
         <Logger name="jdbc.audit" level="ERROR" additivity="false">
         	<AppenderRef ref="console" />
         </Logger>
-        <Logger name="jdbc.resultset" level="DEBUG" additivity="false">
+        <Logger name="jdbc.resultset" level="off" additivity="false">
         	<AppenderRef ref="console" />
         </Logger>
         
-        <Logger name="org.springframework" level="INFO" additivity="false">
+        <Logger name="org.springframework" level="info" additivity="false">
             <AppenderRef ref="console" />
         </Logger>
         
-        <Root level="DEBUG">
+        <Logger name="jdbc.sqlonly" level="info" additivity="false">
+            <AppenderRef ref="console" />
+        </Logger>
+                
+		<logger name="log4jdbc.log4j2" level="error" additivity="false">
+		
+			<appender-ref ref="Console" />
+		
+		</logger>
+		
+		<Logger name="jdbc.sqlonly" level="off" />
+		
+		<Logger name="jdbc.sqltiming" level="info" />
+		
+		<Logger name="jdbc.audit" level="off" />
+		
+		<Logger name="jdbc.resultset" level="off" />
+		
+		<Logger name="jdbc.resultsettable" level="info" />
+		
+		<Logger name="jdbc.connection" level="off" />
+
+
+
+        <Root level="debug">
             <AppenderRef ref="console" />
         </Root>
-   
+        
     </Loggers>
 </Configuration>

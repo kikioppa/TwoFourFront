@@ -1,0 +1,52 @@
+@charset "UTF-8";
+.bottom-menu-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: $bottom-menu-bar-height;
+  padding: rem(15);
+  background-color: #ffffff;
+  border-top: rem(2) solid $default-border-gray;
+  z-index: 1;
+  ul {
+    display: flex;
+    width: 100%;
+    li {
+      flex: 1 1 rem(60);
+      a {
+        display: flex;
+        flex-direction: column;
+        flex: 1 auto;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        span {
+          font-size: rem(20);
+          height: rem(40);
+          color: $default-font-color;
+          &.icon {
+            margin-top: rem(10);
+          }
+          &.menu-name {
+            margin-top: rem(15);
+          }
+        }
+      }
+      &.on {
+        span {
+          color: $primary-color;
+          svg {
+            path {
+              fill: $primary-color;
+            }
+          }
+        }
+      }
+      &:first-child {
+        flex: 1 0 rem(270);
+      }
+    }
+  }
+}

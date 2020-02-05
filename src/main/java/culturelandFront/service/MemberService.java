@@ -40,4 +40,9 @@ public interface MemberService {
 	public int acCheck(Map param);
 
 	public Map selectMemberInfo(Map param);
+	
+	public int updateMemberPhone(Map param);
+	
+	public int updateMemberInfo(Map param);
+	
 }

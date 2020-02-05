@@ -1,0 +1,33 @@
+.my-question{
+  section{
+    &.input-form{
+      @include input-form;
+    }
+    &.editor-form{
+
+      .input-text-wrap{
+        input{
+          padding: rem(30);
+          border-bottom: rem(1) solid $default-border-gray;
+        }
+        input, textarea{
+          padding-left: $outer-padding-side;
+          padding-right: $outer-padding-side;
+        }
+      }
+    }
+    &.submit-btn{
+      @include submit-btn;
+    }
+    .anchor{
+      @include layout-side-pad;
+      padding-top: rem(50);
+      text-align: right;
+      .btn{
+        >span,svg{
+          vertical-align: middle;
+        }
+      }
+    }
+  }  
+}

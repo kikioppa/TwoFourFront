@@ -1,0 +1,43 @@
+
+.my-info{
+  section{
+    &.input-form{
+      @include input-form;
+      .btn-wrap{
+        margin-top: rem(50);
+      }
+      .message-small{
+        @include message-small;
+        margin-top: rem(50);
+      }
+    }
+
+    &.agree-list{
+      margin: rem(50) 0;
+      >ul{
+        > li{
+          @include layout-side-pad;
+          display: flex;
+          padding-top: rem(32);
+          padding-bottom: rem(32);
+          border-bottom: 1px solid $default-border-gray;
+          &:last-child{
+            border-bottom: 0;
+          }
+          .title{
+            display: flex;
+            flex: 1 auto;
+            align-items: center;
+          }
+          .toggle-wrap{
+            flex: 0 rem(300);
+          }
+        }
+      }
+    }
+
+    &.submit-btn{
+      @include submit-btn;
+    }
+  }
+}

@@ -1,0 +1,57 @@
+@charset "UTF-8";
+.join{
+  section{
+    &.input-form{
+      @include input-form;
+        
+      .border-box{
+        @include border-box;
+        margin-top: rem(50);
+        >ul{
+          li{
+            display: flex;
+            margin-bottom: rem(50);
+            > *{
+              flex: 1 auto;
+            }
+            > .btn-wrap{
+              display: flex;
+              flex: 0 rem(100);
+              justify-content: flex-end;
+              align-items: center;
+            }
+            &:last-child{
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+      .message-center{
+        @include message-center;
+        margin-bottom: rem(50);
+      }
+      > .btn-wrap{
+        margin-top: rem(50);
+      }
+      &.for-id{
+        .find-id-result{
+          @include border-box;
+          margin: rem(50) rem(20);
+          background-color: $default-bg-gray;
+          text-align: center;
+          font-weight: 700;
+          color: $default-font-gray;
+        }
+      }
+      &.for-password{
+      }
+    }
+    &.submit-btn{
+      @include submit-btn;
+    }
+    &.tab-wrap{
+      @include layout-side-pad;
+      padding-top: rem(50);
+    }
+  }
+}

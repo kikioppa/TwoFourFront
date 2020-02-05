@@ -85,10 +85,19 @@ public class MemberServiceImpl implements MemberService{
 					
 	}
 	
+	public int updateMemberPhone(Map param){
+		return memberDAO.updateMemberPhone(param);
+	}
+	
+	public int updateMemberInfo(Map param){
+		return memberDAO.updateMemberInfo(param);
+	}
+	
 	public int findIdTrueCount(Map param){
 		return memberDAO.findIdTrueCount(param);
-					
 	}
 
+	
+	
 	
 }

@@ -1,103 +1,177 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>개인정보수정</title>
   <script src="https://auth.logintalk.io/js/logintalk.js"></script>
-  <script src="http://malsup.github.com/jquery.form.js"></script> 
   <script>
 
- function resetPassword(resetPassword){
-	 
-	if(isValid() && confirm("개인정보를 수정하시겠습니까?")){
+  function fn_modify(){
 
-	<!-- $("#resetPassword").val(resetPassword); -->
-	 $("#memberPw").val(CryptoJS.SHA256(pwEncode($('#memberId').val().trim(), $('#memberPw').val().trim())).toString());	 
-	 var option = {
-			type : "post",
-			url: './resetPassword.json',
-			data: $("#frm").serialize() ,
-			dataType: 'json',
-			beforeSend: function() {
-				$('#ajax_load_indicator').show();
-			},
-			success : function(data) {
-				if(data.success){
-					alert('성공하였습니다.');
-					window.location.reload();
-				}else{
-					alert('실패 하였습니다.');
+		if(isValid() && confirm('개인정보를 수정하시겠습니까?')){
+			$("#smsYn").val($('input[name="smsYnBtn"]:checked').val());
+			$("#mailYn").val($('input[name="mailYnBtn"]:checked').val());
+			
+			var option = {
+				type : "post",
+				url: './user_info_update.json',
+				data: $("#frm").serialize() ,
+				dataType: 'json',
+				beforeSend: function() {
+					$('#ajax_load_indicator').show();
+				},
+				success : function(data) {
+					if (data.result){
+						alert('정상처리 되었습니다.');
+						window.location.reload(); 
+					}else{
+						alert('오류가 발생되었습니다.');
+						return ;
+					}
+				},
+				error: function(request, status, err) {
+					//alert('서버와의 통신이 실패했습니다.');
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
+				},
+				complete : function() {
+					$('#ajax_load_indicator').hide();
 				}
-			},
-			error: function(request, status, err) {
-				//alert('서버와의 통신이 실패했습니다.');
-				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
-			},
-			complete : function() {
-				$('#ajax_load_indicator').hide();
-			}
-		};
-
-		$("#frm").ajaxSubmit(option);
- }
- }
+			};
+			$("#frm").ajaxSubmit(option);
+		}		
+	}
  
  function isValid(){
 		var returnStr = true;
-		var pw = $("#memberPw").val();
-		var pw2 = $("#memberPw2").val();
+		var pw = $("#newMemberPw").val();
+		var pw2 = $("#newMemberPw2").val();
 		var phone = $("#memberPhone").val();
 		var getPhone = RegExp(/^\d{3}\d{3,4}\d{4}$/); 
 		var getPw = RegExp(/^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/);
-		
+		var num = pw.search(/[0-9]/g); 
+		var eng = pw.search(/[a-z]/ig); 
+		var spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
 
-		if(  returnStr  &&  trimNvl( $("#memberPw").val() )){
-			alert('패스워드를 입력해 주십시요.');
-			$('#memberPw').focus();
-			returnStr = false;
+		if(pw != '' || pw2 != ''){
+			if(  returnStr  &&  trimNvl( $("#newMemberPw").val() )){
+				alert('패스워드를 입력해 주십시요.');
+				$('#newMemberPw').focus();
+				returnStr = false;
+			}
+			
+// 			if(!getPw.test(pw) && returnStr){
+// 				alert('비밀번호 규칙에 맞춰 입력해주세요');
+// 				$('#memberPw').focus();
+// 				returnStr = false;
+// 			}
+			if( (pw!==pw2) && returnStr){
+				alert('비밀번호가 일치하지 않습니다.');
+				$('#newMemberPw2').focus();
+				returnStr = false;
+			}
+			
+			if(returnStr){
+				$("#gubun").val('Y');
+				$("#memberPw").val(CryptoJS.SHA256(pwEncode($('#memberId').val(), $('#newMemberPw').val())).toString());
+			}
+		}else{
+			$("#gubun").val('N');
 		}
-		
-		if(!getPw.test(pw) && returnStr){
-			alert('비밀번호 규칙에 맞춰 입력해주세요');
-			$('#memberPw').focus();
-			returnStr = false;
-		}
-		if( (pw!==pw2) && returnStr){
-			alert('비밀번호가 일치하지 않습니다.');
-			$('#memberPw2').focus();
-			returnStr = false;
-		}
-		
-		if(  returnStr  &&  trimNvl( $("#memberName").val() )){
-			alert('이름을 입력해 주십시요.');
-			$('#memberName').focus();
-			returnStr = false;
-		}
-		
-		if(  returnStr  &&  trimNvl( $("#memberPhone").val() )){
-			alert('전화번호를 입력해 주십시요.');
-			$('#memberPhone').focus();
-			returnStr = false;
-		}
-		
-	<!--	if(!getPhone.test(phone) && returnStr){
-			alert('- 제외 후 입력해주세요');
-			$('#memberPhone').focus();
-			returnStr = false;
-		}-->
 		
 		return returnStr;
 
-	}
- 
- </script>
 
-<script>
+	}
+
+ 
+ function fn_requestValid(){
+	  if(isValid() && confirm('인증요청 하겠습니까?')){
+		  $("#memberPhone").val($("#memberPhone").val().replace(/-/gi,''));
+			var option = {
+				type : "post",
+				url: './requestValid.json',
+				data: $("#frm").serialize() ,
+				dataType: 'json',
+				beforeSend: function() {
+					$('#ajax_load_indicator').show();
+				},
+				success : function(data) {
+					if (data.result == 'success'){
+						fn_verify();
+// 						alert('성공하였습니다.');
+// 						return fn_test();
+// 						window.location.reload(); 
+					}else{
+						alert('이미 인증된 번호입니다.');
+						
+					}
+				},
+				error: function(request, status, err) {
+					//alert('서버와의 통신이 실패했습니다.');
+					alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
+				},
+				complete : function() {
+					$('#ajax_load_indicator').hide();
+				}
+			};
+			$("#frm").ajaxSubmit(option);
+		}
+	}
+
+ 
+ function fn_verify() {
+
+		var options = {
+			key : "stMyAHwTh",
+			service : 4,
+			auto : false,
+			verify:true,
+			user : $("#memberPhone").val(),
+			action : "./phoneValid.json"
+
+		};
+		logintalk(options);
+		
+
+		function cb(token) {
+		
+			$("#token").val(token);
+			var option = {
+					type : "post",
+					url: './phoneValid.json',
+					data: $("#frm").serialize() ,
+					dataType: 'json',
+					beforeSend: function() {
+						$('#ajax_load_indicator').show();
+					},
+					success : function(data) {
+						if (data.result){
+// 							$("#frm").attr('action', '/front/myPage/myInfo.do');
+// 							$("#frm").submit();
+							alert('정상처리 되었습니다.');
+							window.location.reload();
+						}else{
+							alert('본인인증 오류가 발생 되었습니다.');
+							return ;
+						}
+					},
+					error: function(request, status, err) {
+						//alert('서버와의 통신이 실패했습니다.');
+						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
+					},
+					complete : function() {
+						$('#ajax_load_indicator').hide();
+					}
+				};
+				$("#frm").ajaxSubmit(option);
+				
+		}
+		logintalk.callback(cb);
+	}
+	
+ 
+ 
+ 
 function fn_delete(){
 
 	if(confirm('회원탈퇴 하시겠습니까?')){
@@ -131,58 +205,7 @@ function fn_delete(){
 	}		
 }
 
-</script>
 
- <script>
-  
-	function fn_phoneValid() {
-
-		var options = {
-			key : "stMyAHwTh",
-			service : 4,
-			auto : false,
-			verify:true,
-			user : $("#memberPhone").val(),
-			action : "./user_findPw.json"
-
-		};
-		logintalk(options);
-		
-
-		function cb(token) {
-			console.log("token : " + token);
-			$("#token").val(token);
-			var option = {
-					type : "post",
-					url: './user_findPw.json',
-					data: $("#frm").serialize() ,
-					dataType: 'json',
-					beforeSend: function() {
-						$('#ajax_load_indicator').show();
-					},
-					success : function(data) {
-						if (data.result == 'success'){
-							$("#frm").attr('action', '/front/myPage/myInfo.do');
-							$("#frm").submit();
-						<!--	window.location.reload(); -->
-						}else{
-							alert('본인인증 오류가 발생 되었습니다.');
-							return ;
-						}
-					},
-					error: function(request, status, err) {
-						//alert('서버와의 통신이 실패했습니다.');
-						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
-					},
-					complete : function() {
-						$('#ajax_load_indicator').hide();
-					}
-				};
-				$("#frm").ajaxSubmit(option);
-				
-		}
-		logintalk.callback(cb);
-	}
 		 </script>
   
 </head>
@@ -190,11 +213,25 @@ function fn_delete(){
 <body>
   <form id="frm" name="frm" method="post">
   <input type="hidden" id="seq" name="seq" value="" />
+  <input type="hidden" id="token" name="token" value="" />
+  <input type="hidden" id="smsYn" name="smsYn" value="" />
+  <input type="hidden" id="mailYn" name="mailYn" value="" />
+  <input type="hidden" id="gubun" name="gubun" value="" />
+  <input type="hidden" id="memberPw" name="memberPw" value="" />
+<%--   <input type="hidden" id="memberId" name="memberId" value="<c:out value="${memberInfo.MEMBER_MAIL_ADDR}"/>" /> --%>
   <div class="section">
     <div class="wrapper">
       <div class="buy-header">
-        <h1>개인정보수정</h1>
+        <h1>마이페이지</h1>
       </div>
+      
+      <ul class="mypage-tab">
+        <li class="list1"><a href="${web_server_url}/front/myPage/purchaseList.do">매입신청내역</a></li>
+        <li class="list2"><a href="${web_server_url}/front/myPage/account.do">계좌인증</a></li>
+        <li class="list3"><a href="${web_server_url}/front/myPage/limit.do">매입한도</a></li>
+        <li class="list4 on"><a href="${web_server_url}/front/myPage/myInfo.do">개인정보수정</a></li>
+      </ul>
+            
       <div class="user-info">
         <h2>회원정보</h2>
         <table>
@@ -213,20 +250,21 @@ function fn_delete(){
           <tr>
             <td>새비밀번호</td>
             <td>
-            	<input id="memberPw" name="memberPw" type ="password" placeholder="비밀번호를 입력하세요.">
+            	<input id="newMemberPw" name="newMemberPw" type ="password" placeholder="비밀번호를 입력하세요.">
             </td>
           </tr>
           <tr>
             <td>비밀번호 확인</td>
             <td>
             
-            	<input id="memberPw2" name = "memberPw2" type="password" placeholder="비밀번호 확인합니다.">
+            	<input id="newMemberPw2" name="newMemberPw2" type="password" placeholder="비밀번호 확인합니다.">
             </td>
           </tr>
           <tr>
             <td>휴대폰 번호</td>
-            <td><input type="text" value="${memberInfo.MEMBER_PHONE}" class="phone-number-check"><button type="button"  onclick="fn_phoneValid()">인증하기</button>
-            </td>
+            <td>
+            <input type="text" id="memberPhone" name="memberPhone" value="${memberInfo.MEMBER_PHONE}" class="phone-number-check">
+             <button type ="button"  name="logintalk_verify" onclick="fn_requestValid()">로그인톡 인증</button></td>
             <tr class="text-td">
               <td></td>
               <td>
@@ -239,14 +277,14 @@ function fn_delete(){
               <td>SMS 수신동의</td>
               <td>
                 <div class="radio-wrap">
-                  <input type="radio" id="smsY" name="smsYn" value="Y" <c:if test="${memberInfo.SMS_YN eq 'Y'}">checked</c:if> >
+                  <input type="radio" id="smsY" name="smsYnBtn" value="Y" <c:if test="${memberInfo.SMS_YN eq 'Y'}">checked</c:if> >
                   <span class="icon-radio"></span>
-                  <label for="radio01">동의함</label>
+                  <label for="smsY">동의함</label>
                 </div>
                 <div class="radio-wrap">
-                  <input type="radio" id="smsN" name="smsYn" value="N" <c:if test="${empty memberInfo.SMS_YN || memberInfo.SMS_YN eq 'N'}">checked</c:if> >
+                  <input type="radio" id="smsN" name="smsYnBtn" value="N" <c:if test="${empty memberInfo.SMS_YN || memberInfo.SMS_YN eq 'N'}">checked</c:if> >
                   <span class="icon-radio"></span>
-                  <label for="radio02">동의안함</label>
+                  <label for="smsN">동의안함</label>
                 </div>
               </td>
             </tr>
@@ -255,15 +293,14 @@ function fn_delete(){
               <td>
                 <div class="radio-wrap">
                   <!--선택이 되어있을때-->
-                  <input type="radio" id="mailY" name="mailYn" value="Y" <c:if test="${memberInfo.MAIL_YN eq 'Y'}">checked</c:if> >
-                  	<!--  cif? when ? -->
+                  <input type="radio" id="mailY" name="mailYnBtn" value="Y" <c:if test="${memberInfo.MAIL_YN eq 'Y'}">checked</c:if> >
                   <span class="icon-radio"></span>
-                  <label for="radio03">동의함</label>
+                  <label for="mailY">동의함</label>
                 </div>
                 <div class="radio-wrap">
-                  <input type="radio" id="mailN" name="mailYn" value="N" <c:if test="${empty memberInfo.MAIL_YN || memberInfo.MAIL_YN eq 'N'}">checked</c:if> >
+                  <input type="radio" id="mailN" name="mailYnBtn" value="N" <c:if test="${empty memberInfo.MAIL_YN || memberInfo.MAIL_YN eq 'N'}">checked</c:if> >
                   <span class="icon-radio"></span>
-                  <label for="radio04">동의안함</label>
+                  <label for="mailN">동의안함</label>
                 </div>
               </td>
             </tr>
@@ -272,12 +309,10 @@ function fn_delete(){
         <input type="hidden" id="memberStat"  name="memberStat" value="<c:out value="${memberInfo.MEMBER_STAT}"/>" />
         <input type="hidden" id="memberNO"  name="memberNO" value="<c:out value="${memberInfo.MEMBER_NO}"/>" />
           <button type ="button" onclick="fn_delete()">회원탈퇴</button>
-           <button type ="button" onclick="resetPassword('<c:out value="${memberInfo.MEMBER_PASSWORD}"/>')">개인정보 수정</button>
+           <button type ="button" onclick="fn_modify()">개인정보 수정</button>
         </div>
       </div>
     </div>
   </div>
   </form>
 </body>
-
-</html>

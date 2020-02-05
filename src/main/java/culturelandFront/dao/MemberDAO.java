@@ -75,10 +75,17 @@ public class MemberDAO extends NdnAbstractMapper{
 	}
 
 	public Map selectMemberInfo(Map param) {
-		
 		return (Map) selectOne("member.selectMemberInfo", param);
 	}
 
+	public int updateMemberPhone(Map param) {
+		return update("member.updateMemberPhone", param);
+	}
+
+	public int updateMemberInfo(Map param) {
+		return update("member.updateMemberInfo", param);
+	}
+	
 
 }
 

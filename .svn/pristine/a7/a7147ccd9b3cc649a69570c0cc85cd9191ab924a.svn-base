@@ -1,0 +1,87 @@
+@charset "UTF-8";
+[class*=icon] {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  svg {
+    // height: 100%;
+  }
+}
+
+.icon-menu {
+  width: rem(34);
+  height: rem(26);
+  background-image: url(../img/ico_menu.png);
+}
+
+.icon-notice {
+  width: rem(37);
+  height: rem(37);
+  background-image: url(../img/ico_notice.png);
+}
+
+.icon-faq {
+  width: rem(38);
+  height: rem(37);
+  background-image: url(../img/ico_faq.png);
+}
+
+.icon-arrow {
+  width: rem(16);
+  height: rem(29);
+  background-image: url(../img/ico_arrow.png);
+}
+
+.icon-calculator {
+  width: rem(41);
+  height: rem(38);
+  background-image: url(../img/ico_calculator.png);
+}
+
+.icon-kakao{
+  width: rem(57);
+  height: rem(56);
+  background-image: url(../img/ico_kakao.png);
+}
+.icon-naver{
+  width: rem(51);
+  height: rem(49);
+  background-image: url(../img/ico_naver.png);
+}
+.icon-id{
+  width: rem(35);
+  height: rem(25);
+  background-image: url(../img/ico_id.png);
+}
+.icon-password{
+  width: rem(30);
+  height: rem(28);
+  background-image: url(../img/ico_password.png);
+}
+.icon-password-check{
+  width: rem(32);
+  height: rem(28);
+  background-image: url(../img/ico_password_check.png);
+}
+.icon-name{
+  width: rem(26);
+  height: rem(28);
+  background-image: url(../img/ico_name.png);
+}
+.icon-phone{
+  width: rem(20);
+  height: rem(34);
+  background-image: url(../img/ico_phone.png);
+}
+.icon-calendar{
+  width: rem(26);
+  height: rem(22);
+  background-image: url(../img/ico_calendar.png);
+}
+.icon-radio{
+  width: rem(30);
+  height: rem(30);
+  background-image: url(../img/ico_radio.png);
+  background-size: cover;
+  background-position: bottom;
+}

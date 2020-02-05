@@ -1,0 +1,139 @@
+@mixin fullscreen {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+@mixin fullscreen-absolute {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+@mixin slideup-duration {
+  transition: top $default-transition-duration, bottom $default-transition-duration;
+  -webkit-transition: top $default-transition-duration, bottom $default-transition-duration;
+}
+
+@mixin border-radius {
+  border-radius: rem(6);
+}
+
+@mixin layout-side-pad {
+  padding-left: $outer-padding-side;
+  padding-right: $outer-padding-side;
+}
+
+@mixin small-tag {
+  padding: rem(5) rem(13);
+  border-radius: rem(30);
+  font-size: rem(18);
+}
+
+@mixin border-box{
+  border: 1px solid $default-border-gray;
+  padding: rem(35) rem(30);
+}
+
+@mixin message-center{
+  font-size: $default-message;
+  font-weight: 300;
+  color: $default-font-gray;
+  text-align: center;
+  line-height: 1.6;
+  &.narrow{
+    padding: 0 rem(50);
+  }
+  em{
+    font-weight: 400;
+  }
+}
+
+@mixin message-small{
+  font-size: $small-message;
+  font-weight: 300;
+  line-height: 1.6;
+  color: $default-font-gray;
+  padding-bottom: rem(50);
+  .star{
+    display: inline-block;
+    margin-left: rem(20);
+    text-indent: rem(-15);
+  }
+}
+
+@mixin input-form{
+  @include layout-side-pad;
+  padding-top: rem(50);
+  padding-bottom: rem(50);
+  .input-text-wrap{
+    &.underline-type{
+      margin-top: rem(10);
+    }
+  }
+}
+@mixin multi-btn{
+  .multi{
+    display: flex;
+    justify-content: space-between;
+    > li{
+      flex: 1 50%;
+      margin-right: rem(10);
+      &:last-child{
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+@mixin submit-btn{
+  @include layout-side-pad;
+  @include multi-btn;
+  margin: rem(30) 0;
+  padding-top: rem(50);
+  padding-bottom: rem(50);
+}
+
+@mixin card{
+  border: rem(1) solid $default-border-gray;
+  .card-header{
+    background-color: #e9e9e9;
+    font-size: rem(28);
+    color: $default-font-gray;
+    padding: rem(28);
+    text-align: center;
+  }
+  .card-body{
+    padding: rem(50) rem(30);
+  }
+}
+
+@mixin ladder-list{
+  border: rem(1) solid $default-border-gray;
+  >ul{
+    width: 100%;
+    >li{
+      &.tr{
+        padding: rem(30) rem(50);
+        border-bottom: rem(1) solid $default-border-gray;
+      }
+      &:last-child{
+        border-bottom: 0;
+      }
+    }
+  }
+}
+
+@mixin profile-circle{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $default-bg-gray;
+  width: rem(100);
+  height: rem(100);
+  border-radius: 50%;
+  overflow: hidden;
+}

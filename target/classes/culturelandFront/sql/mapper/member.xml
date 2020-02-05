@@ -242,50 +242,74 @@
 	</update>
 	
 	<update id="resetPassword" parameterType="hashmap">
-	UPDATE CO_MEMBER set MEMBER_PASSWORD = #{memberPw}
-	WHERE MEMBER_NO=#{memberNO}
+		UPDATE CO_MEMBER set MEMBER_PASSWORD = #{memberPw}
+		WHERE MEMBER_NO=#{memberNO}
 	</update>
 	
 	<select id="idCheck" parameterType="hashmap" resultType="java.lang.Integer">
-      SELECT COUNT(*) FROM CO_MEMBER
+      SELECT COUNT(MEMBER_NO) FROM CO_MEMBER
       WHERE MEMBER_MAIL_ADDR = #{memberId}
-</select>
+	</select>
 	
 	<select id="acCheck" parameterType="hashmap" resultType="java.lang.Integer">
-      SELECT COUNT(*) FROM CO_MEMBER
+      SELECT COUNT(MEMBER_NO) FROM CO_MEMBER
       WHERE MEMBER_PHONE = #{memberPhone}
-</select>
+	</select>
 
 	<select id="findIdCount" parameterType="hashmap" resultType="java.lang.Integer">
-      SELECT COUNT(*) from CO_MEMBER
+      SELECT COUNT(MEMBER_NO) from CO_MEMBER
 	  WHERE MEMBER_PHONE = #{memberPhone}
-</select>
+	</select>
 
-<select id="findIdTrueCount" parameterType="hashmap" resultType="java.lang.Integer">
-      SELECT COUNT(*) from CO_MEMBER
-	  WHERE MEMBER_PHONE = #{memberPhone} AND MEMBER_NAME =#{memberName} AND MEMBER_MAIL_ADDR = #{memberId}
-</select>
+	<select id="findIdTrueCount" parameterType="hashmap" resultType="java.lang.Integer">
+	      SELECT COUNT(MEMBER_NO) from CO_MEMBER
+		  WHERE MEMBER_PHONE = #{memberPhone} AND MEMBER_NAME =#{memberName} AND MEMBER_MAIL_ADDR = #{memberId}
+	</select>
 	
 	<select id="findId" parameterType="hashmap" resultType="hashmap">
       SELECT MEMBER_MAIL_ADDR from CO_MEMBER
 	  WHERE MEMBER_PHONE = #{memberPhone}
-</select>
+	</select>
 
 	<select id="selectParam" parameterType="hashmap" resultType="hashmap">
       SELECT MEMBER_MAIL_ADDR,MEMBER_PASSWORD from CO_MEMBER
 	   WHERE MEMBER_PHONE = #{memberPhone} AND MEMBER_NAME =#{memberName} AND MEMBER_MAIL_ADDR = #{memberId}
-</select>
+	</select>
 	
 	<select id="selectMemberInfo" parameterType="hashmap" resultType="hashmap">
-      SELECT * from CO_MEMBER
+      SELECT MEMBER_NO
+      		,MEMBER_MAIL_ADDR
+      		,MEMBER_NAME
+      		,MEMBER_PASSWORD
+      		,MEMBER_PHONE
+      		,SMS_YN
+      		,MAIL_YN
+      		,MEMBER_STAT
+      		,CREATION_DATE
+      		,BIRTHDAY
+      		,GENDER 
+      from CO_MEMBER
 	   WHERE MEMBER_NO = #{memberNo}
-</select>
+	</select>
 
-<delete id="deleteMember" parameterType="hashmap" >
+	<delete id="deleteMember" parameterType="hashmap" >
  		DELETE FROM CO_MEMBER
  		WHERE MEMBER_PHONE = #{memberPhone} AND MEMBER_NAME =#{memberName}
  	</delete>
  	
-
+ 	<update id="updateMemberPhone" parameterType="hashmap">
+		UPDATE CO_MEMBER set 
+			MEMBER_PHONE = #{memberPhone}
+			,LASTUPDATE_DATE = getDate()
+		WHERE MEMBER_NO=#{memberNO}
+	</update>
+	
+	<update id="updateMemberInfo" parameterType="hashmap">
+		UPDATE CO_MEMBER set 
+			SMS_YN = #{smsYn}
+			,MAIL_YN = #{mailYn}
+			,LASTUPDATE_DATE = getDate()
+		WHERE MEMBER_NO=#{memberNO}
+	</update>
 
 </mapper>

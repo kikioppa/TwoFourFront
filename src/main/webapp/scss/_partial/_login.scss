@@ -1,0 +1,42 @@
+@charset "UTF-8";
+.login{
+  section{
+    &.input-form{
+      @include input-form;
+      .login-status{
+        margin-top: rem(30);
+        .checkbox-label{
+          label{
+            font-size: rem(24);
+          }
+        }
+      }
+      .btn-wrap{
+        margin-top: rem(50);
+      }
+      .links {
+        margin-top: rem(100);
+        padding: 0 rem(100);
+        font-size: rem(26);
+        >ul {
+          display: flex;
+          li {
+            display: flex;
+            flex: 1 auto;
+            justify-content: center;
+            border-right: rem(2) solid $default-border-gray;
+            a {
+              color: #666666;
+              em{
+                color: $primary-color;
+              }
+            }
+            &:last-child {
+              border-right: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

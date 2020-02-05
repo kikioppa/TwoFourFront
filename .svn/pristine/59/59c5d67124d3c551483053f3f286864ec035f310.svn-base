@@ -1,0 +1,11 @@
+body {
+  height: 100%;
+  color: $default-color;
+}
+
+a {
+  color: $default-color;
+}
+pre{
+  white-space: pre-wrap;
+}

@@ -1,0 +1,9 @@
+$default-fontsize: 16;
+body {
+  font-size: $default-fontsize+px;
+}
+
+@function rem($px) {
+  $rem: $px / ($default-fontsize * 2);
+  @return $rem+rem
+}

@@ -1,192 +1,220 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>
-<!DOCTYPE html>
-<html>
 
 <head>
-    <title>문화 1번가 - 회원가입</title>
+    <title>회원가입</title>
     <script src="https://auth.logintalk.io/js/logintalk.js"></script>
 	<script type="text/javascript">
-	function fn_test2(){
-		console.log('테스트입디나다122');
-	}
 	
-	
-	function fn_join(){
+		function fn_join(){
 
-	if(isValid() && confirm('회원가입 하시겠습니까?')){
-		var option = {
-			type : "post",
-			url: './join_user.json',
-			data: $("#frm").serialize() ,
-			dataType: 'json',
-			beforeSend: function() {
-				$('#ajax_load_indicator').show();
-			},
-			success : function(data) {
-				if (data.result == 'success'){
-					fn_test();
-				}else if(data.result == 'idError'){
-					alert('중복아이디.');			
-				}else if(data.result == 'acError'){
-					alert('가입된 회원입니다.');	
-				}else{
-					alert('오류');
-					return ;
-				}
-			},
-			error: function(request, status, err) {
-				//alert('서버와의 통신이 실패했습니다.');
-				alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
-			},
-			complete : function() {
-				$('#ajax_load_indicator').hide();
+			if(isValid() && confirm('회원가입 하시겠습니까?')){
+				var option = {
+					type : "post",
+					url: './join_user.json',
+					data: $("#frm").serialize() ,
+					dataType: 'json',
+					beforeSend: function() {
+						$('#ajax_load_indicator').show();
+					},
+					success : function(data) {
+						if (data.result == 'success'){
+							fn_joinValid();
+						}else if(data.result == 'idError'){
+							alert('아이디가 존재합니다.');
+							$("#memberPw").val('');
+							$("#memberPw2").val('')	
+						}else if(data.result == 'acError'){
+							alert('가입된 회원입니다.');	
+						}else{
+							alert('오류');
+							return ;
+						}
+					},
+					error: function(request, status, err) {
+						//alert('서버와의 통신이 실패했습니다.');
+						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
+					},
+					complete : function() {
+						$('#ajax_load_indicator').hide();
+					}
+				};
+				$("#frm").ajaxSubmit(option);
+			}		
+		}
+
+
+		function isValid(){
+			var returnStr = true;
+			var id =  $("#memberId").val();
+			var phone = $("#memberPhone").val();
+			var name = $("#memeberName").val();
+			var pw = $("#memberPw").val();
+			var pw2 = $("#memberPw2").val();
+			var mailYn=$("#mailYn").val();
+			var smsYn=$("#smsYn").val();
+			var check = $("input:checkbox[id='checkbox']").is(":checked");
+			var check1 = $("input:checkbox[id='checkbox1']").is(":checked");
+			var check2 = $("input:checkbox[id='checkbox2']").is(":checked");
+// 			var getId=RegExp(/^[0-9a-zA-Z]*[@][0-9a-zA-Z]*[.][a-zA-Z]{2,3}$/i);
+			var getId=RegExp(/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i);
+			var getPhone = RegExp(/^\d{3}\d{3,4}\d{4}$/); 
+			var getPw = RegExp(/^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/);
+			var num = pw.search(/[0-9]/g); 
+			var eng = pw.search(/[a-z]/ig); 
+			var spe = pw.search(/[`~!@@#$%^&*|₩₩₩'₩";:₩/?]/gi);
+
+			if(  returnStr  &&  trimNvl( $("#memberId").val() )){
+				alert('아이디를 입력해 주십시요.');
+				$('#memberId').focus();
+				returnStr = false;
 			}
-		};
-		$("#frm").ajaxSubmit(option);
-	}		
-}
+			
+			if(!getId.test(id) && returnStr){
+				alert('이메일 형식으로 입력해주세요');
+				$('#memberId').focus();
+				returnStr = false;
+			}
+		
+			if(  returnStr  &&  trimNvl( $("#memberPw").val() )){
+				alert('패스워드를 입력해 주십시요.');
+				$('#memberPw').focus();
+				returnStr = false;
+			}
+// 			if(!getPw.test(pw) && returnStr){
+// 				alert('비밀번호 규칙에 맞춰 입력해주세요');
+// 				$('#memberPw').focus();
+// 				returnStr = false;
+// 			}
+			if (pw.length < 6 || pw.length > 12 && returnStr ) {
+				alert("6 ~ 12자리 이내로 입력해주세요.");
+				$('#memberPw').focus();
+				returnStr = false;
+			}
+			if( ((num < 0 && eng < 0) || (eng < 0 && spe < 0) || (spe < 0 && num < 0)) && returnStr ){
+				alert("영문,숫자,특수문자 중 2가지 이상을 혼합하여 입력해주세요.");
+				$('#memberPw').focus();
+				returnStr = false;				
+			}
 
-
-			 function isValid(){
-					var returnStr = true;
-					var id =  $("#memberId").val();
-					var phone = $("#memberPhone").val();
-					var name = $("#memeberName").val();
-					var pw = $("#memberPw").val();
-					var pw2 = $("#memberPw2").val();
-					var mailYn=$("#mailYn").val();
-					var smsYn=$("#smsYn").val();
-					var check = $("input:checkbox[id='checkbox']").is(":checked");
-					var check1 = $("input:checkbox[id='checkbox1']").is(":checked");
-					var check2 = $("input:checkbox[id='checkbox2']").is(":checked");
-					var getId=RegExp(/^[0-9a-zA-Z]*[@][0-9a-zA-Z]*[.][a-zA-Z]{2,3}$/i);
-					var getPhone = RegExp(/^\d{3}\d{3,4}\d{4}$/); 
-					var getPw = RegExp(/^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/);
-					
-					if(  returnStr  &&  trimNvl( $("#memberId").val() )){
-						alert('아이디를 입력해 주십시요.');
-						$('#memberId').focus();
-						returnStr = false;
-					}
-					
-					if(!getId.test(id) && returnStr){
-						alert('이메일 형식으로 입력해주세요');
-						$('#memberId').focus();
-						returnStr = false;
-					}
-				
-					if(  returnStr  &&  trimNvl( $("#memberPw").val() )){
-						alert('패스워드를 입력해 주십시요.');
-						$('#memberPw').focus();
-						returnStr = false;
-					}
-					
-					if(!getPw.test(pw) && returnStr){
-						alert('비밀번호 규칙에 맞춰 입력해주세요');
-						$('#memberPw').focus();
-						returnStr = false;
-					}
-					if( (pw!==pw2) && returnStr){
-						alert('비밀번호가 일치하지 않습니다.');
-						$('#memberPw2').focus();
-						returnStr = false;
-					}
-					
-					if(  returnStr  &&  trimNvl( $("#memberName").val() )){
-						alert('이름을 입력해 주십시요.');
-						$('#memberName').focus();
-						returnStr = false;
-					}
-					
-					if(  returnStr  &&  trimNvl( $("#memberPhone").val() )){
-						alert('전화번호를 입력해 주십시요.');
-						$('#memberPhone').focus();
-						returnStr = false;
-					}
-					
-					if(!getPhone.test(phone) && returnStr){
-						alert('- 제외 후 입력해주세요');
-						$('#memberPhone').focus();
-						returnStr = false;
-					}
-					
-					if(!check && returnStr ){
-						alert('14세  미만은 가입이 불가합니다.');
-						returnStr =false;
-					}
-				
-					if(!check1 && returnStr ){
-						alert('이용약관에 동의해주세요.');
-						returnStr =false;
-					}
-				
-					if(!check2 && returnStr ){
-						alert('개인정보처리방침에 동의해주세요.');
-						returnStr =false;
-					}
-					
-					if($("input:checkbox[id='mailCheckYn']").is(":checked")){
-						$("#mailYn").val("Y");
-					}else{
-						$("#mailYn").val("N");
-					}
+			if( (pw!==pw2) && returnStr){
+				alert('비밀번호가 일치하지 않습니다.');
+				$('#memberPw2').focus();
+				returnStr = false;
+			}
+			
+			if(  returnStr  &&  trimNvl( $("#memberName").val() )){
+				alert('이름을 입력해 주십시요.');
+				$('#memberName').focus();
+				returnStr = false;
+			}
+			
+			if(  returnStr  &&  trimNvl( $("#memberPhone").val() )){
+				alert('전화번호를 입력해 주십시요.');
+				$('#memberPhone').focus();
+				returnStr = false;
+			}
+			
+			if(!getPhone.test(phone) && returnStr){
+				alert('- 제외 후 입력해주세요');
+				$('#memberPhone').focus();
+				returnStr = false;
+			}
+			
+			if(!check && returnStr ){
+				alert('14세  미만은 가입이 불가합니다.');
+				returnStr =false;
+			}
+		
+			if(!check1 && returnStr ){
+				alert('이용약관에 동의해주세요.');
+				returnStr =false;
+			}
+		
+			if(!check2 && returnStr ){
+				alert('개인정보처리방침에 동의해주세요.');
+				returnStr =false;
+			}
+			
+			if($("input:checkbox[id='mailCheckYn']").is(":checked")){
+				$("#mailYn").val("Y");
+			}else{
+				$("#mailYn").val("N");
+			}
 	
-					if($("input:checkbox[id='smsYn']").is(":checked")){
-						$("#smsYn").val("Y");
-					}else{
-						$("#smsYn").val("N");
-					}
+			if($("input:checkbox[id='smsYn']").is(":checked")){
+				$("#smsYn").val("Y");
+			}else{
+				$("#smsYn").val("N");
+			}
 	
-					if(returnStr){
-						$("#memberPw").val(CryptoJS.SHA256(pwEncode($('#memberId').val(), $('#memberPw').val())).toString());	
-					}
-					return returnStr;
+			if(returnStr){
+				$("#memberPw").val(CryptoJS.SHA256(pwEncode($('#memberId').val(), $('#memberPw').val())).toString());	
+			}
+			return returnStr;
 				
-			 }
+		}
 			
 			  
-			  function go_list(){
-				  $("#frm").attr("action","login.do")
-				  $("#frm").submit();
-			  }
-</script>
-
-<!-- 로그인톡 클라이언트 -->
-<script>
-
-	function fn_test() {
-
-		var options = {
-			key : "stMyAHwTh",
-			service : 4,
-			auto : false,
-			verify:true,
-			user : $("#memberPhone").val(),
-			action : "/front/member/joined.do"
-
-		};
-		logintalk(options);
-		
-
-		function cb(token) {
-			console.log("token : " + token);
-			$("#token").val(token);
-			$("#frm").attr('action', '/front/member/joined.do');
+		function go_list(){
+			$("#frm").attr("action","login.do")
 			$("#frm").submit();
+		}
+
+		
+		function fn_joinValid() {
+
+			var options = {
+				key : "stMyAHwTh",
+				service : 4,
+				auto : false,
+				verify:true,
+				user : $("#memberPhone").val(),
+				action : "./join_valid.json"
+
+			};
+			logintalk(options);
+		
+		
+		
+		
+		function cb(token) {
+
+			$("#token").val(token);
+			var option = {
+					type : "post",
+					url: './join_valid.json',
+					data: $("#frm").serialize() ,
+					dataType: 'json',
+					beforeSend: function() {
+						$('#ajax_load_indicator').show();
+					},
+					success : function(data) {
+						console.log("데이타"+data.result);
+						if (data.result == 'success'){
+							alert('회원가입이 성공했습니다.');
+							$("#frm").attr('action', '/index.do');
+							$("#frm").submit();
+						<!--	window.location.reload(); -->
+						}else{
+							alert('본인인증 오류가 발생 되었습니다.');
+							return ;
+						}
+					},
+					error: function(request, status, err) {
+						//alert('서버와의 통신이 실패했습니다.');
+						alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+err);
+					},
+					complete : function() {
+						$('#ajax_load_indicator').hide();
+					}
+				};
+				$("#frm").ajaxSubmit(option);
+				
 		}
 		logintalk.callback(cb);
 	}
-		 </script>
-  
-
-
-
-
-
-
-
-
+	</script>
 </head>
 
 <body>
@@ -224,31 +252,31 @@
             <tr>
               <td>아이디</td>
               <td>
-                <input name="memberId" id="memberId" type="text"  placeholder="아이디(이메일)를 입력하세요.">
+                <input name="memberId" id="memberId" type="text" maxlength="50" placeholder="아이디(이메일)를 입력하세요.">
               </td>
             </tr>
             <tr>
               <td>비밀번호</td>
               <td>
-                <input id="memberPw" name="memberPw" type ="password" placeholder="비밀번호를 입력하세요.">
+                <input id="memberPw" name="memberPw" type="password" maxlength="12" placeholder="비밀번호를 입력하세요.">
               </td>
             </tr>
             <tr>
               <td>비밀번호 확인</td>
-              <td><input id="memberPw2" name = "memberPw2" type="password" placeholder="비밀번호 확인합니다.">
-                <p>*비밀번호는 영문/숫자/특수문자 3가지 이상 조합해서 최소 6자~12자</p>
+              <td><input id="memberPw2" name="memberPw2" type="password" maxlength="12" placeholder="비밀번호 확인합니다.">
+                <p>*비밀번호는 영문/숫자/특수문자 2가지 이상 조합해서 최소 6자~12자</p>
               </td>
             </tr>
             <tr>
               <td>이름</td>
               <td>
-                <input name="memberName" id="memberName" type="text" placeholder="가입자 이름을 입력하세요.">
+                <input name="memberName" id="memberName" type="text" maxlength="10" placeholder="가입자 이름을 입력하세요.">
               </td>
             </tr>
             <tr>
               <td>휴대폰</td>
               <td>
-                <input name="memberPhone" id="memberPhone" type="text" placeholder="휴대폰번호 “-” 제외 후 입력하세요.">
+                <input name="memberPhone" id="memberPhone" type="text" maxlength="14" placeholder="휴대폰번호 “-” 제외 후 입력하세요.">
               </td>
             </tr>
           </table>
@@ -439,5 +467,3 @@
   </div>
   </form>
 </body>
-
-</html>

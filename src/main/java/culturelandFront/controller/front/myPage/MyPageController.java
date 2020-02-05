@@ -1,4 +1,9 @@
 package culturelandFront.controller.front.myPage;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,29 +22,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import culturelandFront.core.abstr.NdnAbstractController;
 import culturelandFront.core.helper.ListHelper;
 import culturelandFront.core.security.sha256.sha256;
 import culturelandFront.core.util.PropUtil;
 import culturelandFront.service.AccountService;
 import culturelandFront.service.BoardService;
-import culturelandFront.service.FileMngService;
 import culturelandFront.service.MemberService;
 import culturelandFront.service.PurchaseService;
 import culturelandFront.service.StatisticsService;
 import culturelandFront.vo.UserVO;
-import egovframework.rte.fdl.idgnr.EgovIdGnrService;
 
 @Controller
-@RequestMapping("/front/myPage")
+@RequestMapping({"/front/myPage", "/m/myPage"})
 public class MyPageController extends NdnAbstractController{
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-	
 	@Resource
 	private MemberService memberService;
-	
 	
 	@Resource
 	private AccountService accountService;
@@ -52,13 +56,6 @@ public class MyPageController extends NdnAbstractController{
 	
 	@Resource
 	private BoardService boardService;
-	
-	@Resource
-	private FileMngService fileMngService;
-	
-	/** fileGnrService */
-    @Resource(name="fileGnrService")
-    private EgovIdGnrService fileGnrService;
 	
 	private List codelist;     
     
@@ -79,11 +76,9 @@ public class MyPageController extends NdnAbstractController{
     
     /**매입신청내역*/
     
-	@RequestMapping({"/purchaseList.do", "/m/purchaseList.do"})
+	@RequestMapping("/purchaseList.do")
 	public String purchaseList(
-			HttpSession session,
 			HttpServletRequest request,
-			HttpServletResponse response,
 			@RequestParam Map param ,
 			Model model,
 			Device device
@@ -97,8 +92,9 @@ public class MyPageController extends NdnAbstractController{
 		listHelper = purchaseService.getSelectPurchaseList(listHelper);
 		
 		model.addAttribute("listHelper", listHelper);
-		
-		if(device.isMobile()){	//모바일에서 접속 시
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "41");
+		if(device.isMobile()){
 			return "/mobile/myPage/purchaseList";
 		}else{
 			return "/front/myPage/purchaseList";
@@ -107,11 +103,9 @@ public class MyPageController extends NdnAbstractController{
     
     /**매입신청내역상세*/
     
-	@RequestMapping({"/purchaseDetail.do", "/m/purchaseDetail.do"})
+	@RequestMapping("/purchaseDetail.do")
 	public String purchaseDetail(
-			HttpSession session,
 			HttpServletRequest request,
-			HttpServletResponse response,
 			@RequestParam Map param ,
 			Model model,
 			Device device
@@ -126,7 +120,7 @@ public class MyPageController extends NdnAbstractController{
 		
 		model.addAttribute("listHelper", listHelper);
 		
-		if(device.isMobile()){	//모바일에서 접속 시
+		if(device.isMobile()){
 			return "/mobile/myPage/purchaseDetail";
 		}else{
 			return "/front/myPage/purchaseDetail";
@@ -135,11 +129,9 @@ public class MyPageController extends NdnAbstractController{
     
     /**대용량 매입신청내역*/
     
-	@RequestMapping({"/largePurchaseList.do", "/m/largePurchaseList.do"})
+	@RequestMapping("/largePurchaseList.do")
 	public String largePurchaseList(
-			HttpSession session,
 			HttpServletRequest request,
-			HttpServletResponse response,
 			@RequestParam Map param ,
 			Model model,
 			Device device
@@ -153,8 +145,9 @@ public class MyPageController extends NdnAbstractController{
 		listHelper = purchaseService.getSelectLargePurchaseList(listHelper);
 		
 		model.addAttribute("listHelper", listHelper);
-		
-		if(device.isMobile()){	//모바일에서 접속 시
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "42");
+		if(device.isMobile()){
 			return "/mobile/myPage/largePurchaseList";
 		}else{
 			return "/front/myPage/largePurchaseList";
@@ -163,11 +156,9 @@ public class MyPageController extends NdnAbstractController{
     
     /**대용량 매입신청내역상세*/
     
-	@RequestMapping({"/largePurchaseDetail.do", "/m/largePurchaseDetail.do"})
+	@RequestMapping("/largePurchaseDetail.do")
 	public String largePurchaseDetail(
-			HttpSession session,
 			HttpServletRequest request,
-			HttpServletResponse response,
 			@RequestParam Map param ,
 			Model model,
 			Device device
@@ -181,8 +172,9 @@ public class MyPageController extends NdnAbstractController{
 		listHelper = purchaseService.getSelectLargePurchaseDetailList(listHelper);
 		
 		model.addAttribute("listHelper", listHelper);
-		
-		if(device.isMobile()){	//모바일에서 접속 시
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "42");
+		if(device.isMobile()){
 			return "/mobile/myPage/largePurchaseDetail";
 		}else{
 			return "/front/myPage/largePurchaseDetail";
@@ -193,9 +185,7 @@ public class MyPageController extends NdnAbstractController{
     
 	@RequestMapping("/question.do")
 	public String questionList(
-			HttpSession session,
 			HttpServletRequest request,
-			HttpServletResponse response,
 			@RequestParam Map param ,
 			Model model,
 			Device device
@@ -206,10 +196,10 @@ public class MyPageController extends NdnAbstractController{
 		listHelper = boardService.getSelectInquiryBoardList(listHelper);
 		
 		model.addAttribute("listHelper", listHelper);
-		model.addAttribute("menu_id", "02");
-		model.addAttribute("sub_menu_id", "11");
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "43");
 
-		if(device.isMobile()){	//모바일에서 접속 시
+		if(device.isMobile()){
 			return "/mobile/myPage/question";
 		}else{
 			return "/front/myPage/question";
@@ -227,15 +217,29 @@ public class MyPageController extends NdnAbstractController{
 	public String account(
 			HttpSession session,
 			@RequestParam Map param ,
-			Model model
+			Model model,
+			Device device
 			) {
+		UserVO user = (UserVO)session.getAttribute(PropUtil.get("session.user"));
 		
 		Map paramMap = new HashMap();
 		paramMap.put("gubun" , "BANK");
 		codelist = statisticsService.selectCodeList(paramMap);
 		model.addAttribute("bankList", codelist);
-				
-		return "/front/myPage/account";
+		
+		if(user != null){
+			logger.debug("user"+user);
+			param.put("memberNo", user.getMemberNo());
+			HashMap detail = (HashMap)accountService.getSelectAccountDetail(param);
+			model.addAttribute("detail", detail);
+		}		
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "44");		
+		if(device.isMobile()){
+			return "/mobile/myPage/account";
+		}else{
+			return "/front/myPage/account";
+		}
 	}
 	
 	/**
@@ -254,7 +258,8 @@ public class MyPageController extends NdnAbstractController{
 			HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestParam Map param ,
-			Model model
+			Model model,
+			Device device
 			) {
 		
 		//param.put("largeYn", "Y");
@@ -263,10 +268,13 @@ public class MyPageController extends NdnAbstractController{
 		//listHelper = purchaseService.getSelectPurchaseList(listHelper);
 		
 		//model.addAttribute("listHelper", listHelper);
-		model.addAttribute("menu_id", "03");
-		model.addAttribute("sub_menu_id", "12");
-		
-		return "/front/myPage/limit";
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "45");
+		if(device.isMobile()){
+			return "/mobile/myPage/limit";
+		}else{
+			return "/front/myPage/limit";
+		}
 	}	
 	
 	/**개인정보수정 페이지*/
@@ -276,19 +284,21 @@ public class MyPageController extends NdnAbstractController{
 			HttpServletRequest request,
 			HttpServletResponse response,
 			@RequestParam Map param ,
-			Model model
+			Model model,
+			Device device
 			) {
 		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
-		System.out.println(user.getMemberNo());
 		param.put("memberNo", user.getMemberNo());
 		Map memberInfo = (Map) memberService.selectMemberInfo(param);
 		
-		System.out.println("개인정보"+memberInfo);
-		
-		
 		model.addAttribute("memberInfo", memberInfo);
-	
-		return "/front/myPage/myInfo";
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "46");		
+		if(device.isMobile()){
+			return "/mobile/myPage/myInfo";
+		}else{
+			return "/front/myPage/myInfo";
+		}
 	}	
 	
 	/**
@@ -335,6 +345,114 @@ public class MyPageController extends NdnAbstractController{
 		
 		return obj.toString();
 	}
+	
+	/**
+	 * 정보수정 번호인증
+	 */
+	
+	@RequestMapping("/requestValid.json")
+	@ResponseBody
+	public String phoneVal(
+			HttpSession session,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			@RequestParam Map param ,
+			Model model
+			) throws Exception {
+		
+		JSONObject obj = new JSONObject();
+		
+		int result = 0;
+		
+		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+		Map memberInfo = (Map) memberService.selectMemberInfo(param);
+		param.put("memberName", memberInfo.get("MEMBER_NAME"));
+		param.put("memberPhone", memberInfo.get("MEMBER_PHONE"));
+		
+		result = memberService.findIdCount(param);
+		
+		if(result < 0){
+			obj.put("result", "success");
+		}else{
+			obj.put("result", "error");
+		}
+		
+		
+		return obj.toString();
+	}
+
+	
+	/**
+	 * 
+	 * 개인정보페이지 핸드폰번호 인증
+	 * 
+	 * 
+	 * */
+
+	@RequestMapping(value ={"/phoneValid.json","/m/phoneValid.json"})
+	@ResponseBody
+	public String phoneValid	(
+			HttpServletRequest request
+			, Model model
+			, @RequestParam Map param) {
+
+		ObjectMapper mapper = new ObjectMapper();
+		JSONObject obj = new JSONObject();
+		int result = 0;
+		Map resultMap = new HashMap();
+		int updatemember;
+		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+		/*param.put("memberPhone", user.getCellphone());*/
+		param.put("memberName", user.getName());
+	/*	Map memberInfo = (Map) memberService.selectMemberInfo(param);
+		param.put("memberPhone", memberInfo.get("MEMBER_PHONE"));
+		param.put("memberName", memberInfo.get("MEMBER_NAME"));
+	*/	
+		System.out.println("일빠"+param);
+		
+		try {
+		    String apiURL = "https://auth.logintalk.io/exchange?token="+param.get("token");
+		      URL url = new URL(apiURL);
+		      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		      con.setRequestMethod("GET");
+		      int responseCode = con.getResponseCode();
+		      BufferedReader br;
+		      System.out.print("responseCode="+responseCode);
+		      if(responseCode==200) {
+		        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		        //result = memberService.insertMember(param);
+		        System.out.println("성공");
+		      } else {
+		        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+		        System.out.println("실패");
+		      }
+		      
+		      String inputLine;
+		      StringBuffer res = new StringBuffer();
+		      while ((inputLine = br.readLine()) != null) {
+		    	System.out.println("inputLine : " + inputLine);
+		        res.append(inputLine);
+		    
+		      }
+		      br.close();
+		      resultMap = mapper.readValue(res.toString(), new TypeReference<Map>(){});
+		      System.out.println("맵맵맵"+resultMap);
+		      if(responseCode==200) {
+	    			updatemember= memberService.updateMemberPhone(param);
+					System.out.println("아이디 :  "+ param.toString());
+	    			//System.out.println("아이디 22:  " +idList);
+					obj.put("result",true);
+		      }else{
+		    	  obj.put("result",false);
+		      }
+	    }catch (Exception e) {
+	      System.out.println(e);
+	    }
+		
+		return  obj.toString();
+	}	
 
 	
 	/**
@@ -347,7 +465,7 @@ public class MyPageController extends NdnAbstractController{
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/resetPassword.json")
+	@RequestMapping("/user_info_update.json")
 	@ResponseBody
 	public String resetPassword(
 			HttpSession session,
@@ -359,14 +477,20 @@ public class MyPageController extends NdnAbstractController{
 		
 		JSONObject obj = new JSONObject();
 		
+		System.out.println("info update : " + param.toString());
+		
 		int result = 0;
 		
-		result = memberService.resetPassword(param);
+		result = memberService.updateMemberInfo(param);
+		
+		if("Y".equals(param.get("gubun"))){
+			result = memberService.resetPassword(param);
+		}
 		
 		if(result > 0){
-			obj.put("success", true);
+			obj.put("result", true);
 		}else{
-			obj.put("success", false);
+			obj.put("result", false);
 		}
 		
 		

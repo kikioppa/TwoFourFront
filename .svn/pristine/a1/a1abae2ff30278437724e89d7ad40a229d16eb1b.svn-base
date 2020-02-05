@@ -1,0 +1,11 @@
+.container{
+  min-height: 100%;
+  margin-top: $nav-header-height;
+  background-color: $default-bg-gray;
+  &.wedge {
+    margin-top: calc(#{$nav-header-height} + #{$nav-quickmenu-height});
+  }
+  section{
+    background-color: #ffffff;;
+  }
+}
