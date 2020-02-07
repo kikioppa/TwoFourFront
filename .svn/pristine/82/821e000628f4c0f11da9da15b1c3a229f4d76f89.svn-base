@@ -150,7 +150,7 @@ public class UserController extends NdnAbstractController{
 	 * 
 	 * 
 	 * */
-	@RequestMapping(value={"/foundid.do"})
+	@RequestMapping(value={"/foundid.do","/m/foundid.do"})
 	public String tes3	(
 			HttpServletRequest request
 			, Model model

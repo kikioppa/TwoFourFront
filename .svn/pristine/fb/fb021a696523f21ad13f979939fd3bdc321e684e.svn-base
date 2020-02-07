@@ -115,24 +115,14 @@ function check2() {
 function check(e) {
   var dama = e.childNodes[0];
   var target = $(e).prop('for');
-  var agent = navigator.userAgent.toLowerCase();
   
-  if(agent.indexOf("chrome") != -1){
-	  if (dama.src.match("ck-icon2") || dama.src.match("ck-icon2") == 'ck-icon2' || dama.src.indexOf("ck-icon2") > 0 ) {
-	    dama.src = "../../images/front/ck-icon.png";
-	  } else {
-	    dama.src = "../../images/front/ck-icon2.png";
-	  }
-  }else{
-	  if (dama.src.match("ck-icon2") || dama.src.match("ck-icon2") == 'ck-icon2' || dama.src.indexOf("ck-icon2") > 0 ) {
-	    dama.src = "../../images/front/ck-icon.png";
-	    $('input#'+target).prop('checked',true);
-	  } else {
-	    dama.src = "../../images/front/ck-icon2.png";
-	    $('input#'+target).prop('checked',false);
-	  }
+  if (dama.src.match("ck-icon2")) {
+    dama.src = "../../images/front/ck-icon.png";
+    $('input#'+target).prop('checked',true);
+  } else {
+    dama.src = "../../images/front/ck-icon2.png";
+    $('input#'+target).prop('checked',false);
   }
- 
   console.log($('input#'+target).prop('checked'));
 };
 

@@ -286,7 +286,7 @@
         <p>이용약관및<br>개인정보처리방침</p>
         <ul>
           <li>
-            <input type="checkbox" id="checkbox" name="checkbox" value ="true">
+            <input type="checkbox" id="checkbox" name="checkbox">
             <label for="checkbox" onclick="check(this)"><img src="${web_server_url}/images/front/ck-icon2.png" alt="빈체크 이미지"></label> 만 14세 이상입니다.
           </li>
           <li>

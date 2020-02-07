@@ -18,9 +18,11 @@
 					},
 					success : function(data) {
 						if (data.result == 'success'){
+							console.log("냥냥");
 							fn_resetPw();
 						<!--	window.location.reload(); -->
 						}else if(data.result == 'idError'){
+							colsole.log("멍멍");
 							alert('일치하는 정보가 없습니다.');
 							
 							return ;

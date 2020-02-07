@@ -21,7 +21,7 @@
  	
  	<select id="selectIndexPurchaseList" parameterType="hashmap" resultType="hashmap">
 		SELECT DISTINCT 
-			TOP 7 
+			TOP 15
 			A.SEQ 
 			,RIGHT(CONVERT(CHAR(8), A.CREATION_DATE, 2), 5) AS date
 			,C.MEMBER_NAME AS name

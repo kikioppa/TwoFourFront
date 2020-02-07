@@ -179,7 +179,9 @@
 	 		   A.INQUIRY_CONTENTS, 
 	 		   A.ANSWER_CONTENTS, 
 	 		   A.creation_user, 
-	 		   A.creation_date, 
+			   <if test="no_date == null">
+	 		   	  A.creation_date, 
+			   </if>
 			   B.CATE_NAME 
 		FROM CO_FAQNotice A 
 		LEFT OUTER JOIN CO_FAQCategory B ON B.SEQ = A.CATE_SEQ

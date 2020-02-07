@@ -37,7 +37,7 @@
           controls: false,
           pager: false,
           moveSlides: 1,
-          speed: 100,
+          speed: 500,
           wrapperClass: 'speed',
           autoDirection: 'next'          
         });

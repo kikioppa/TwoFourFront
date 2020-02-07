@@ -49,8 +49,10 @@
 			var id =  $("#memberId").val();
 			var phone = $("#memberPhone").val();
 			var name = $("#memeberName").val();
-			var pw = $("#newMemberPw").val();
-			var pw2 = $("#newMemberPw2").val();
+			var pw = $("#memberPw").val();
+			var pw2 = $("#memberPw2").val();
+			var mailYn=$("#mailYn").val();
+			var smsYn=$("#smsYn").val();
 			var check = $("input:checkbox[id='checkbox']").is(":checked");
 			var check1 = $("input:checkbox[id='checkbox1']").is(":checked");
 			var check2 = $("input:checkbox[id='checkbox2']").is(":checked");
@@ -74,9 +76,9 @@
 				returnStr = false;
 			}
 		
-			if(  returnStr  &&  trimNvl( $("#newMemberPw").val() )){
+			if(  returnStr  &&  trimNvl( $("#memberPw").val() )){
 				alert('패스워드를 입력해 주십시요.');
-				$('#newMemberPw').focus();
+				$('#memberPw').focus();
 				returnStr = false;
 			}
 // 			if(!getPw.test(pw) && returnStr){
@@ -86,18 +88,18 @@
 // 			}
 			if (pw.length < 6 || pw.length > 12 && returnStr ) {
 				alert("6 ~ 12자리 이내로 입력해주세요.");
-				$('#newMemberPw').focus();
+				$('#memberPw').focus();
 				returnStr = false;
 			}
 			if( ((num < 0 && eng < 0) || (eng < 0 && spe < 0) || (spe < 0 && num < 0)) && returnStr ){
 				alert("영문,숫자,특수문자 중 2가지 이상을 혼합하여 입력해주세요.");
-				$('#newMemberPw').focus();
+				$('#memberPw').focus();
 				returnStr = false;				
 			}
 
 			if( (pw!==pw2) && returnStr){
 				alert('비밀번호가 일치하지 않습니다.');
-				$('#newMemberPw').focus();
+				$('#memberPw2').focus();
 				returnStr = false;
 			}
 			
@@ -120,7 +122,6 @@
 			}
 			
 			if(!check && returnStr ){
-				console.log('check : ' + check);
 				alert('14세  미만은 가입이 불가합니다.');
 				returnStr =false;
 			}
@@ -141,14 +142,14 @@
 				$("#mailYn").val("N");
 			}
 	
-			if($("input:checkbox[id='smsCheckYn']").is(":checked")){
+			if($("input:checkbox[id='smsYn']").is(":checked")){
 				$("#smsYn").val("Y");
 			}else{
 				$("#smsYn").val("N");
 			}
 	
 			if(returnStr){
-				$("#memberPw").val(CryptoJS.SHA256(pwEncode($('#memberId').val(), $('#newMemberPw').val())).toString());	
+				$("#memberPw").val(CryptoJS.SHA256(pwEncode($('#memberId').val(), $('#memberPw').val())).toString());	
 			}
 			return returnStr;
 				
@@ -189,7 +190,7 @@
 						$('#ajax_load_indicator').show();
 					},
 					success : function(data) {
-// 						console.log("데이타"+data.result);
+						console.log("데이타"+data.result);
 						if (data.result == 'success'){
 							alert('회원가입이 성공했습니다.');
 							$("#frm").attr('action', '/index.do');
@@ -223,7 +224,6 @@
   	  	<input type="hidden" name="smsYn" id="smsYn" value="" />
   		<input type="hidden" name="memberStat" id="memberStat" value="A" />
   		<input type="hidden" name="token" id="token" value="" />
-  		<input type="hidden" name="memberPw" id="memberPw" value="" />
 		<!-- <input type="text" name="tel" id="tel" value="01044951809" /> -->
 		
   	  
@@ -258,13 +258,12 @@
             <tr>
               <td>비밀번호</td>
               <td>
-                <input id="newMemberPw" name="newMemberPw" type="password" maxlength="12" placeholder="비밀번호를 입력하세요.">
+                <input id="memberPw" name="memberPw" type="password" maxlength="12" placeholder="비밀번호를 입력하세요.">
               </td>
-              
             </tr>
             <tr>
               <td>비밀번호 확인</td>
-              <td><input id="newMemberPw2" name="newMemberPw2" type="password" maxlength="12" placeholder="비밀번호 확인합니다.">
+              <td><input id="memberPw2" name="memberPw2" type="password" maxlength="12" placeholder="비밀번호 확인합니다.">
                 <p>*비밀번호는 영문/숫자/특수문자 2가지 이상 조합해서 최소 6자~12자</p>
               </td>
             </tr>
@@ -286,7 +285,7 @@
         <p>이용약관및<br>개인정보처리방침</p>
         <ul>
           <li>
-            <input type="checkbox" id="checkbox" name="checkbox" value ="true">
+            <input type="checkbox" id="checkbox">
             <label for="checkbox" onclick="check(this)"><img src="${web_server_url}/images/front/ck-icon2.png" alt="빈체크 이미지"></label> 만 14세 이상입니다.
           </li>
           <li>
@@ -297,7 +296,7 @@
               <div class="popup">
                 <div class="pop_title">
                   이용약관
-                  <button type="button" onclick="close1('popup','popback')">X</button>
+                  <button href="javascript:;" type="button" onclick="close1('popup','popback')">X</button>
                 </div>
                 <div class="pop_text">
                   제1조(목적)<br> 이 약관은 (주)피니(이하 "회사"라 함)이 운영하는 인터넷사이트(이하 "사이트"라 함)를 통하여 제공하는 전자상거래 서비스(이하 "서비스"라 함)와 관련하여 "회사"와 "회원"(제2조에 정합니다)의 권리와 의무, 책임사항 및 "회원"의 "서비스" 이용절차에 관한 사항을 규정함을 목적으로 합니다. 이 약관은 PC 통신, 스마트폰(안드로이드폰, 아이폰 등) 앱, 무선 등을 이용하는 전자상거래에
@@ -456,8 +455,8 @@
             <input type="checkbox" name="mailCheckYn" id="mailCheckYn">
             <label for="mailCheckYn" onclick="check(this)"><img src="${web_server_url}/images/front/ck-icon2.png" alt="빈체크 이미지"></label> 이메일 마케팅 수신동의</li>
           <li>
-            <input type="checkbox" name="smsCheckYn" id="smsCheckYn">
-            <label for="smsCheckYn" onclick="check(this)"><img src="${web_server_url}/images/front/ck-icon2.png" alt="빈체크 이미지"></label> SMS 마케팅 수신동의</li>
+            <input type="checkbox" name="smsYn" id="smsYn">
+            <label for="smsYn" onclick="check(this)"><img src="${web_server_url}/images/front/ck-icon2.png" alt="빈체크 이미지"></label> SMS 마케팅 수신동의</li>
         </ul>
       </div>
       <div class="join-btn">

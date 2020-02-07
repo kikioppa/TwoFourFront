@@ -69,11 +69,11 @@
 		returnStr = false;
   		}
 	
-	 if(!getPhone.test(phone) && returnStr){
+	/* if(!getPhone.test(phone) && returnStr){
 		alert('- 제외 후 입력해주세요');
 		$('#memberPhone').focus();
 		returnStr = false;
-	}
+	} */
 	
 	return returnStr;
   	}
@@ -131,6 +131,18 @@
 	}
 		 </script>
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 </head>
 
 <body>
@@ -155,8 +167,8 @@
         <div class="pw-form">
 		<form name="frm" id ="frm" method ="post">
           <input name="memberId" id="memberId" type="text" placeholder="아이디(이메일)">
-          <input name="memberName" id="memberName" type="text" placeholder="가입자 이름">
           <input name="memberPhone" id="memberPhone" type="tel" placeholder="휴대폰 번호“-”제외한 번호입력" class="phone-number-check">
+          <input name="memberName" id="memberName" type="text" placeholder="가입자 이름">
           <input type="hidden" name="token" id="token" value="" />
           <button type="button" class="red-btn" onclick="fn_findPw()">비밀번호 재설정</button>
         </form>
