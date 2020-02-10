@@ -107,7 +107,14 @@
 	 		   A.notice_yn, 
 	 		   A.atch_file_id, 
 	 		   A.creation_user, 
-	 		   A.creation_date,
+				<choose>
+					<when test="no_date == null">
+	 		   			A.creation_date,
+					</when>
+					<otherwise>
+			   			CONVERT(VARCHAR(50),A.creation_date, 23) AS creation_date, 
+					</otherwise>
+				</choose>
 			   B.STRE_FILE_NM 
 		FROM CO_Notice A 
 		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id 
@@ -142,9 +149,17 @@
 	 		   A.seq,
 	 		   A.title, 
 	 		   A.inq_yn, 
-	 		   A.creation_date, 
-	 		   B.contents, 
-	 		   B.creation_date AS answerDate
+				<choose>
+					<when test="no_date == null">
+	 		   			A.creation_date,
+	 		   			B.creation_date AS answerDate, 
+					</when>
+					<otherwise>
+			   			CONVERT(VARCHAR(50),A.creation_date, 23) AS creation_date, 
+	 		   			CONVERT(VARCHAR(50),B.creation_date, 23) AS answerDate, 
+					</otherwise>
+				</choose>
+	 		   B.contents 
 		FROM CO_Inquiry A
 		LEFT OUTER JOIN CO_InquiryAnswer B ON B.INQ_SEQ = A.seq
 		WHERE 1 = 1
@@ -155,6 +170,7 @@
 					B.seq
 				FROM CO_Inquiry B
 				WHERE 1=1 
+				AND B.CREATION_USER = ${memberNo} 
 				ORDER BY B.creation_date DESC
 			)
 		</if>

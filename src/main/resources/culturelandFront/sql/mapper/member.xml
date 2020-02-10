@@ -312,4 +312,11 @@
 		WHERE MEMBER_NO=#{memberNO}
 	</update>
 
+ 	<select id="verifiCheck" parameterType="hashmap" resultType="int">
+	 	SELECT COUNT(MEMBER_NO)
+		FROM CO_Member A
+		WHERE MEMBER_MAIL_ADDR = #{id}
+		AND MEMBER_PASSWORD = #{pw}
+ 	</select>
+ 	
 </mapper>

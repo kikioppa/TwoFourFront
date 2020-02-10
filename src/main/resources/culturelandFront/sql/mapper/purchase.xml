@@ -350,7 +350,15 @@
 			,A.FAIL_REASON
 			,A.CREATION_USER
 			,A.CREATION_DATE
-		FROM CO_BuyDetail A
+		<choose>
+			<when test='largeGubun == "Y"'>
+				FROM CO_LargeBuyDetail A
+			</when>
+			<otherwise>
+				FROM CO_BuyDetail A
+			</otherwise>
+		</choose>	
+		
 		WHERE A.BUY_SEQ = #{buySeq}
 		<if test='largeGubun == "Y"'>
 			AND A.SUCCESS_YN = 'N'
@@ -372,7 +380,14 @@
 				 SUM(A.REQ_MONEY) as total_Req_Money
 				,SUM(A.PURCHASE_MONEY) as total_Pur_Money
 				,COUNT(A.SEQ) as total_Cnt
-			FROM CO_BuyDetail A
+			<choose>
+				<when test='largeGubun == "Y"'>
+					FROM CO_LargeBuyDetail A
+				</when>
+				<otherwise>
+					FROM CO_BuyDetail A
+				</otherwise>
+			</choose>
 			WHERE A.BUY_SEQ = #{buySeq}
 			<if test='largeGubun == "Y"'>
 				AND A.SUCCESS_YN = 'Y'
