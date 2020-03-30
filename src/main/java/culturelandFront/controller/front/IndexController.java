@@ -1,6 +1,8 @@
 package culturelandFront.controller.front;
 
 import java.io.BufferedReader;
+
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -11,8 +13,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONObject;
 import org.springframework.mobile.device.Device;
@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import culturelandFront.controller.front.ksnet.BankingController;
 import culturelandFront.core.abstr.NdnAbstractController;
+import culturelandFront.core.util.NdnUtil;
 import culturelandFront.core.util.PropUtil;
 import culturelandFront.service.BannerService;
 import culturelandFront.service.BoardService;
 import culturelandFront.service.PurchaseService;
-import culturelandFront.service.StatisticsService;
-import culturelandFront.vo.AdminUserVO;
 @Controller
 public class IndexController extends NdnAbstractController {
 	
@@ -40,9 +40,6 @@ public class IndexController extends NdnAbstractController {
 	
 	@Resource
 	private PurchaseService purchaseService;
-	
-	@Resource
-	private StatisticsService statisticsService;
 	
 	/**
 	 * front 메인 
@@ -78,6 +75,8 @@ public class IndexController extends NdnAbstractController {
 		model.addAttribute("faqList", faqList);
 		model.addAttribute("charge", charge);
 		
+		System.out.println("userIp : " + NdnUtil.getRemoteAddr(request));
+		
 		if(device.isMobile()){	//모바일 화면
 			return  "/mobile/index";
 		}else{					//WEB 화면
@@ -90,7 +89,7 @@ public class IndexController extends NdnAbstractController {
 	 * front 메인 
 	 * 
 	 */
-	@RequestMapping( "/test.do")
+/*	@RequestMapping( "/test.do")
 	public String test	(
 						HttpServletRequest request
 						, Model model
@@ -101,7 +100,7 @@ public class IndexController extends NdnAbstractController {
 
 		
 		return  "/front/test";
-	}	
+	}	*/
 	
 	/**
 	 * front 메인 
@@ -174,4 +173,34 @@ public class IndexController extends NdnAbstractController {
 		
 		return obj.toString();
 	}
+	
+	/**
+	 * front_gnb 로고 붙이기
+	 * */
+	@RequestMapping("/tradeRequest.do")
+	@ResponseBody
+	public String tradeRequest(
+			@RequestParam Map param ,
+			Device device
+			) throws Exception{
+		
+		JSONObject obj = new JSONObject();
+		Map dataMap = new HashMap();
+		
+		String ksNetSeq = purchaseService.selectKsNetSeq();
+		purchaseService.updateKsNetSeq();
+		
+		dataMap.put("ksNetSeq", String.valueOf(ksNetSeq));
+		dataMap.put("accountNo", "110420392599");
+		dataMap.put("bankCode", "088");
+		
+		HashMap applyMap = BankingController.transfer(dataMap);
+		
+		purchaseService.insertTradeRequest(applyMap);
+		
+		return obj.toString();
+	}
+	
+
+	
 }

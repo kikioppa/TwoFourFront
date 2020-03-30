@@ -1,0 +1,29 @@
+.select-wrap{
+  position: relative;
+  select{
+    @include border-radius;
+    border: rem(1) solid $default-border-gray;
+    padding: rem(30);
+    width: 100%;
+    font-size: rem(24);
+    background-color: #ffffff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    &::-ms-expand{
+      display: none;
+    }
+  }
+  &:after{
+    content:'';
+    position: absolute;
+    width: rem(23);
+    height: rem(12);
+    background-image: url(../img/ico_select_arrow.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    right: rem(30);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

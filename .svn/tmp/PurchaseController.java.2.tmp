@@ -1,0 +1,1157 @@
+package culturelandFront.controller.front.purchase;
+
+/**
+ * 매입처리관리
+ * */
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.collections4.Put;
+import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.simple.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mobile.device.Device;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.MethodType;
+
+import culturelandFront.controller.front.ksnet.BankingController;
+import culturelandFront.core.abstr.NdnAbstractController;
+import culturelandFront.core.security.seed.SeedED;
+import culturelandFront.core.util.FilesUtil;
+import culturelandFront.core.util.NdnUtil;
+import culturelandFront.core.util.PropUtil;
+import culturelandFront.core.value.JavaScript;
+import culturelandFront.service.AccountService;
+import culturelandFront.service.BoardService;
+import culturelandFront.service.FileMngService;
+import culturelandFront.service.PurchaseService;
+import culturelandFront.service.StatisticsService;
+import culturelandFront.vo.FileVO;
+import culturelandFront.vo.UserVO;
+import egovframework.rte.fdl.idgnr.EgovIdGnrService;
+
+@Controller
+@RequestMapping({ "/purchase", "/m/purchase" })
+public class PurchaseController extends NdnAbstractController {
+
+	private final Logger logger = Logger.getLogger(this.getClass());
+
+	@Resource
+	private PurchaseService purchaseService;
+
+	@Resource
+	private StatisticsService statisticsService;
+	
+	@Resource
+	private AccountService accountService;
+
+	@Resource
+	private BoardService boardService;
+	private List codelist;  
+	@Resource
+	private FileMngService fileMngService;
+
+	/** fileGnrService */
+	@Resource(name = "fileGnrService")
+	private EgovIdGnrService fileGnrService;
+
+	public String appendSpace(String str, int len) {
+		int strLength = str.getBytes().length;
+		String tempStr = str;
+		if (strLength < len) {
+			int endCount = len - strLength;
+
+			for (int i = 0; i < endCount; i++) {
+				str = str + " ";
+			}
+		} else if (strLength > len) {
+			byte[] temp = new byte[len];
+			System.arraycopy(str.getBytes(), 0, temp, 0, len);
+			str = new String(temp);
+		} else {
+		}
+		
+		if(str.length()==0){
+			byte[]temp = new byte[len];
+			System.arraycopy(tempStr.getBytes(), 0, temp, 0, len-1);
+			str= new String(temp);
+		}
+		
+		return str;
+	}
+	/**
+	 * 일반 매입신청 화면
+	 * */
+	@RequestMapping("/apply.do")
+	public String purchaseApply(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response,
+			@RequestParam Map param, Model model, Device device) {
+
+		UserVO user = (UserVO) request.getSession().getAttribute(
+				PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+		/*param.put("accountNo", param.get("accountNo")); */
+		
+	
+		/*param.put("bankName", paramMap.get("bankName"));*/
+		
+		
+		
+		System.out.println("삐뽀"+param);
+		// 계좌인증이 안된 회원
+		if (param.get("ksNetSeq") == null || "".equals(param.get("ksNetSeq"))) {
+			System.out.println("삐삐"+param);
+			JavaScript javaScript = new JavaScript();
+			javaScript.message("상품권 매입 신청은 계좌 인증 후 가능합니다.");
+			if (device.isMobile()) { 
+				javaScript.script("location.href = '/m/purchase/applyAccount.do'");
+			}else{
+				javaScript.script("location.href = '/purchase/applyAccount.do'");
+			}
+			
+
+			return goScript(javaScript);
+		}
+		Map paramMap = new HashMap();
+		paramMap = statisticsService.selectBankName(param);
+		param.put("bankName",paramMap.get("CODE_NAME"));
+		System.out.println("으아"+param.toString());
+		
+		// 수수료 조회
+		double charge = boardService.selectCharge(param);
+		model.addAttribute("charge", charge);
+		model.addAttribute("accountNo", param.get("accountNo"));	
+		model.addAttribute("bankName", param.get("bankName"));
+		if (device.isMobile()) { // 모바일에서 접속 시
+			return "/mobile/purchase/apply";
+		} else {
+			return "/front/purchase/apply";
+		}
+	}
+
+	/**
+	 * 계좌조회
+	 * */
+	@RequestMapping("/applyAccount.do")
+	public String applyAccount(HttpSession session,
+			@RequestParam Map param ,
+			Model model,
+			Device device) {
+
+		UserVO user = (UserVO)session.getAttribute(PropUtil.get("session.user"));
+	/*	if (!"Y".equals(param.get("verifi"))){
+			JavaScript javaScript = new JavaScript();
+			javaScript.script("history.back(-1);");
+			return goScript(javaScript);
+		}
+		
+	*/	Map paramMap = new HashMap();
+		paramMap.put("gubun" , "BANK");
+		codelist = statisticsService.selectCodeList(paramMap);
+		model.addAttribute("bankList", codelist);
+		param.put("memberNo",user.getMemberNo());
+		System.out.println("빠람"+param);
+	//	accountService.insertAccount(param);
+		if(user != null){
+			logger.debug("user"+user);
+			param.put("memberNo", user.getMemberNo());
+			HashMap detail = (HashMap)accountService.getSelectAccountDetail(param);
+			model.addAttribute("detail", detail);
+		}		
+		model.addAttribute("menu_id", "04");
+		model.addAttribute("sub_menu_id", "44");
+		if (device.isMobile()) { // 모바일에서 접속 시
+			return "/mobile/purchase/applyAccount";
+		} else {
+			return "/front/purchase/applyAccount";
+		}
+	}
+	/**
+	 * 핀번호 조회 처리
+	 * */
+	@RequestMapping("/finCodeConFirm.json")
+	@ResponseBody
+	public String finCodeConFirm(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response,
+			@RequestParam Map param, Model model, Device device) {
+
+		JSONObject obj = new JSONObject();
+		int buySeq = 0;
+		 System.out.println("conFirm param : " + param.toString());
+		UserVO user = (UserVO) request.getSession().getAttribute(
+				PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+
+		Map paramMap = new HashMap();
+		paramMap = statisticsService.selectBankName(param);
+		param.put("bankName",paramMap.get("CODE_NAME"));
+		System.out.println("zz"+paramMap.toString());
+		System.out.println("zzz"+param.toString());
+		// 계좌인증이 안된 회원
+	/*	if (accountInfo == null || !"Y".equals(accountInfo.get("CONFIRM_YN"))) {
+			obj.put("result", "acntError");
+			return obj.toString();
+		}*/
+		//HashMap resultMap1 = (HashMap)purchaseService.selectTradeRequestTbl(param);
+		//String resultCode1 = resultMap1.toString();
+	//	param.put("acntNumber", resultMap1.get("ACNT_NUMBER"));
+	//	param.put("bankName", resultMap1.get("BANK_NAME"));
+		param.put("memberNo", user.getMemberNo());
+		param.put("memberName", user.getName());
+	//	param.put("accountNo",param.get("ACNT_NUMBER"));
+		// 입금여부(N으로 초기값을 맞춘 이유는 상품권코드 특성 상 코드 확인 즉시 더이상 상품권코드를 입력 할 수 없기 때문에
+		// 매입요청을 완료 시 Y로 수정하기 위해서 이다)
+		// 상품권 코드만 입력하고 화면 종료 시 입금이 안되고 상품권은 더이상 입력이 안되기 때문에 우선 N처리를 한다. 추후 N처리
+		// 인것들에 대해서 사용자에게 알림이 필요해 보임
+		param.put("depositYn", "N");
+		// 매입 신청 등록
+		String ksNetSeq = purchaseService.selectKsNetSeq();
+		param.put("ksNetSeq", ksNetSeq);
+		
+		
+		//System.out.println("코드"+resultCode1);
+		
+		System.out.println("데이타"+param);
+		param.put("accountNo", SeedED.encoding(param.get("accountNo").toString()));
+		
+		purchaseService.insertBuy(param);
+		buySeq = (int) param.get("buySeq");
+
+		obj.put("buySeq", buySeq);
+		obj.put("bankName",param.get("bankName"));
+		// System.out.println("buySeq : " + buySeq);
+
+		// 수수료 조회
+		double charge = boardService.selectCharge(param);
+		// System.out.println("charge : " + charge);
+
+		String[] codeArr = param.get("finCodeArr").toString().split("\\|");
+
+		List<HashMap<String, Object>> finList = new ArrayList<HashMap<String, Object>>();
+
+		for (int i = 0; i < codeArr.length; i++) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			HashMap<String, Object> resultMap = new HashMap<String, Object>(); // 인증
+																				// 결과를
+																				// 담을
+																			// Map
+			String checkCode = ""; // 사용자에게 받은 코드
+			String failText = ""; // 실패시 실패이유
+			String successYn = "Y"; // 인증 성공여부 (Y : 성공, N : 실패)
+			String reqMoney = "0";
+
+			// 온라인 문화상품권의 경우 18자리이고, 모바일 문화상품권의 경우 16자리이다.
+			// 다만 인증할수 있는 핀코드는 16자리이기 때문에 온라인 문화상품권의 코드 맨 앞자리 2개를 자르고 인증을 해야 한다.
+			if ("W".equals(param.get("giftGubun").toString())) {
+				checkCode = codeArr[i].replaceAll("-", "").substring(2);
+			} else {
+				checkCode = codeArr[i].replaceAll("-", "");
+			}
+
+			resultMap = finCodeCheck(checkCode); // finCode 인증 777
+			String resultCode = resultMap.get("resultCode").toString();
+			String returnMsg = resultMap.get("returnMsg").toString();
+			// System.out.println("return returnMsg : " + returnMsg);
+			// 0000은 정상처리 되었기 때문에 실패이유를 조회하지 않는다.
+			if (!"0000".equals(resultCode)) {
+				failText = failCodeStr(resultCode);
+				successYn = "N";
+				map.put("purchaseMoney", "0");
+			} else {
+				double purMoney = 0;
+
+				// 성공했을 경우에만 핀코드의 금액을 반환해주며 결과 메세지의 뒤에서 9번쨰자리까지 반환한다.
+				reqMoney = NdnUtil.StrNum(returnMsg.substring(
+						returnMsg.length() - 9, returnMsg.length()));
+				purMoney = Integer.parseInt(reqMoney)
+						- (Integer.parseInt(reqMoney) * 0.01 * charge);
+
+				map.put("purchaseMoney", purMoney);
+			}
+
+			// System.out.println("reqMoney : " + reqMoney);
+			map.put("buySeq", buySeq);
+			map.put("finNumber", codeArr[i]);
+			map.put("reqMoney", reqMoney);
+			map.put("successYn", successYn);
+			map.put("failCode", resultCode);
+			map.put("failReason", failText);
+			map.put("memberNo", user.getMemberNo());
+			map.put("giftGubun", param.get("giftGubun"));
+			map.put("bankName",param.get("bankName"));
+			finList.add(map);
+		}
+
+		for (int i = 0; i < finList.size(); i++) {
+			HashMap map = new HashMap();
+			map = (HashMap) finList.get(i);
+			System.out.println("맵이이이" + map.toString());
+
+			// 매입 상세 등록하기
+			purchaseService.insertBuyDetail(map);
+		}
+		
+		obj.put("result", "success");
+		return obj.toString();
+	}
+	
+	/**
+	 * 핀번호 조회 결과 화면
+	 * */
+	@RequestMapping("/confirm.do")
+	public String purConfirm(HttpSession session, HttpServletRequest request,
+			HttpServletResponse response, @RequestParam Map param, Model model,
+			Device device) {
+
+		UserVO user = (UserVO) request.getSession().getAttribute(
+				PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+
+		System.out.println("컨펌 파람 : " + param.toString());
+		// 매입 신청한 핀코드 인증 목록
+		List purList = purchaseService.getSelectPurchaseBuyList(param);
+		
+		param.put("purList",purList);
+		
+		// 매입 신청한 핀코드 인증 결과
+		HashMap buyResult = (HashMap) purchaseService
+				.getSelectPurchaseBuyResult(param);
+
+		// 수수료 조회
+		double charge = boardService.selectCharge(param);
+		model.addAttribute("charge", charge);
+		model.addAttribute("purList", purList);
+		model.addAttribute("buyResult", buyResult);
+		model.addAttribute("finCodeArr", param.get("finCodeArr"));	
+		model.addAttribute("buySeq", param.get("buySeq"));
+		model.addAttribute("menu_id", "02");
+		model.addAttribute("sub_menu_id", "21");
+		
+		if (device.isMobile()) { // 모바일에서 접속 시
+			return "/mobile/purchase/confirm";
+		} else {
+			return "/front/purchase/confirm";
+		}
+	}
+
+	/**
+	 * 로그인요청 (to get hashNumber)
+	 * @param userNo
+	 * @returns
+	 */
+	public HashMap<String, Object> finHashCheck(int userNo) {
+		//resultMap =finCodeCheck(code);
+		String socketIp = PropUtil.get("fincode.check.ip");
+		String str = Integer.toString(userNo);
+		int length = str.getBytes().length;
+		int length2 = socketIp.getBytes().length;
+		String MemberID = appendSpace(str, 20);
+		String HeadNo = "8310";
+		String MessageLength = "0442";
+		String MemberCode = "A009555     ";
+		String SubMemberCode = "cult                ";
+		String RequestDate = NdnUtil.getTimeStampString("yyyyMMdd"); // 전송날짜 :
+		String UserIP =	appendSpace(socketIp,15);						//"127.0.0.1      ";																// 년월일
+		String RequestTime = NdnUtil.getTimeStampString("HHmmss"); // 전송시간 : 시분초
+		String UserID = "lsi135790606";
+		String UserPW = "2e483fa0d9a00dfc3d8f6806d7851d77                  ";
+		String gap = "                                                                                                                                                                                                                                                                                                                                             ";
+		String resultCode = "";
+		String hashCode ="";
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		String codeCheckData = HeadNo + MessageLength + MemberCode
+				+ UserID + UserPW + UserIP + MemberID + gap;
+		System.out.println("socketIp : " + socketIp);
+		resultMap.put("hashCode",hashCode);
+		try {
+			// 서버 접속
+			Socket socket = new Socket(socketIp, 5984);
+
+			// Server에 보낼 데이터
+			BufferedWriter bufWriter = new BufferedWriter(
+					new OutputStreamWriter(socket.getOutputStream()));
+
+			// 전문 ID submember 가맹점 요청일자 회원 id 등등등 추적넘버 해시넘버 // 210000부터 상품권코드
+			bufWriter.write(codeCheckData);
+			// bufWriter.newLine();
+			bufWriter.flush();
+
+			// Server가 보낸 데이터 출력
+			BufferedReader bufReader = new BufferedReader(
+					new InputStreamReader(socket.getInputStream(), "euc-kr"));
+
+			String message = bufReader.readLine();
+			resultCode = message.substring(53, 78);
+			System.out.println("Message : " + resultCode);
+			hashCode = message.substring(53,78);
+			System.out.println("HashCode :" + hashCode);
+			resultMap.put("resultCode", resultCode);
+			resultMap.put("returnMsg", message.replaceAll(" ", ""));
+
+			System.out.println("Message : " + message);
+			socket.close();
+			bufReader.close();
+			bufWriter.close();
+
+		}
+
+		catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+		return resultMap;
+	}
+	
+	
+	
+	/**
+	 * 충전요청
+	 */
+	public HashMap<String, Object> finCodeRequest(String code, String hashNumber) {
+		String socketIp = PropUtil.get("fincode.check.ip");
+		String finCode = code;
+		String HeadNo = "9110";
+		String MessageLength = "0442";
+		String MemberCode = "A009555     ";
+		String SubMemberCode = "cult                ";
+	    String TransNo = NdnUtil.getTimeStampString("yyyyMMddHHmm"); //추적시간 :
+		// 현재날짜시간으로 설정함
+		String SendDate = NdnUtil.getTimeStampString("yyyyMMdd"); // 전송날짜 :
+		String SendTime = NdnUtil.getTimeStampString("HHmmss"); // 전송시간 : 시분초
+	    String UserId = "lsi135790606        ";
+		String CustId = "95413062    ";
+		String HashNo = hashNumber;			
+		String gap ="                                                                                                                                                                                                                                                                                                                       ";
+		String resultCode = "";
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		String codeCheckData = HeadNo + MessageLength + MemberCode
+				+ SubMemberCode + TransNo + SendDate + SendTime + UserId +CustId + HashNo + finCode
+				+ gap;
+		try {
+			// 서버 접속
+			Socket socket = new Socket(socketIp, 5984);
+
+			// Server에 보낼 데이터
+			BufferedWriter bufWriter = new BufferedWriter(
+					new OutputStreamWriter(socket.getOutputStream()));
+
+			// 전문 ID submember 가맹점 요청일자 회원 id 등등등 추적넘버 해시넘버 // 210000부터 상품권코드
+			bufWriter.write(codeCheckData);
+			// bufWriter.newLine();
+			bufWriter.flush();
+
+			// Server가 보낸 데이터 출력
+			BufferedReader bufReader = new BufferedReader(
+					new InputStreamReader(socket.getInputStream(), "euc-kr"));
+
+			String message = bufReader.readLine();
+			resultCode = message.substring(66,70);
+			System.out.println("Message : " + resultCode);
+
+			resultMap.put("resultCode", resultCode);
+			resultMap.put("returnMsg", message.replaceAll(" ", ""));
+
+			System.out.println("Message : " + message);
+			socket.close();
+			bufReader.close();
+			bufWriter.close();
+
+		}
+
+		catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+		return resultMap;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	 * ++++완료 내역
+	 * @throws Exception 
+	 * 
+	 * */
+	@RequestMapping("/complete.json")
+	@ResponseBody
+	public String purchaseComplete(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response,
+			@RequestParam Map param, Model model, Device device) throws Exception {
+		UserVO user = (UserVO) request.getSession().getAttribute(
+				PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+		
+		JSONObject obj = new JSONObject();
+		int result = 0;
+		
+		//핀코드 로그인 (컬쳐랜드에 핀코드 결제시 필요한 해쉬값 조회)
+		HashMap<String, Object> resultMap = finHashCheck(user.getMemberNo()); // finCode 인증
+		
+		//검증된 핀코드 리스트
+		
+		param.put("confirmYn","Y");
+		List purList = purchaseService.getSelectPurchaseBuyList(param);
+		System.out.println("퍼리"+purList);
+		param.put("purList",purList);
+
+		int totalDeposit=0; 
+		
+		
+		for(int i = 0; i < purList.size(); i++){
+			HashMap map = new HashMap();
+			HashMap reqMap = new HashMap();
+			map = (HashMap)purList.get(i);
+			String code = map.get("FIN_NUMBER").toString().replaceAll("-", "");
+			System.out.println("map : " + map.toString());
+			
+			if(code.length() > 16){
+				code = code.substring(2);
+			}
+			System.out.println("code : " + code +      "      resultCode메세지값 : " + resultMap.get("resultCode").toString());
+			
+			// 컬저랜치에 결제요청 
+			reqMap = finCodeRequest(code, resultMap.get("resultCode").toString());
+			
+			//핀번호 요청 성공시 개별로 YN여부  식별
+			if("0000".equals(reqMap.get("resultCode"))){
+				param.put("seq", map.get("SEQ"));
+				purchaseService.updateDeposit(param);
+				//System.out.println("성공");
+				//송금금액 = 송금금액 + 이번 핀번호 금액;
+				totalDeposit = totalDeposit + Integer.parseInt(map.get("PURCHASE_MONEY").toString());
+			}else{
+				System.out.println("실패");
+			}
+		}
+		
+		//수수료를 뺀 전체 금액
+		System.out.println("totalDeposit : " + totalDeposit);
+		
+		//은행으로 송금요청
+		Map dataMap = new HashMap();
+		String ksNetSeq = purchaseService.selectKsNetSeq();
+		purchaseService.updateKsNetSeq();
+		
+		dataMap.put("ksNetSeq", String.valueOf(ksNetSeq));
+		dataMap.put("accountNo",param.get("accountNo"));
+		dataMap.put("bankCode", param.get("bankCode"));
+		dataMap.put("bankName", param.get("bankName"));
+		dataMap.put("totalDeposit", totalDeposit);
+		
+		HashMap applyMap = BankingController.transfer(dataMap);
+		System.out.println("나이"+dataMap.toString());
+		//DB insert를 통한 송금요청
+		result = purchaseService.insertTradeRequest(applyMap);
+		
+		obj.put("applyMap", applyMap);
+		
+		if(result > 0){
+			obj.put("result", true);
+		}else{
+			obj.put("result", false);
+		}
+		
+		return obj.toString();
+		
+	}
+
+	
+	/**
+	 * 
+	 * @throws 입금여부 확인
+	 * 
+	 * */
+	@RequestMapping("/confirmDeposit.json")
+	@ResponseBody
+	public String confirmDepositJson(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response,
+			@RequestParam Map param, Model model, Device device) throws Exception {
+		UserVO user = (UserVO) request.getSession().getAttribute(
+				PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+		
+		JSONObject obj = new JSONObject();
+		int result = 0;
+		
+		//결제요청에 대한 결과값 조회
+		HashMap resultMap = (HashMap)purchaseService.selectTradeRequestTbl(param);
+
+		
+		//결제요청한 정보에 대한 결과값을 업데이트(입금여부 성공 시 Y로 업데이트)
+		String rcvMsg = resultMap.get("RECV_MSG").toString();
+		
+		//아직 결과값 받아오지 못할 시
+		if(rcvMsg == null){
+			obj.put("result", false);
+			return obj.toString();
+		}
+				
+		//결과 코드 (0000 : 성공)
+		String revcCode = rcvMsg.substring(51,55);
+		
+		System.out.println("revcCode : " + revcCode);
+		
+		
+		obj.put("revcCode", revcCode);
+		obj.put("result", true);
+		
+		return obj.toString();
+	}
+	
+
+	/**
+	 * 입금여부 확인 및 업데이트
+	 * */
+	@RequestMapping("/confirmDeposit.do")
+	public String confirmDeposit(HttpSession session, HttpServletRequest request,
+			HttpServletResponse response, @RequestParam Map param, Model model,
+			Device device) {
+
+		String revcCode =  param.get("revcCode").toString();
+		param.put("gubun", "D");
+		param.put("revcCode", revcCode);
+		
+		//입금이 성공되었다면
+		if("0000".equals(revcCode)){
+			// 입금여부완료 수정
+			param.put("depositYn", "Y");
+		}else{
+			param.put("depositYn", "N");
+		}
+		
+		//매입신청 업데이트
+		purchaseService.updateCOBuy(param);
+				
+		//입금성공한 핀코드 목록 조회
+		//COBuyDetail에서 Deposit이 Y인 것들에 대한 입금여부 성공이라고 띄우고 아니면 입금실패(Deposit이 N이면 매입실패(컬쳐랜드에서 실패했기 때문에))
+		//입금여부가 N이라면 입금실패로 표시
+		List purList = purchaseService.getSelectPurchaseBuyList(param);
+		Map buyMap = purchaseService.selectCoBuy(param);
+		//토탈 결과
+		param.put("confirmYn", "N");
+		HashMap buyResult = (HashMap)purchaseService.getSelectPurchaseBuyResult(param);
+		
+		//revcCode가 0000이라면 송금성공 아니면 실패
+		model.addAttribute("revcCode", revcCode);
+		model.addAttribute("purList", purList);
+		model.addAttribute("buyResult", buyResult);
+		model.addAttribute("buyMap", buyMap);
+		
+		//결과화면으로 return
+		if (device.isMobile()) { // 모바일에서 접속 시
+			return "/mobile/purchase/complete";
+		} else {
+			return "/front/purchase/complete";
+		}
+	}
+	
+	
+	
+	/**
+	 * 대용령 매입신청 화면
+	 * */
+	@RequestMapping("/largeApply.do")
+	public String largeApply(HttpSession session, HttpServletRequest request,
+			HttpServletResponse response, @RequestParam Map param, Model model,
+			Device device) {
+		
+		System.out.println("삐뽀 대용량 : "+param);
+		// 계좌인증이 안된 회원
+		if (param.get("ksNetSeq") == null || "".equals(param.get("ksNetSeq"))) {
+			System.out.println("삐삐"+param);
+			JavaScript javaScript = new JavaScript();
+			javaScript.message("상품권 매입 신청은 계좌 인증 후 가능합니다.");
+			javaScript.script("location.href = '/purchase/applyAccount.do'");
+
+			return goScript(javaScript);
+		}
+		Map paramMap = new HashMap();
+		paramMap = statisticsService.selectBankName(param);
+		param.put("bankName",paramMap.get("CODE_NAME"));
+		System.out.println("으아 대용량 : "+param.toString());
+		
+		// 수수료 조회
+		double charge = boardService.selectCharge(param);
+		model.addAttribute("charge", charge);
+		model.addAttribute("accountNo", param.get("accountNo"));	
+		model.addAttribute("bankName", param.get("bankName"));
+		
+		if (device.isMobile()) { // 모바일에서 접속 시
+			return "/mobile/purchase/largeApply";
+		} else {
+			return "/front/purchase/largeApply";
+		}
+	}
+
+	/**
+	 * 대용량 매입신청 프로세스 및 결과 화면
+	 * */
+	@RequestMapping("/largeFinCodeConFirm.json")
+	@ResponseBody
+	public String largeFinCodeConFirm(
+			final MultipartHttpServletRequest multiRequest,
+			HttpSession session, HttpServletRequest request,
+			HttpServletResponse response, @RequestParam Map param, Model model,
+			Device device) {
+
+		JSONObject obj = new JSONObject();
+		int buySeq = 0;
+		String atchFileId = "";
+
+		final Map<String, MultipartFile> files = multiRequest.getFileMap();
+		MultipartFile file1 = (MultipartFile) multiRequest.getFile("file_0");
+
+		try {
+
+			FileVO fvo = new FileVO();
+
+			if (file1 != null && !file1.isEmpty()) {
+				atchFileId = fileGnrService.getNextStringId();
+				param.put("atchFileId", atchFileId);
+
+				fvo = FilesUtil.parseFileInfOne(file1, "PURC_", 0, atchFileId,
+						"purc");
+
+				fileMngService.insertFileInf(fvo);
+			} else {
+				obj.put("result", "fileError");
+				return obj.toString();
+			}
+
+			List finCodeList = new ArrayList();
+
+			// 엑셀파일에 있는 핀코드 추출
+			if (fvo != null) {
+				finCodeList = excelRead(PropUtil.get("image.web.upload.path")
+						+ fvo.getFileStreCours() + fvo.getStreFileNm());
+			}
+
+			for (int i = 0; i < finCodeList.size(); i++) {
+				HashMap map = new HashMap();
+				map = (HashMap) finCodeList.get(i);
+				System.out.println("map : " + map.toString());
+			}
+
+			UserVO user = (UserVO) request.getSession().getAttribute(
+					PropUtil.get("session.user"));
+			param.put("memberNo", user.getMemberNo());
+
+			HashMap accountInfo = (HashMap) accountService
+					.getSelectAccountDetail(param);
+
+			// 계좌인증이 안된 회원
+		/*	if (accountInfo == null
+					|| !"Y".equals(accountInfo.get("CONFIRM_YN"))) {
+				obj.put("result", "acntError");
+				return obj.toString();
+			}*/
+
+			param.put("acntNumber", accountInfo.get("ACNT_NUMBER"));
+			param.put("bankName", accountInfo.get("BANK_NAME"));
+			param.put("memberNo", user.getMemberNo());
+			param.put("memberName", user.getName());
+			// 입금여부(N으로 초기값을 맞춘 이유는 상품권코드 특성 상 코드 확인 즉시 더이상 상품권코드를 입력 할 수 없기 때문에
+			// 매입요청을 완료 시 Y로 수정하기 위해서 이다)
+			// 상품권 코드만 입력하고 화면 종료 시 입금이 안되고 상품권은 더이상 입력이 안되기 때문에 우선 N처리를 한다. 추후
+			// N처리 인것들에 대해서 사용자에게 알림이 필요해 보임
+			param.put("depositYn", "N");
+
+			// 매입 신청 등록
+			purchaseService.insertBuy(param);
+			buySeq = (int) param.get("buySeq");
+
+			obj.put("buySeq", buySeq);
+
+			// 수수료 조회
+			double charge = boardService.selectCharge(param);
+
+			List<HashMap<String, Object>> finList = new ArrayList<HashMap<String, Object>>();
+
+			for (int i = 0; i < finCodeList.size(); i++) {
+				HashMap<String, Object> finMap = new HashMap<String, Object>();
+				HashMap<String, Object> map = new HashMap<String, Object>();
+				HashMap<String, Object> resultMap = new HashMap<String, Object>(); // 인증
+																					// 결과를
+																					// 담을
+																					// Map
+				String checkCode = ""; // 사용자에게 받은 코드
+				String failText = ""; // 실패시 실패이유
+				String successYn = "Y"; // 인증 성공여부 (Y : 성공, N : 실패)
+				String reqMoney = "0";
+				String giftGubun = "";
+
+				finMap = (HashMap<String, Object>) finCodeList.get(i);
+				String excelFinCode = finMap.get("fincode").toString();
+
+				// 온라인 문화상품권의 경우 18자리이고, 모바일 문화상품권의 경우 16자리이다.
+				// 다만 인증할수 있는 핀코드는 16자리이기 때문에 온라인 문화상품권의 코드 맨 앞자리 2개를 자르고 인증을 해야
+				// 한다.
+				if (excelFinCode.length() > 19) {
+					checkCode = excelFinCode.replaceAll("-", "").substring(2);
+					giftGubun = "W";
+				} else {
+					checkCode = excelFinCode.replaceAll("-", "");
+					giftGubun = "M";
+				}
+
+				resultMap = finCodeCheck(checkCode); // finCode 인증
+				String resultCode = resultMap.get("resultCode").toString();
+				String returnMsg = resultMap.get("returnMsg").toString();
+				// System.out.println("return returnMsg : " + returnMsg);
+				// 0000은 정상처리 되었기 때문에 실패이유를 조회하지 않는다.
+				if (!"0000".equals(resultCode)) {
+					failText = failCodeStr(resultCode);
+					successYn = "N";
+					map.put("purchaseMoney", "0");
+				} else {
+					double purMoney = 0;
+
+					// 성공했을 경우에만 핀코드의 금액을 반환해주며 결과 메세지의 뒤에서 9번쨰자리까지 반환한다.
+					reqMoney = NdnUtil.StrNum(returnMsg.substring(
+							returnMsg.length() - 9, returnMsg.length()));
+					purMoney = Integer.parseInt(reqMoney)
+							- (Integer.parseInt(reqMoney) * 0.01 * charge);
+
+					map.put("purchaseMoney", purMoney);
+				}
+
+				// System.out.println("reqMoney : " + reqMoney);
+				map.put("buySeq", buySeq);
+				map.put("finNumber", excelFinCode);
+				map.put("reqMoney", reqMoney);
+				map.put("successYn", successYn);
+				map.put("failCode", resultCode);
+				map.put("failReason", failText);
+				map.put("hashCode",resultMap.get(hashCode()));
+				map.put("memberNo", user.getMemberNo());
+				map.put("giftGubun", giftGubun);
+				finList.add(map);
+				
+				resultMap.put("code",checkCode);
+			}
+
+			for (int i = 0; i < finList.size(); i++) {
+				HashMap map = new HashMap();
+				map = (HashMap) finList.get(i);
+				System.out.println(map.toString());
+
+				// 대량 매입 상세 등록하기
+				purchaseService.insertBuyLargeDetail(map);
+			}
+
+			obj.put("result", "success");
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return obj.toString();
+	}
+
+	/**
+	 * 대용량 매입신청 결과 화면
+	 * */
+	@RequestMapping("/largeComplete.do")
+	public String largeConfirm(HttpSession session, HttpServletRequest request,
+			HttpServletResponse response, @RequestParam Map param, Model model,
+			Device device) {
+
+		UserVO user = (UserVO) request.getSession().getAttribute(
+				PropUtil.get("session.user"));
+		param.put("memberNo", user.getMemberNo());
+
+		// 매입 신청한 회원의 계좌정보
+		HashMap accountInfo = (HashMap) accountService
+				.getSelectAccountDetail(param);
+
+		// System.out.println("param : " + param.toString());
+
+		param.put("largeGubun", "Y");
+
+		// 매입 신청한 핀코드 인증 목록
+		List purList = purchaseService.getSelectPurchaseBuyList(param);
+
+		
+		// 매입 신청한 핀코드 인증 결과
+		HashMap buyResult = (HashMap) purchaseService
+				.getSelectPurchaseBuyResult(param);
+
+		model.addAttribute("purList", purList);
+		model.addAttribute("buyResult", buyResult);
+		model.addAttribute("accountInfo", accountInfo);
+		model.addAttribute("buySeq", param.get("buySeq"));
+		model.addAttribute("deposit",param.get("DEPOSIT"));
+		model.addAttribute("menu_id", "02");
+		model.addAttribute("sub_menu_id", "21");
+		if (device.isMobile()) { // 모바일에서 접속 시
+			return "/mobile/purchase/largeComplete";
+		} else {
+			return "/front/purchase/largeComplete";
+		}
+	}
+
+	public HashMap<String, Object> finCodeCheck(String code) {
+		String socketIp = PropUtil.get("fincode.check.ip");
+		String HeadNo = "9210";
+		String MessageLength = "0442";
+		String MemberCode = "A009555     ";
+		String SubMemberCode = "cult                ";
+		String RequestDate = NdnUtil.getTimeStampString("yyyyMMdd"); // 전송날짜 :// 년월일
+		String RequestTime = NdnUtil.getTimeStampString("HHmmss"); // 전송시간 : 시분초
+		String PosCode = "00";
+		String gap ="                                                                                                                                                                                                                                                                                                                                                                                          ";
+		String resultCode = "";
+		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+
+		String codeCheckData = HeadNo + MessageLength + MemberCode
+				+ SubMemberCode + PosCode + code + RequestDate + RequestTime
+				+ gap;
+		System.out.println("socketIp : " + socketIp);
+		try {
+			// 서버 접속
+			Socket socket = new Socket(socketIp, 5984);
+
+			// Server에 보낼 데이터
+			BufferedWriter bufWriter = new BufferedWriter(
+					new OutputStreamWriter(socket.getOutputStream()));
+
+			// 전문 ID submember 가맹점 요청일자 회원 id 등등등 추적넘버 해시넘버 // 210000부터 상품권코드
+			bufWriter.write(codeCheckData);
+			// bufWriter.newLine();
+			bufWriter.flush();
+
+			// Server가 보낸 데이터 출력
+			BufferedReader bufReader = new BufferedReader(
+					new InputStreamReader(socket.getInputStream(), "euc-kr"));
+
+			String message = bufReader.readLine();
+			resultCode = message.substring(42,46);
+			System.out.println("Message : " + resultCode);
+
+			resultMap.put("resultCode", resultCode);
+			resultMap.put("returnMsg", message.replaceAll(" ", ""));
+
+			System.out.println("Message : " + message);
+			socket.close();
+			bufReader.close();
+			bufWriter.close();
+
+		}
+
+		catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+		return resultMap;
+	}
+
+	 
+	public String failCodeStr(String code) {
+		String result = "";
+
+		if ("9101".equals(code)) {
+			result = "등록 되지 않은 업체코드";
+		} else if ("9102".equals(code)) {
+			result = "등록되지않거나 잘못된 스크래치번호";
+		} else if ("9103".equals(code)) {
+			result = "이미 사용된 스크래치번호";
+		} else if ("9104".equals(code)) {
+			result = "이미 상환된 스크래치번호";
+		} else if ("9105".equals(code)) {
+			result = "상환처리 입력중 에러";
+		} else if ("9106".equals(code)) {
+			result = "상품권원장 상태변경중 에러";
+		} else if ("9901".equals(code)) {
+			result = "요청전문형식오류";
+		} else if ("9902".equals(code)) {
+			result = "요청 중 COM에러";
+		}
+
+		return result;
+	}
+
+	/**
+	 * 대용량 매입 엑셀파일 Read
+	 * 
+	 * @param model
+	 * @param session
+	 * @param request
+	 * @param param
+	 * @param seq
+	 * @return
+	 * @throws Exception
+	 */
+	public List excelRead(String filePath) throws Exception {
+
+		JSONObject obj = new JSONObject();
+		int result = 0;
+
+		HashMap resultMap = new HashMap();
+		ArrayList list = new ArrayList();
+		int listCount = 0;
+		File file = new File(filePath);
+		Workbook workbook = null;
+
+		try {
+			if (file.getName().toLowerCase().endsWith("xlsx")) { // 엑셀 파일의
+																	// 확장자(버전)에
+																	// 따라서 생성해야
+																	// 할
+																	// Workbook
+																	// 객체가 다르다.
+				System.out.println("xlsx!!");
+				workbook = new XSSFWorkbook(new FileInputStream(file));
+			} else {
+				System.out.println("xls!!");
+				workbook = new HSSFWorkbook(new FileInputStream(file));
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Sheet workSheet = workbook.getSheetAt(0); // 첫번째 Sheet
+		Iterator<Row> rowIterator = workSheet.iterator();
+		int rowSize = workSheet.getLastRowNum() + 1; // 행의 총 개수 (행은 0부터 시작함)
+		// System.out.println("rowSize : " + rowSize);
+
+		for (int i = 1; i < rowSize; i++) { // i를 4부터 시작해야 두번째 행부터 데이터가 입력된다.
+			Row row = workSheet.getRow(i);
+			// System.out.println("row : " + row);
+			// System.out.println("row : " + row.toString());
+			HashMap map = new HashMap();
+
+			map.put("fincode", row.getCell(0));
+
+			list.add(map);
+		} // for loop(i) end (Rows)
+
+		return list;
+	}
+	
+	
+	/**
+	 * 실명계좌인증 처리
+	 * @throws Exception 
+	 * */
+	@RequestMapping("/applyAccount.json")
+	@ResponseBody
+	public String applyAccount(HttpSession session,
+			@RequestParam Map param) throws Exception {
+
+		JSONObject obj = new JSONObject();
+		RestTemplate rest = new RestTemplate();		// RestTemplate 선언
+		HttpHeaders headers = new HttpHeaders();	// http 헤더 선언
+		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		
+		System.out.println("param123 : " + param.toString());
+		String ksNetSeq = purchaseService.selectKsNetSeq();
+//		purchaseService.updateKsNetSeq();
+		
+		param.put("ksNetSeq", ksNetSeq);
+		HashMap applyMap = BankingController.applyAccount(param);
+		
+		purchaseService.insertTradeRequest(applyMap);
+
+		applyMap.put("ksNetSeq", ksNetSeq);
+//		System.out.println("applyMap : " + applyMap.toString());
+		
+		//결과값을 받아오기 위해 1초 딜레이
+//		Thread.sleep(2000);
+//		HashMap resultMap = (HashMap)purchaseService.selectTradeRequestTbl(applyMap);
+		
+		//KSNET 시퀀스 증가
+		
+		purchaseService.updateKsNetSeq();
+		
+		obj.put("result", "success");
+		obj.put("applyMap", applyMap);
+		return obj.toString();
+	}
+
+	/**
+	 * 실명계좌인증 처리
+	 * @throws Exception 
+	 * */
+	@RequestMapping("/applyAccountRecv.json")
+	@ResponseBody
+	public String applyAccount2(HttpSession session,
+			HttpServletRequest request, HttpServletResponse response,
+			@RequestParam Map param, Model model, Device device) throws Exception {
+		UserVO user = (UserVO)session.getAttribute(PropUtil.get("session.user"));
+		JSONObject obj = new JSONObject();
+		
+//		param.put("memberNo", user.getMemberNo());
+		System.out.println("param : " + param.toString());
+		//결과값을 받아오기 위해 1초 딜레이
+//		Thread.sleep(2000);
+		HashMap resultMap = (HashMap)purchaseService.selectTradeRequestTbl(param);
+		String resultCode = resultMap.toString();
+		
+		if(resultMap == null){
+			obj.put("result", false);
+			return obj.toString();
+		}
+		
+		int qe = param.get("memberName").toString().length();
+		String sss = resultCode.substring(499,499+qe);  
+
+		if(sss.equals(param.get("memberName"))){
+			obj.put("result", true);
+		
+		}else {
+			obj.put("result", false);
+		}
+		return obj.toString();
+	}
+	
+}

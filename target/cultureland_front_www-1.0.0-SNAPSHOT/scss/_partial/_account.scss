@@ -1,0 +1,31 @@
+@charset "UTF-8";
+.account{
+  section{
+    &.account-form{
+      @include layout-side-pad;
+      @include layout-topbottom-pad;
+      .message-center{
+        @include message-center;
+        margin-bottom: rem(50);
+      }
+      .message-small{
+        @include message-small;
+        margin-top: rem(50);
+        em{
+          font-weight: 400;
+        }
+      }
+      .input-text-wrap{
+        margin-top: rem(10);
+      }
+      .btn-wrap{
+        @include multi-btn;
+        margin-top: rem(50);
+      }
+    }
+
+    &.submit-btn{
+      @include submit-btn;
+    }
+  }
+}

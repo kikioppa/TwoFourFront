@@ -1,0 +1,151 @@
+@charset "UTF-8";
+.faq{
+  section{
+    &.search{
+      @include layout-side-pad;
+      padding-top: rem(50);
+      .input-text-wrap {
+        position: relative;
+        flex: 1 auto;
+        box-shadow: 0 0 rem(15) rem(5) rgba(0, 0, 0, 0.15);
+        @include border-radius;
+        overflow: hidden;
+        border: rem(2) solid $primary-color;
+        input[type="text"],
+        input[type="number"] {
+          font-size: rem(28);
+          font-weight: 500;
+          color: $default-font-gray;
+          padding: rem(30) rem(70) rem(30) rem(50);
+        }
+        .search-btn{
+          display: inline-block;
+          position: absolute;
+          right: rem(30);
+          top: 50%;
+          transform: translateY(-50%);
+          border: 0;
+          background-color: #ffffff;
+          .icon{
+          }
+        }
+      }
+      .quick-tag{
+        >ul{
+          display: flex;
+          >li{
+            display: flex;
+            flex: 1 auto;
+            justify-content: center;
+            a{
+              font-size: rem(24);
+              font-weight: 500;
+              color: $font-gray-lighten;
+              padding: rem(50) 0;
+              width: 100%;
+              text-align: center;
+            }
+            &.on{
+              a{
+                color: $default-font-gray;
+              }
+            }
+          }
+        }
+      }
+    }
+    &.board-list{
+      margin-top: rem(50);
+      .links {
+        font-size: rem(26);
+        >ul {
+          >li {
+            background-color: #ffffff;
+            a {
+              display: flex;
+              @include layout-side-pad;
+              padding-top: rem(45);
+              padding-bottom: rem(45);
+              border-bottom: rem(2) solid $default-border-gray;
+              >div {
+                &.title {
+                  display: flex;
+                  flex: 1 auto;
+                  width: calc(100% - #{rem(50)});
+                  font-size: rem(26);
+                  font-weight: 500;
+                  color: $default-font-gray;
+                  flex-direction: column;
+                  .title-text{
+                    width: 100%;
+                    line-height: 1.4;
+                  }
+                }
+                &[class*=fix] {
+                  flex: 0 rem(50);
+                }
+                &.suffix {
+                  text-align: right;
+                  display: flex;
+                  align-items: center;
+                  justify-content: flex-end;
+                  .icon-arrow{
+                    transform: rotate(-90deg);
+                    transition: ease 0.2s;
+                    &.down{
+                      transform: rotate(90deg);
+                    }
+                  }
+                }
+                &.prefix {
+                  flex: 0 rem(85);
+                }
+              }
+            }
+          }
+        }
+      }
+      .accordion-list{
+        >ul{
+          >li{
+            &:first-child{
+              border-top: 0;
+            }
+            a{
+              .title{
+                font-size: rem(26);
+                font-weight: 500;
+                line-height: 1.4;
+                padding-right: rem(5);
+                em{
+                  margin-right: rem(15);
+                }
+              }
+            }
+            svg{
+              path{
+                fill: $font-gray-lighten;
+              }
+            }
+            &.child{
+              @include layout-side-pad;
+              @include layout-topbottom-pad;
+              
+              pre{
+                font-size: rem(24);
+                color: #787878;
+                line-height: 1.4;
+
+              }
+            }
+          }
+        }
+      }
+      .btn-wrap{
+        @include layout-side-pad;
+        @include layout-topbottom-pad;
+        
+      }
+    }
+  }
+}

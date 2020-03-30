@@ -38,6 +38,18 @@
 
  	</insert> 	
  
+ 
+ <insert id="insertAccountConfirm" parameterType="hashmap">
+		INSERT INTO CO_Account(
+			MEMBER_NO
+			,CONFIRM_YN
+		)VALUES(
+			#{memberNo}
+		   ,#{confirmYn}
+		)
+
+ 	</insert> 	
+ 
  	
  	<update id="updateAccount" parameterType="hashmap">
  		UPDATE CO_Account SET
@@ -47,6 +59,12 @@
  			,CONFIRM_YN = #{confirmYn}
  			,LASTUPDATE_DATE = GETDATE()
  		WHERE SEQ = #{seq}
+ 	</update>
+
+<update id="updateAccountConfirm" parameterType="hashmap">
+ 		UPDATE CO_Account SET
+ 			CONFIRM_YN = #{confirmYn}
+ 		WHERE MEMBER_NO = #{memberNo}
  	</update>
 
 </mapper>

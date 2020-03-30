@@ -35,6 +35,22 @@
 
  	</select>
  	
+ 	<select id="selectUserInfo" parameterType="hashmap" resultType="hashmap">
+	 	SELECT A.MEMBER_NO
+			  ,A.MEMBER_MAIL_ADDR
+			  ,A.MEMBER_NAME
+			  ,A.MEMBER_PHONE
+			  ,A.SMS_YN
+			  ,A.MAIL_YN
+			  ,A.MEMBER_STAT
+			  ,A.BIRTHDAY
+			  ,A.GENDER
+			  ,A.CREATION_DATE
+			  ,A.LASTUPDATE_DATE
+		FROM CO_Member A
+		WHERE MEMBER_NO = #{memberNo}
+ 	</select>
+ 	
 	<insert id="insertUserPageHis" parameterType="hashmap">
 	INSERT INTO ch_userpagehistory (
 	     member_no

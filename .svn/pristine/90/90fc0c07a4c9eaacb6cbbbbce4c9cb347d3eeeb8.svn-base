@@ -1,0 +1,158 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp"%>
+
+<head>
+  <title>대용량 매입신청내역</title>
+  
+  	<script type="text/javascript">
+	$(document).ready(function() {
+		$('.date-sele input[type="text"]').daterangepicker({
+		    locale: {
+		      format: "YYYY-MM-DD",
+		      cancelLabel: '취소',
+		      applyLabel: "적용",
+		      daysOfWeek: ["일","월","화","수","목","금","토"],
+		      monthNames: ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"]
+		    },
+		    startDate: ($("#startDate").val() != "" ) ? $("#startDate").val():new Date(),
+		    endDate: ($("#endDate").val() != "" ) ? $("#endDate").val():new Date(),
+		    buttonClasses: "btn toggle",
+		    applyButtonClasses: "apply",
+		    cancelClass: "cancel"
+		 });	
+	});  	
+		function go_view(seq) {
+			$("#frm").attr("action" , "largePurchaseDetail.do");
+			$("#seq").val(seq);
+			$("#frm").submit();
+		}
+		function go_paging(page){
+			$("#frm").attr("action" , "largePurchaseList.do");
+			$("#curPage").val(page);
+			$("#frm").submit();
+		}
+		function go_list(){
+			$("#startDate").val('');
+			$("#endDate").val('');				
+			$("#frm").attr("action" , "purchaseList.do");
+			$("#frm").submit();
+		}
+		
+		function search(){
+			$("#startDate").val($('.date-sele input[type="text"]').data('daterangepicker').startDate.format('YYYY-MM-DD'));
+			$("#endDate").val($('.date-sele input[type="text"]').data('daterangepicker').endDate.format('YYYY-MM-DD'));				
+			$("#frm").attr("action" , "largePurchaseList.do");
+			$("#frm").submit();
+		}
+		
+		function date_set(startDate,endDate){
+			  $('.date-sele input[type="text"]').data('daterangepicker').setStartDate(startDate);
+			  $('.date-sele input[type="text"]').data('daterangepicker').setEndDate(endDate);	  	
+		}			
+		
+	</script>
+</head>
+
+<body>
+  <div class="section">
+    <div class="wrapper">
+      <div class="buy-header">
+        <h1>마이페이지</h1>
+      </div>
+      
+      <ul class="mypage-tab">
+        <li class="list1 on"><a href="${web_server_url}/myPage/purchaseList.do">매입신청내역</a></li>
+        <li class="list2"><a href="${web_server_url}/myPage/accountVerifi.do">계좌인증</a></li>
+        <li class="list3"><a href="${web_server_url}/myPage/limit.do">매입한도</a></li>
+        <li class="list4"><a href="${web_server_url}/myPage/question.do">1:1문의</a></li>
+        <li class="list5"><a href="${web_server_url}/myPage/myInfoCheck.do">개인정보수정</a></li>
+      </ul>
+
+      <div class="topper-btn-wrap">
+        <button type="button" onclick="go_list()" class="line-btn">일반 매입신청내역</button>
+      </div>
+      
+	  <form action="" name="frm" id="frm" method="post">
+	  <input type="hidden" id="seq" name="seq" value="" />
+	  <input type="hidden" id="curPage" name="curPage" value="" />     
+	  <input type="hidden" name="startDate" id="startDate" value="<c:out value="${param.startDate }" />"/>     
+	  <input type="hidden" name="endDate" id="endDate" value="<c:out value="${param.endDate }" />"/>    
+      <div class="date-join">
+        <ul>
+          <li>기간조회</li>
+          <li onclick="date_set(addDate(0,0),curDate());"><button type="button"> 당일</button></li>
+          <li onclick="date_set(addDate(0,-7),curDate());"><button type="button"> 1주일</button></li>
+          <li onclick="date_set(addDate(-1,0),curDate());"><button type="button"> 3개월</button></li>
+          <li onclick="date_set(addDate(-6,0),curDate());"><button type="button"> 6개월</button></li>
+          <li>날짜지정</li>
+        </ul>
+        <span class="date-sele">
+        <input type="text"><input type="button" onclick="search()" value="조회">
+        </span> 
+      </div> 
+      </form>
+      <table class="buy-list">
+        <colgroup>
+          <col style="width: auto;">
+          <col style="width: auto;">
+          <col style="width: auto;">
+          <col style="width: auto;">
+          <col style="width: auto;">
+          <col style="width: 230px;">
+          <col style="width: 90px;">
+          <col style="width: 90px;">
+        </colgroup>
+
+        <tr class="thead">
+          <th>주문번호</th>
+          <th>신청 핀코드 수</th>
+          <th>신청 핀코드액면가</th>
+          <th>정상/비정상</th>
+          <th>매입금액</th>
+          <th>접수/입금일자</th>
+          <th>메모</th>
+          <th>상태</th>
+        </tr>
+        <c:forEach items="${listHelper.list}" var="list" varStatus="status">
+	        <tr onclick="go_view(<c:out value='${list.SEQ}'/>)" style="cursor:pointer">
+	          <th><c:out value="${list.rownum}"/></th>
+	          <th><c:out value="${list.finCount}"/></th>
+	          <th><c:out value="${list.moneySum}"/></th>
+	          <th><c:out value="${list.normal}"/>/<c:out value="${list.abnormal}"/></th>
+	          <th><c:out value="${list.realSum}"/></th>
+	          <th><c:out value="${list.date}"/></th>
+	          <th onclick="event.cancelBubble = true;"><button class="agree" type="button" onclick="purchasePop(<c:out value='${list.SEQ}'/>)">보기</button></th>
+<!-- 	          <th onclick="event.cancelBubble = true;"><button class="line-btn-sm" onclick="go_list()">보기</button></th> -->
+              <div class="popup popup<c:out value='${list.SEQ}'/>" style="display: none;">
+                <div class="pop_title">
+                 	 관리자 메모
+                  <button href="javascript:;" type="button" onclick="close1('popup','popback')">X</button>
+                </div>
+                <div class="pop_text" style="height:300px;">
+					<c:if test="${empty list.CONTENTS}">
+				    	관리자 메모가 없습니다.
+					</c:if>
+					<c:out value="${list.CONTENTS}"/>
+                </div>
+              </div>
+	          
+	          <th><c:out value="${list.state}"/></th>
+	        </tr>
+		</c:forEach>
+        <div class="popback"></div>
+		<c:if test="${empty listHelper.list}">
+	        <tr>
+	          <th colspan="8">매입신청 내역이 없습니다.</th>
+	        </tr>
+	        <tr>
+	          <th colspan="8"></th>
+	        </tr>
+		</c:if>
+      </table>
+	  <div class="paging">
+		<ndn:paging listHelper="${listHelper}"/>
+	  </div>
+    </div>
+  </div>
+</body>

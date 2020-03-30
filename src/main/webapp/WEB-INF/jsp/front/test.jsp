@@ -10,7 +10,7 @@
 function fn_test(){
 	
 	var options = {
-	  key: "stMyAHwTh",
+	  key: "fWhqX0kuC",
 	  service:4,
 	  auto:false,
 	  verify:true,

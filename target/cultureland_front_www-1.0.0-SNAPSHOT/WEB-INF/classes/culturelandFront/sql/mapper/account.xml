@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="account">
+	
+ 	<select id="selectAccountDetail" parameterType="hashmap" resultType="hashmap">
+ 		SELECT	
+ 				A.SEQ
+ 				,A.MEMBER_NO
+	 			,A.ACNT_NUMBER
+	 			,B.CODE_VAL as BANK_NAME
+	 			,A.BANK_CODE
+	 			,A.CONFIRM_YN
+	 			,A.CREATION_DATE
+		FROM CO_Account A
+		LEFT OUTER JOIN CC_StatisticCode b 
+		ON A.BANK_CODE = B.CODE_VAL
+		WHERE A.MEMBER_NO = #{memberNo}
+
+ 	</select>
+	
+ 	
+ 	<insert id="insertAccount" parameterType="hashmap">
+		INSERT INTO CO_Account(
+			MEMBER_NO
+			,ACNT_NUMBER
+			,BANK_NAME
+			,BANK_CODE
+			,CONFIRM_YN
+			,CREATION_DATE
+		)VALUES(
+			#{memberNo}
+		   ,#{acntNumber}
+		   ,(SELECT CODE_NAME FROM CC_StatisticCode WHERE GUBUN = 'BANK' AND CODE_VAL = #{bankCode})
+		   ,#{bankCode}
+		   ,#{confirmYn}
+		   ,GETDATE()
+		)
+
+ 	</insert> 	
+ 
+ 	
+ 	<update id="updateAccount" parameterType="hashmap">
+ 		UPDATE CO_Account SET
+ 			ACNT_NUMBER = #{acntNumber}
+ 			,BANK_NAME = (SELECT CODE_NAME FROM CC_StatisticCode WHERE GUBUN = 'BANK' AND CODE_VAL = #{bankCode})
+ 			,BANK_CODE = #{bankCode}
+ 			,CONFIRM_YN = #{confirmYn}
+ 			,LASTUPDATE_DATE = GETDATE()
+ 		WHERE SEQ = #{seq}
+ 	</update>
+
+</mapper>

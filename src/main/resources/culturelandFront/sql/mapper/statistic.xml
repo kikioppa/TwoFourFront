@@ -142,5 +142,13 @@
  		ORDER BY CODE_VAL
  	</select> 	
  	
+ 	<select id="selectBankName" parameterType="hashmap" resultType="hashmap">
+ 		SELECT
+				 CODE_NAME
+ 		FROM	CC_STATISTICCODE
+ 		WHERE	CODE_VAL = #{bankCode}
+ 		
+ 	</select> 	
+ 	
  	
 </mapper>

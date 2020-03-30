@@ -29,11 +29,16 @@ public class AopController extends NdnAbstractController{
 
 	private final Logger logger = Logger.getLogger(this.getClass());	
 	
-	@Pointcut("execution(public * culturelandFront.controller..*(..))")
+	@Pointcut("execution(public * culturelandFront.service.*Impl.*(..))")
 	private void commonChk() {}
 	
-	@Pointcut("execution(public * culturelandFront.controller.front..*(..)) || execution(public * culturelandFront.controller.m..*(..)) ")
+	@Pointcut("execution(public * culturelandFront.service.*Impl.*(..)) || execution(public * culturelandFront.service.*Impl.*(..)) ")
 	private void menuChk() {}
+//	@Pointcut("execution(public * culturelandFront.controller..*(..))")
+//	private void commonChk() {}
+//	
+//	@Pointcut("execution(public * culturelandFront.controller.front..*(..)) || execution(public * culturelandFront.controller.m..*(..)) ")
+//	private void menuChk() {}
 	
 //	@Autowired 
 //	private CacheManager cacheManager;
@@ -66,7 +71,6 @@ public class AopController extends NdnAbstractController{
 				request.setAttribute("getProfiles" , StaticContextAccessor.getProfiles());
 
 		}
-		
 		
 		
 		

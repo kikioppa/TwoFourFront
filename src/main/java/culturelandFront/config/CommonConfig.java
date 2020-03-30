@@ -19,6 +19,7 @@ import culturelandFront.service.ContentsService;
 		)
 @PropertySource(value={
 									"classpath:/culturelandFront/properties/application.properties" ,
+									"classpath:/culturelandFront/properties/ksnet.properties" ,
 									"classpath:/culturelandFront/properties/config/app-${spring.profiles.active:default}.properties"
 								})
 public class CommonConfig {

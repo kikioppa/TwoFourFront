@@ -24,7 +24,7 @@
 			TOP 15
 			A.SEQ 
 			,RIGHT(CONVERT(CHAR(8), A.CREATION_DATE, 2), 5) AS date
-			,C.MEMBER_NAME AS name
+			,A.MEMBER_NAME AS name
 			,REPLACE(CONVERT(VARCHAR, CAST(SUM(CASE WHEN B.SUCCESS_YN = 'Y' THEN B.REQ_MONEY ELSE 0 END) OVER(PARTITION BY B.BUY_SEQ) AS MONEY),1),'.00','') AS realSum
 			,CONVERT(CHAR(8), A.CREATION_DATE, 8) AS time
 			,DATEDIFF(s, A.CREATION_DATE, A.LASTUPDATE_DATE) AS second
@@ -32,7 +32,8 @@
 		LEFT OUTER JOIN CO_BuyDetail B ON A.SEQ = B.BUY_SEQ
 		LEFT OUTER JOIN CO_Member C ON A.MEMBER_NO = C.MEMBER_NO 
 		WHERE 1=1
-		GROUP BY A.SEQ, B.BUY_SEQ, B.REQ_MONEY, B.SUCCESS_YN, A.CREATION_DATE, A.LARGE_YN, C.MEMBER_NAME, A.LASTUPDATE_DATE
+		AND A.LASTUPDATE_DATE IS NOT NULL
+		GROUP BY A.SEQ, B.BUY_SEQ, B.REQ_MONEY, B.SUCCESS_YN, A.CREATION_DATE, A.LARGE_YN, A.MEMBER_NAME, A.LASTUPDATE_DATE
 		HAVING A.LARGE_YN = 'N' AND SUM(CASE WHEN B.SUCCESS_YN = 'Y' THEN B.REQ_MONEY ELSE 0 END) > 0
 		ORDER BY A.SEQ DESC
  	</select>
@@ -286,11 +287,51 @@
  		WHERE SEQ = #{seq}
  	</update>
  	
- 	<!--                                       front 시작!!!!!!!!!!!!!!!!!!!!!!!!!                                                               -->
+ 	<!--                                       front 시작!!!!!!!!!!!!!!!!!!!!!!!!!    
+ 	
+ 	
+ 	
+                                                           -->
+	<insert id="insertTradeRequest" parameterType="hashmap">
+ 		INSERT INTO TRADE_REQUEST_TBL(
+			REQ_DATE,
+			REQ_TIME,
+			SVC_TYPE,
+			BANK_CODE,
+			COMP_CODE,
+			SEQ_NO,
+			MSG_CODE,
+			SEND_FLAG,
+			RECV_FLAG,
+			SEND_DATE,
+			SEND_TIME,
+			RECV_DATE,
+			RECV_TIME,
+			SEND_MSG,
+			RECV_MSG
+		)VALUES(
+			#{reqDate},
+			#{reqTime},
+			#{svcType},
+			#{bankCode},
+			#{compCode},
+			#{seqNo},
+			#{msgCode},
+			#{sendFlag},
+			#{recvFlag},
+			#{sendDate},
+			#{sendTime},
+			#{recvDate},
+			#{recvTime},
+			#{sendMsg},
+			#{recvMsg}
+		); commit;
+	</insert>
  	<insert id="insertBuy" parameterType="hashmap">
  		INSERT INTO CO_Buy(
  			ACNT_NUMBER
  			,BANK_NAME
+ 			,BANK_CODE
  			,MEMBER_NO
  			,MEMBER_NAME
  			,LARGE_YN
@@ -300,8 +341,9 @@
  			,ATCH_FILE_ID
  			,CREATION_DATE
  		)VALUES(
-			#{acntNumber}
+			#{accountNo}
 			,#{bankName}
+			,#{bankCode}
 			,#{memberNo}
 			,#{memberName}
 			,#{largeYn}
@@ -337,7 +379,7 @@
  			,GETDATE()
  		)
  	</insert>
- 	 	
+ 	 
  	<select id="selectPurchaseBuyList" parameterType="hashmap" resultType="hashmap">
  		SELECT 
 			A.SEQ
@@ -347,6 +389,7 @@
 			,A.SUCCESS_YN
 			,A.PURCHASE_MONEY
 			,A.FAIL_CODE
+			,A.DEPOSIT
 			,A.FAIL_REASON
 			,A.CREATION_USER
 			,A.CREATION_DATE
@@ -362,6 +405,9 @@
 		WHERE A.BUY_SEQ = #{buySeq}
 		<if test='largeGubun == "Y"'>
 			AND A.SUCCESS_YN = 'N'
+		</if>
+		<if test='confirmYn == "Y"'>
+			AND A.SUCCESS_YN = 'Y'
 		</if>
 		ORDER BY A.CREATION_DATE DESC, A.SEQ DESC
  	</select>
@@ -392,6 +438,9 @@
 			<if test='largeGubun == "Y"'>
 				AND A.SUCCESS_YN = 'Y'
 			</if>
+			<if test='confirmYn == "Y"'>
+				AND A.DEPOSIT = 'Y'
+			</if>
 		)AA
  	</select>
  	
@@ -400,10 +449,18 @@
  			<if test='gubun == "D"'>
  				DEPOSIT_YN = #{depositYn}
  				,LASTUPDATE_DATE = getDate()
+ 				,RCV_CODE = #{revcCode}
  			</if>
  		WHERE SEQ = #{buySeq}
  	</update>
  	
+ 		<update id="updateDeposit" parameterType="hashmap">
+ 		UPDATE CO_BuyDetail SET
+ 			
+ 				DEPOSIT = 'Y'
+ 			
+ 		WHERE SEQ = #{seq}
+ 	</update>
  	<insert id="insertBuyLargeDetail" parameterType="hashmap">
  		INSERT INTO CO_LargeBuyDetail(
  			BUY_SEQ
@@ -510,4 +567,57 @@
 			hit = hit+1
 		WHERE seq = #{seq}	
 	</update>
+	
+	<select id="selectKsNetSeq" resultType="java.lang.String">
+		select REPLICATE('0', 6 - LEN(NEXT_ID)) + convert(varchar, NEXT_ID) from cc_comcode where table_name = 'KSNET'
+	</select>
+	
+	<update id="updateKsNetSeq">
+		update cc_comcode set
+			next_id = next_id + 1
+		where table_name = 'KSNET'
+	</update>
+	
+	<select id="selectTradeRequestTbl" parameterType="hashmap" resultType="hashmap">
+		SELECT REQ_DATE,
+				REQ_TIME,
+				SVC_TYPE,
+				BANK_CODE,
+				COMP_CODE,
+				SEQ_NO,
+				MSG_CODE,
+				SEND_FLAG,
+				RECV_FLAG,
+				SEND_DATE,
+				SEND_TIME,
+				RECV_DATE,
+				RECV_TIME,
+				SEND_MSG,
+				RECV_MSG
+		FROM TRADE_REQUEST_TBL
+		WHERE REQ_DATE = #{reqDate}
+		AND REQ_TIME = #{reqTime}
+		AND SEQ_NO = #{ksNetSeq}
+		
+	</select>
+	
+	<select id="selectCoBuy" parameterType="hashmap" resultType="hashmap">
+			SELECT  SEQ,
+					ACNT_NUMBER,
+					BANK_CODE,
+					BANK_NAME,
+					MEMBER_NO,
+					MEMBER_NAME,
+					LARGE_YN,
+					ACCEPT_YN,
+					DEPOSIT_YN,
+					GIFT_GUBUN,
+					ATCH_FILE_ID,
+					LARGE_CONTENTS,
+					CREATION_DATE,
+					LASTUPDATE_DATE,
+					RCV_CODE
+					from CO_BUY
+					WHERE SEQ =#{buySeq}
+	</select>
 </mapper>

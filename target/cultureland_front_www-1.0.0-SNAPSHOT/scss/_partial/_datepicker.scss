@@ -1,0 +1,53 @@
+@charset "UTF-8";
+.daterangepicker{
+  font-family: 'Noto Sans KR', sans-serif;
+  top: 158px;
+  left: 0px;
+  right: 0px;
+  width: 100%;
+  flex-direction: column;
+  td.in-range{
+    background-color: lighten($primary-color, 50%);
+  }
+  td.available:hover, th.available:hover{
+    background-color: lighten($primary-color, 53%);
+  }
+  td.active, td.active:hover{
+    background-color: $primary-color;
+    color: #ffffff;
+  }
+  .drp-calendar{
+    flex: 1 1 auto;
+    max-width: unset;
+    &.right,&.left{
+      padding: rem(10);
+    }
+  }
+  &.opensright:after{
+    left: 50%;
+  }
+  &.opensright:before{
+    left: calc(50% - 1px);
+  }
+  &.show-calendar{
+    .drp-buttons{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      .btn{
+        display: inline-block;
+        border: 0;
+        padding: rem(20) rem(25);
+        &.cancel{
+          color: $default-font-gray;
+          background-color: #ffffff;
+          border: rem(2) solid #999999;
+        }
+        &.apply{
+          color: #ffffff;
+          background-color: $primary-color;
+        }
+      }
+    }
+  }
+}

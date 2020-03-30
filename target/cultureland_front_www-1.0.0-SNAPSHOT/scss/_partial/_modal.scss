@@ -1,0 +1,63 @@
+@charset "UTF-8";
+.modal-pop{
+  height: 100%;
+  display: none;
+  .header{
+    display: flex;
+    height: $nav-header-height;
+    padding: rem(0) rem(30) 0 rem(50);
+    >div {
+      flex: 1 0 auto;
+      &.prefix {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+      }
+      &.suffix{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+      &.title {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex: 1 0 90%;
+        img {
+          width: rem(155);
+        }
+      }
+    }
+    .btn-close{
+      .icon{
+        svg{
+          path{
+            fill: $default-font-color;
+          }
+        }
+      }
+    }
+  }
+  .content-body{
+    @include layout-side-pad;
+    @include layout-topbottom-pad;
+    position: absolute;
+    top: $nav-header-height;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Lets it scroll lazy */
+    pre{
+      line-height: 1.3;
+      font-size: rem(22);
+    }
+    h2{
+      font-size: rem(24);
+      font-weight: 500;
+    }
+  }
+  &.pullscreen-type{
+    @include modal(fixed);
+  }
+}

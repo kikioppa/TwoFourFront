@@ -1,0 +1,253 @@
+@charset "UTF-8";
+.main {
+  
+  
+  section {
+    &.main-banner {
+      position: relative;
+      overflow: hidden;
+      background-color: $default-bg-gray;
+      .banner {
+        .card {
+          margin: rem(50) auto rem(30);
+          a {
+            display: inline-block;
+            img {
+              width: 100%;
+            }
+          }
+        }
+      }
+      .float-btn {
+        position: absolute;
+        right: rem(-200);
+        bottom: 0;
+        z-index: 1;
+        a {
+          height: rem(308);
+          display: inline-block;
+          img {
+            height: 100%;
+          }
+        }
+      }
+    }
+    &.realtime-board {
+      @include layout-side-pad;
+      padding-bottom: rem(50);
+      .h2 {
+        position: relative;
+        height: rem(100);
+        img {
+          position: absolute;
+          left: rem(-30);
+          top: rem(-30);
+          width: rem(505);
+        }
+      }
+      div {
+        >ul {
+          >li {
+            padding: rem(23) rem(20);
+            border-bottom: rem(2) solid $default-border-gray;
+            &:last-child {
+              border-bottom: 0;
+            }
+            >ul {
+              display: flex;
+              >li {
+                flex: 1 0 auto;
+                text-align: center;
+                color: $font-gray-lighten;
+                font-size: rem(22);
+                font-weight: 300;
+                &.date {}
+                &.name {
+                  color: $default-font-gray;
+                }
+                &.cost {
+                  color: $default-font-gray;
+                }
+                &.time {}
+                &.late {}
+                &.result {
+                  .tag {
+                    @include small-tag;
+                    &.dark {
+                      background-color: $default-font-gray;
+                      color: #ffffff;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    &.sub-banner.veryfast {
+      background-color: $default-bg-gray;
+      padding: rem(30) 0 rem(20);
+      a {
+        display: block;
+        .banner {
+          position: relative;
+          display: block;
+          height: rem(130);
+          img {
+            width: 100%;
+            max-width: rem(750);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+          }
+          &.yellow-bg {
+            background-color: #f2e551;
+          }
+          &.red-bg {
+            background-color: #df0000;
+          }
+        }
+      }
+    }
+    &.cs-links {
+    // background-color: $default-bg-gray;
+      padding-top: rem(20);
+      margin-bottom: rem(30);
+      >ul {
+        >li {
+          background-color: #ffffff;
+          a {
+            display: flex;
+            @include layout-side-pad;
+            padding-top: rem(45);
+            padding-bottom: rem(45);
+            border-bottom: rem(2) solid $default-border-gray;
+            >div {
+              &.title {
+                flex: 1 auto;
+                font-size: rem(32);
+                font-weight: 500;
+                color: $default-font-gray;
+              }
+              &[class*=fix] {
+                flex: 0 rem(50);
+              }
+              &.suffix {
+                text-align: right;
+              }
+              &.prefix {
+                flex: 0 rem(85);
+              }
+            }
+          }
+          &:last-child {
+            a {
+              border-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+    &.calculator {
+      @include layout-side-pad;
+      padding-bottom: rem(10);
+      .h2 {
+        display: flex;
+        padding: rem(45) 0;
+        .title {
+          font-size: rem(32);
+          font-weight: 500;
+          color: $primary-color;
+        }
+        .prefix {
+          flex: 0 rem(85);
+        }
+      }
+      .calc-input {
+        display: flex;
+        .input-text-wrap {
+          position: relative;
+          flex: 1 auto;
+          box-shadow: 0 0 rem(15) rem(5) rgba(0, 0, 0, 0.15);
+          @include border-radius;
+          overflow: hidden;
+          input[type="text"],
+          input[type="number"] {
+            font-size: rem(28);
+            font-weight: 500;
+            color: $default-font-gray;
+            padding: rem(30) rem(70) rem(30) rem(50);
+          }
+          &:after {
+            content: '원';
+            position: absolute;
+            right: rem(36);
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: rem(26);
+            color: $font-gray-lighten;
+          }
+        }
+        .unit {
+          display: flex;
+          flex: 0 rem(100);
+          font-size: rem(28);
+          font-weight: 500;
+          align-items: center;
+          justify-content: flex-end;
+          padding-right: rem(10);
+          .btn {
+            color: #666666;
+          }
+        }
+      }
+      .calc-output {
+        // padding: rem(32) 0;
+        >ul {
+          padding: rem(34) rem(20);
+          border-bottom: rem(2) solid $default-border-gray;
+          >li {
+            padding: rem(18) 0;
+            >ul {
+              display: flex;
+              li {
+                flex: 1 auto;
+                font-size: rem(26);
+                color: #787878;
+                &:last-child {
+                  display: flex;
+                  justify-content: flex-end;
+                  color: #333333;
+                }
+              }
+            }
+          }
+        }
+        .total-value {
+          padding: rem(42) rem(20);
+          font-size: rem(32);
+          font-weight: 500;
+          color: $default-font-gray;
+          >ul {
+            display: flex;
+            li {
+              flex: 1 auto;
+              &:last-child {
+                display: flex;
+                justify-content: flex-end;
+                .value {
+                  margin-right: rem(10);
+                  font-weight: 700;
+                  color: $primary-color;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

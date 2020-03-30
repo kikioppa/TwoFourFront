@@ -1,0 +1,45 @@
+.join{
+  section{
+    &.input-form{
+      @include input-form;
+        
+      .border-box{
+        @include border-box;
+        margin-top: rem(50);
+        >ul{
+          li{
+            display: flex;
+            margin-bottom: rem(50);
+            > *{
+              flex: 1 auto;
+            }
+            > .btn-wrap{
+              display: flex;
+              flex: 0 rem(100);
+              justify-content: flex-end;
+            }
+            &:last-child{
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+      .message-center{
+        @include message-center;
+        margin-bottom: rem(50);
+      }
+      > .btn-wrap{
+        margin-top: rem(50);
+      }
+      &.for-password{
+      }
+    }
+    &.submit-btn{
+      @include submit-btn;
+    }
+    &.tab-wrap{
+      @include layout-side-pad;
+      padding-top: rem(50);
+    }
+  }
+}

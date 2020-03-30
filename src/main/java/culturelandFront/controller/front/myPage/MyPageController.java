@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -29,6 +30,7 @@ import culturelandFront.core.abstr.NdnAbstractController;
 import culturelandFront.core.helper.ListHelper;
 import culturelandFront.core.security.sha256.sha256;
 import culturelandFront.core.util.PropUtil;
+import culturelandFront.core.value.JavaScript;
 import culturelandFront.service.AccountService;
 import culturelandFront.service.BoardService;
 import culturelandFront.service.MemberService;
@@ -37,7 +39,7 @@ import culturelandFront.service.StatisticsService;
 import culturelandFront.vo.UserVO;
 
 @Controller
-@RequestMapping({"/front/myPage", "/m/myPage"})
+@RequestMapping({"/myPage", "/m/myPage"})
 public class MyPageController extends NdnAbstractController{
 
 	private final Logger logger = Logger.getLogger(this.getClass());
@@ -74,7 +76,14 @@ public class MyPageController extends NdnAbstractController{
 	 * 		 개인정보 수정 상세
 	 * */
     
-    /**매입신청내역*/
+    /**
+     * 매입신청내역
+     * @param request
+     * @param param
+     * @param model
+     * @param device
+     * @return
+     */
     
 	@RequestMapping("/purchaseList.do")
 	public String purchaseList(
@@ -90,8 +99,10 @@ public class MyPageController extends NdnAbstractController{
 		ListHelper listHelper = new ListHelper(param);
 		
 		listHelper = purchaseService.getSelectPurchaseList(listHelper);
-		
+
 		model.addAttribute("listHelper", listHelper);
+		model.addAttribute("startDate", param.get("startDate"));
+		model.addAttribute("endDate", param.get("endDate"));
 		model.addAttribute("menu_id", "04");
 		model.addAttribute("sub_menu_id", "41");
 		if(device.isMobile()){
@@ -101,7 +112,61 @@ public class MyPageController extends NdnAbstractController{
 		}
 	}
     
-    /**매입신청내역상세*/
+    /**
+     * 매입신청 내역 모바일 페이징
+     * @param request
+     * @param param
+     * @param model
+     * @param device
+     * @return
+     */
+    
+	@RequestMapping("/purchaseMoreList.json")
+	@ResponseBody
+	public String purchaseMoreList(
+			HttpServletRequest request,
+			@RequestParam Map param ,
+			Model model,
+			Device device
+			) {
+
+		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
+		
+		param.put("memberNo", user.getMemberNo());
+				
+		JSONObject obj = new JSONObject();
+		
+		ListHelper listHelper = new ListHelper(param);
+		
+		listHelper = purchaseService.getSelectPurchaseList(listHelper);
+
+		List list = listHelper.getList();
+		int curPage = Integer.parseInt((String)param.get("curPage")) + 1;
+
+		obj.put("list", list);
+		obj.put("curPage", curPage);
+
+		param.put("curPage", curPage);
+		ListHelper tempListHelper = new ListHelper(param);
+		tempListHelper = purchaseService.getSelectPurchaseList(tempListHelper);
+		
+		if(tempListHelper.getList().isEmpty()) {
+			obj.put("last", true);
+		}else {
+			obj.put("last", false);
+		}
+		
+		return obj.toString();
+	}
+    
+    /**
+     * 매입신청내역상세
+     * @param request
+     * @param param
+     * @param model
+     * @param device
+     * @return
+     */
     
 	@RequestMapping("/purchaseDetail.do")
 	public String purchaseDetail(
@@ -127,7 +192,14 @@ public class MyPageController extends NdnAbstractController{
 		}
 	}
     
-    /**대용량 매입신청내역*/
+    /**
+     * 대용량 매입신청내역
+     * @param request
+     * @param param
+     * @param model
+     * @param device
+     * @return
+     */
     
 	@RequestMapping("/largePurchaseList.do")
 	public String largePurchaseList(
@@ -145,6 +217,8 @@ public class MyPageController extends NdnAbstractController{
 		listHelper = purchaseService.getSelectLargePurchaseList(listHelper);
 		
 		model.addAttribute("listHelper", listHelper);
+		model.addAttribute("startDate", param.get("startDate"));
+		model.addAttribute("endDate", param.get("endDate"));
 		model.addAttribute("menu_id", "04");
 		model.addAttribute("sub_menu_id", "42");
 		if(device.isMobile()){
@@ -154,7 +228,61 @@ public class MyPageController extends NdnAbstractController{
 		}
 	}
     
-    /**대용량 매입신청내역상세*/
+    /**
+     * 대용량 매입신청내역 모바일 페이징
+     * @param request
+     * @param param
+     * @param model
+     * @param device
+     * @return
+     */
+    
+	@RequestMapping("/largePurchaseMoreList.json")
+	@ResponseBody
+	public String largePurchaseMoreList(
+			HttpServletRequest request,
+			@RequestParam Map param ,
+			Model model,
+			Device device
+			) {
+
+		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
+		
+		param.put("memberNo", user.getMemberNo());
+				
+		JSONObject obj = new JSONObject();
+		
+		ListHelper listHelper = new ListHelper(param);
+		
+		listHelper = purchaseService.getSelectLargePurchaseList(listHelper);
+
+		List list = listHelper.getList();
+		int curPage = Integer.parseInt((String)param.get("curPage")) + 1;
+
+		obj.put("list", list);
+		obj.put("curPage", curPage);
+
+		param.put("curPage", curPage);
+		ListHelper tempListHelper = new ListHelper(param);
+		tempListHelper = purchaseService.getSelectLargePurchaseList(tempListHelper);
+		
+		if(tempListHelper.getList().isEmpty()) {
+			obj.put("last", true);
+		}else {
+			obj.put("last", false);
+		}
+		
+		return obj.toString();
+	}
+    
+    /**
+     * 대용량 매입신청내역상세
+     * @param request
+     * @param param
+     * @param model
+     * @param device
+     * @return
+     */
     
 	@RequestMapping("/largePurchaseDetail.do")
 	public String largePurchaseDetail(
@@ -170,8 +298,9 @@ public class MyPageController extends NdnAbstractController{
 		ListHelper listHelper = new ListHelper(param);
 		
 		listHelper = purchaseService.getSelectLargePurchaseDetailList(listHelper);
-		
+
 		model.addAttribute("listHelper", listHelper);
+		model.addAttribute("seq", param.get("seq"));
 		model.addAttribute("menu_id", "04");
 		model.addAttribute("sub_menu_id", "42");
 		if(device.isMobile()){
@@ -179,6 +308,53 @@ public class MyPageController extends NdnAbstractController{
 		}else{
 			return "/front/myPage/largePurchaseDetail";
 		}
+	}
+    
+    /**
+     * 대용량 매입신청내역상세 모바일 페이징
+     * @param request
+     * @param param
+     * @param model
+     * @param device
+     * @return
+     */
+    
+	@RequestMapping("/largePurchaseDetailMoreList.json")
+	@ResponseBody
+	public String largePurchaseDetailMoreList(
+			HttpServletRequest request,
+			@RequestParam Map param ,
+			Model model,
+			Device device
+			) {
+
+		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
+		
+		param.put("memberNo", user.getMemberNo());
+				
+		JSONObject obj = new JSONObject();
+		
+		ListHelper listHelper = new ListHelper(param);
+		
+		listHelper = purchaseService.getSelectLargePurchaseDetailList(listHelper);
+
+		List list = listHelper.getList();
+		int curPage = Integer.parseInt((String)param.get("curPage")) + 1;
+
+		obj.put("list", list);
+		obj.put("curPage", curPage);
+
+		param.put("curPage", curPage);
+		ListHelper tempListHelper = new ListHelper(param);
+		tempListHelper = purchaseService.getSelectLargePurchaseDetailList(tempListHelper);
+		
+		if(tempListHelper.getList().isEmpty()) {
+			obj.put("last", true);
+		}else {
+			obj.put("last", false);
+		}
+		
+		return obj.toString();
 	}
     
     /**
@@ -218,7 +394,7 @@ public class MyPageController extends NdnAbstractController{
 	}
     
     /**
-     * 1:1 문의 내역
+     * 1:1 문의 내역 모바일 페이징
      * @param request
      * @param param
      * @param model
@@ -226,9 +402,9 @@ public class MyPageController extends NdnAbstractController{
      * @return
      */
     
-	@RequestMapping("/moreList.json")
+	@RequestMapping("/questionMoreList.json")
 	@ResponseBody
-	public String moreList(
+	public String questionMoreList(
 			HttpServletRequest request,
 			@RequestParam Map param ,
 			Model model,
@@ -307,7 +483,11 @@ public class MyPageController extends NdnAbstractController{
 			Device device
 			) {
 		UserVO user = (UserVO)session.getAttribute(PropUtil.get("session.user"));
-		
+		if (!"Y".equals(param.get("verifi"))){
+			JavaScript javaScript = new JavaScript();
+			javaScript.script("history.back(-1);");
+			return goScript(javaScript);
+		}
 		Map paramMap = new HashMap();
 		paramMap.put("gubun" , "BANK");
 		codelist = statisticsService.selectCodeList(paramMap);
@@ -399,6 +579,12 @@ public class MyPageController extends NdnAbstractController{
 			Device device
 			) {
 		UserVO user = (UserVO)request.getSession().getAttribute(PropUtil.get("session.user"));
+		if (!"Y".equals(param.get("verifi"))){
+			JavaScript javaScript = new JavaScript();
+			javaScript.script("history.back(-1);");
+			return goScript(javaScript);
+		}		
+		
 		param.put("memberNo", user.getMemberNo());
 		Map memberInfo = (Map) memberService.selectMemberInfo(param);
 		
@@ -518,7 +704,6 @@ public class MyPageController extends NdnAbstractController{
 		param.put("memberPhone", memberInfo.get("MEMBER_PHONE"));
 		param.put("memberName", memberInfo.get("MEMBER_NAME"));
 	*/	
-		System.out.println("일빠"+param);
 		
 		try {
 		    String apiURL = "https://auth.logintalk.io/exchange?token="+param.get("token");
@@ -575,7 +760,7 @@ public class MyPageController extends NdnAbstractController{
 	 */
 	@RequestMapping("/user_info_update.json")
 	@ResponseBody
-	public String resetPassword(
+	public String resetPassword(@Valid UserVO userVO,
 			HttpSession session,
 			HttpServletRequest request,
 			HttpServletResponse response,
@@ -590,7 +775,8 @@ public class MyPageController extends NdnAbstractController{
 		int result = 0;
 		
 		result = memberService.updateMemberInfo(param);
-		
+		userVO.setPw(sha256.createHash(sha256.pwEncode(param.get("memberId").toString(),param.get("memberPw").toString())));
+		param.put("memberPw", userVO.getPw());
 		if("Y".equals(param.get("gubun"))){
 			result = memberService.resetPassword(param);
 		}
@@ -666,11 +852,14 @@ public class MyPageController extends NdnAbstractController{
 		JSONObject obj = new JSONObject();
 		
 		int result = 0;
+		System.out.println("param : " + param.toString());
+		param.put("pw", sha256.createHash(sha256.pwEncode(param.get("id").toString(),param.get("pw").toString())));
 		
 		result = memberService.verifiCheck(param);
 		
 		if(result > 0){
 			obj.put("success", true);
+			obj.put("result", "Y");
 		}else{
 			obj.put("success", false);
 		}

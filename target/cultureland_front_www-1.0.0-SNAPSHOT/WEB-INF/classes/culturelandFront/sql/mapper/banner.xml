@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="banner">
+	
+	<select id="selectBannerList" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+	 		   A.LINK_URL, 
+			   B.file_stre_cours,
+			   B.stre_file_nm
+		FROM CO_BannerManage A 
+		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id 
+		WHERE 1 = 1
+			AND A.USE_YN = 'Y'
+			AND A.IMG_GUBUN = 'B'
+			AND PLAY_GUBUN = #{PLAY_GUBUN}
+		ORDER BY A.ORDER_SORT ASC, A.CREATION_DATE DESC;
+ 	</select> 
+	
+	<select id="selectLogo" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+	 		   TOP 1 
+			   B.file_stre_cours,
+			   B.stre_file_nm
+		FROM CO_BannerManage A 
+		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id 
+		WHERE 1 = 1
+			AND A.USE_YN = 'Y'
+			AND A.IMG_GUBUN = 'S'
+			AND PLAY_GUBUN = #{PLAY_GUBUN}
+		ORDER BY A.CREATION_DATE DESC;
+ 	</select> 
+	
+	<select id="selectBanner" parameterType="hashmap" resultType="hashmap">
+	 	SELECT 
+	 		   A.seq, 
+	 		   A.PLAY_GUBUN, 
+	 		   A.ORDER_SORT, 
+	 		   A.LINK_URL, 
+	 		   A.USE_YN, 
+	 		   A.atch_file_id
+		FROM CO_BannerManage A 
+		LEFT OUTER JOIN CO_ComfileDetail B ON B.atch_file_id = A.atch_file_id 
+		WHERE seq = #{seq}
+ 	</select> 
+ 	
+ 	<insert id="insertBanner" parameterType="hashmap">
+		INSERT INTO CO_BannerManage(
+ 			PLAY_GUBUN
+ 			,ORDER_SORT 
+ 			,ATCH_FILE_ID 
+ 			,LINK_URL 
+ 			,USE_YN 
+			,CREATION_USER 
+			,CREATION_DATE 
+ 		)VALUES(
+			#{platform}
+			,#{order}
+			,#{atchFileId}
+			,#{url}
+			,#{use}
+			,#{bannerAdder}
+ 			,getdate()
+ 		);
+ 	</insert>
+ 	
+ 	<delete id="deleteBanner" parameterType="hashmap">
+ 		DELETE FROM CO_BannerManage
+ 		WHERE <if test='seq != null and seq != "" '>seq = #{seq}</if>
+ 	</delete> 	
+ 	
+ 	<update id="updateBanner" parameterType="hashmap">
+  		UPDATE CO_BannerManage SET
+ 			PLAY_GUBUN = #{platform}
+ 			,ORDER_SORT = #{order}
+ 			,ATCH_FILE_ID = #{atchFileId}
+ 			,LINK_URL = #{url}
+ 			,USE_YN = #{use}
+			,LASTUPDATE_USER = #{bannerAdder}
+			,LASTUPDATE_DATE = GETDATE()
+ 		WHERE SEQ = #{seq};
+ 	</update>
+ 	
+</mapper>
