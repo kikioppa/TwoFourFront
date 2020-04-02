@@ -40,23 +40,40 @@
  			})
     	}
     }
-    
+    var delayCnt = 0;
     function  confirmDeposit(){
     	$.ajax({
 			url: '/m/purchase/confirmDeposit.json',
 			type: 'post',
 			data: $("#frm").serialize() ,
 			success : function(data) {
+				if(data.result =="delay"){
+					if(delayCnt <3){
+						delayCnt = delayCnt + 1;
+						setTimeout(function() {
+							confirmDeposit();
+							console.log("delayCnt",delayCnt);
+						}, 3000);
+					}else{
+						delayCnt=0;
+						alert('통신의 문제가 발생했습니다.\n 잠시후 다시 시도해 주세요.');
+						$("#laoding-spinner").hide();
+						return;
+					}
+				}else{
 				if(data.result){
 					$("#laoding-spinner").hide();
 					$("#revcCode").val(data.revcCode);
-					$("#frm").attr('action', '/m/purchase/confirmDeposit.do');
+					$("#frm").attr('action', './confirmDeposit.do');
 					$("#frm").submit();
 				}else{
-					confirmDeposit();
+					alert('입금내역을 확인 후 다시 시도 해주세요.');
+					$("#laoding-spinner").hide();
+					return;
 				}
 			}    		
-		})
+		}
+	    });
     }
   </script>
 </head>

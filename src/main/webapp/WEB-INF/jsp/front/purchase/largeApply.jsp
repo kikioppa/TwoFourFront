@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jsp/common/jstlcore.jsp" %>     
 <head>
   <title>문화 1번가 - 대용량 매입신청 STEP01</title>
   <script>
@@ -25,8 +26,6 @@
     					if(data.result == 'success'){
 //     						alert('정상처리 되었습니다.');
     						$("#buySeq").val(data.buySeq);
-    						$("#bankName").val(data.bankName);
-    						$("#accountNo").val(data.accountNo);
     						$("#frm").attr('action','./largeComplete.do');
     						$("#frm").submit();
     					}else if(data.result == 'acntError'){
@@ -108,6 +107,9 @@
 	<form name="frm" id="frm" method="post" enctype="multipart/form-data">
 	  <input type="hidden" name="buySeq" id="buySeq" value="" />
 	  <input type="hidden" name="largeYn" id="largeYn" value="Y" />
+	  <input type="hidden" name="bankCode" id="bankCode" value="<c:out value="${param.bankCode}" />" />
+      	<input type="hidden" name="bankName" id="bankName" value="<c:out value="${param.bankName}"/>" />
+      	<input type="hidden" name="accountNo" id="accountNo" value="<c:out value="${param.accountNo}"/>" />
 	  <!--section-->
 	  <div class="section">
 	    <div class="section-main apply01">

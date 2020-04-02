@@ -77,8 +77,8 @@
 	          <td>매입예정</td>
 	        </tr>
 	        <tr>
-	          <td><c:out value="${accountInfo.BANK_NAME }" /></td>
-	          <td><c:out value="${ndn:seedDecoding(accountInfo.ACNT_NUMBER) }" /></td>
+	          <td><c:out value="${param.bankName }" /></td>
+	          <td><c:out value="${param.accountNo}" /></td>
 	          <td class="no-center"><fmt:formatNumber value="${buyResult.TOTAL_PUR_MONEY }" pattern="#,###" />원</td>
 	          <td>유선으로 확인 후 입금</td>
 	        </tr>

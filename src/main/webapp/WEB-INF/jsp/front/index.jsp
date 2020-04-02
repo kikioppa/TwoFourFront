@@ -145,7 +145,7 @@
       <div class="demo-video">
         <h3>상품권매입 요청 데모영상</h3>
         <div class="video">
-          <iframe width="573" height="410" src="https://www.youtube.com/embed/UtPrNN4poOw" frameborder="0" allow="accelerometer; autoplay=1; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <iframe width="573" height="410" src="https://www.youtube.com/embed/AkDsygVZDcU" frameborder="0" allow="accelerometer; autoplay=1; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
       </div>
     </div>

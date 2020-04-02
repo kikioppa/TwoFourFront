@@ -27,26 +27,45 @@
 	 			})		
 			}
 		}
-		
+		var delayCnt = 0;
 		function applyAccountRecv(){
 			$.ajax({
 				url: '/m/purchase/applyAccountRecv.json',
 				type: 'post',
 				async: false,
 				dataType: 'json',
+				timeout : 3000,
 				data: $("#apiForm").serialize() ,
 				success : function(data) {
-					if(data.result){
-						$("#laoding-spinner").hide();
-						alert('인증에 성공하였습니다.');
-						$("#bankName").val($("#bankCode option:checked").text());
-						$("#apiForm").attr('action', '/m/purchase/apply.do');
-						$("#apiForm").submit();
+					if(data.result == "delay"){
+						if(delayCnt < 3){
+							delayCnt = delayCnt + 1;
+							setTimeout(function() {
+						 		applyAccountRecv();
+							}, 3000);
+						}else{
+							delayCnt = 0;
+							alert('통신의 문제가 발생했습니다.\n 잠시후 다시 시도해 주세요.');
+							$("#laoding-spinner").hide();
+							return;
+						}
 					}else{
-						applyAccountRecv();
+						if(data.result){
+							$("#laoding-spinner").hide();
+							alert('인증에 성공하였습니다.');
+							delayCnt = 0;
+							$("#bankName").val($("#bankCode option:checked").text());
+							$("#apiForm").attr('action', 'm/purchase/apply.do');
+							$("#apiForm").submit();
+						}else{
+							alert('입력한 정보를 확인 후 다시 인증하세요.');
+							$("#laoding-spinner").hide();
+							return;
+						}
 					}
-				}    		
-			})	
+					
+				}
+			});	
 		}
 		function isValid(){
 			var returnStr = true;

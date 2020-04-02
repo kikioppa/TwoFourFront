@@ -126,17 +126,9 @@ public class PurchaseController extends NdnAbstractController {
 		UserVO user = (UserVO) request.getSession().getAttribute(
 				PropUtil.get("session.user"));
 		param.put("memberNo", user.getMemberNo());
-		/*param.put("accountNo", param.get("accountNo")); */
 		
-	
-		/*param.put("bankName", paramMap.get("bankName"));*/
-		
-		
-		
-		System.out.println("삐뽀"+param);
 		// 계좌인증이 안된 회원
 		if (param.get("ksNetSeq") == null || "".equals(param.get("ksNetSeq"))) {
-			System.out.println("삐삐"+param);
 			JavaScript javaScript = new JavaScript();
 			javaScript.message("상품권 매입 신청은 계좌 인증 후 가능합니다.");
 			if (device.isMobile()) { 
@@ -151,7 +143,6 @@ public class PurchaseController extends NdnAbstractController {
 		Map paramMap = new HashMap();
 		paramMap = statisticsService.selectBankName(param);
 		param.put("bankName",paramMap.get("CODE_NAME"));
-		System.out.println("으아"+param.toString());
 		
 		// 수수료 조회
 		double charge = boardService.selectCharge(param);
@@ -186,8 +177,7 @@ public class PurchaseController extends NdnAbstractController {
 		codelist = statisticsService.selectCodeList(paramMap);
 		model.addAttribute("bankList", codelist);
 		param.put("memberNo",user.getMemberNo());
-		System.out.println("빠람"+param);
-	//	accountService.insertAccount(param);
+		
 		if(user != null){
 			logger.debug("user"+user);
 			param.put("memberNo", user.getMemberNo());
@@ -213,16 +203,12 @@ public class PurchaseController extends NdnAbstractController {
 
 		JSONObject obj = new JSONObject();
 		int buySeq = 0;
-		 System.out.println("conFirm param : " + param.toString());
-		UserVO user = (UserVO) request.getSession().getAttribute(
-				PropUtil.get("session.user"));
+		UserVO user = (UserVO) request.getSession().getAttribute(PropUtil.get("session.user"));
 		param.put("memberNo", user.getMemberNo());
 
 		Map paramMap = new HashMap();
 		paramMap = statisticsService.selectBankName(param);
 		param.put("bankName",paramMap.get("CODE_NAME"));
-		System.out.println("zz"+paramMap.toString());
-		System.out.println("zzz"+param.toString());
 		// 계좌인증이 안된 회원
 	/*	if (accountInfo == null || !"Y".equals(accountInfo.get("CONFIRM_YN"))) {
 			obj.put("result", "acntError");
@@ -244,10 +230,6 @@ public class PurchaseController extends NdnAbstractController {
 		String ksNetSeq = purchaseService.selectKsNetSeq();
 		param.put("ksNetSeq", ksNetSeq);
 		
-		
-		//System.out.println("코드"+resultCode1);
-		
-		System.out.println("데이타"+param);
 		param.put("accountNo", SeedED.encoding(param.get("accountNo").toString()));
 		
 		purchaseService.insertBuy(param);
@@ -255,11 +237,9 @@ public class PurchaseController extends NdnAbstractController {
 
 		obj.put("buySeq", buySeq);
 		obj.put("bankName",param.get("bankName"));
-		// System.out.println("buySeq : " + buySeq);
 
 		// 수수료 조회
 		double charge = boardService.selectCharge(param);
-		// System.out.println("charge : " + charge);
 
 		String[] codeArr = param.get("finCodeArr").toString().split("\\|");
 
@@ -287,7 +267,6 @@ public class PurchaseController extends NdnAbstractController {
 			resultMap = finCodeCheck(checkCode); // finCode 인증 777
 			String resultCode = resultMap.get("resultCode").toString();
 			String returnMsg = resultMap.get("returnMsg").toString();
-			// System.out.println("return returnMsg : " + returnMsg);
 			// 0000은 정상처리 되었기 때문에 실패이유를 조회하지 않는다.
 			if (!"0000".equals(resultCode)) {
 				failText = failCodeStr(resultCode);
@@ -305,7 +284,6 @@ public class PurchaseController extends NdnAbstractController {
 				map.put("purchaseMoney", purMoney);
 			}
 
-			// System.out.println("reqMoney : " + reqMoney);
 			map.put("buySeq", buySeq);
 			map.put("finNumber", codeArr[i]);
 			map.put("reqMoney", reqMoney);
@@ -321,7 +299,6 @@ public class PurchaseController extends NdnAbstractController {
 		for (int i = 0; i < finList.size(); i++) {
 			HashMap map = new HashMap();
 			map = (HashMap) finList.get(i);
-			System.out.println("맵이이이" + map.toString());
 
 			// 매입 상세 등록하기
 			purchaseService.insertBuyDetail(map);
@@ -343,7 +320,6 @@ public class PurchaseController extends NdnAbstractController {
 				PropUtil.get("session.user"));
 		param.put("memberNo", user.getMemberNo());
 
-		System.out.println("컨펌 파람 : " + param.toString());
 		// 매입 신청한 핀코드 인증 목록
 		List purList = purchaseService.getSelectPurchaseBuyList(param);
 		
@@ -389,15 +365,14 @@ public class PurchaseController extends NdnAbstractController {
 		String RequestDate = NdnUtil.getTimeStampString("yyyyMMdd"); // 전송날짜 :
 		String UserIP =	appendSpace(socketIp,15);						//"127.0.0.1      ";																// 년월일
 		String RequestTime = NdnUtil.getTimeStampString("HHmmss"); // 전송시간 : 시분초
-		String UserID = "lsi135790606";
-		String UserPW = "2e483fa0d9a00dfc3d8f6806d7851d77                  ";
+		String UserID = appendSpace(PropUtil.get("fincode.user.id"), 12);
+		String UserPW = appendSpace(PropUtil.get("fincode.user.pw"), 50);
 		String gap = "                                                                                                                                                                                                                                                                                                                                             ";
 		String resultCode = "";
 		String hashCode ="";
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 		String codeCheckData = HeadNo + MessageLength + MemberCode
 				+ UserID + UserPW + UserIP + MemberID + gap;
-		System.out.println("socketIp : " + socketIp);
 		resultMap.put("hashCode",hashCode);
 		try {
 			// 서버 접속
@@ -418,13 +393,10 @@ public class PurchaseController extends NdnAbstractController {
 
 			String message = bufReader.readLine();
 			resultCode = message.substring(53, 78);
-			System.out.println("Message : " + resultCode);
 			hashCode = message.substring(53,78);
-			System.out.println("HashCode :" + hashCode);
 			resultMap.put("resultCode", resultCode);
 			resultMap.put("returnMsg", message.replaceAll(" ", ""));
 
-			System.out.println("Message : " + message);
 			socket.close();
 			bufReader.close();
 			bufWriter.close();
@@ -455,15 +427,15 @@ public class PurchaseController extends NdnAbstractController {
 		// 현재날짜시간으로 설정함
 		String SendDate = NdnUtil.getTimeStampString("yyyyMMdd"); // 전송날짜 :
 		String SendTime = NdnUtil.getTimeStampString("HHmmss"); // 전송시간 : 시분초
-	    String UserId = "lsi135790606        ";
-		String CustId = "95413062    ";
+		String UserID = appendSpace(PropUtil.get("fincode.user.id"),20);
+		String CustId = appendSpace(PropUtil.get("fincode.cust.id"), 12);
 		String HashNo = hashNumber;			
 		String gap ="                                                                                                                                                                                                                                                                                                                       ";
 		String resultCode = "";
 		HashMap<String, Object> resultMap = new HashMap<String, Object>();
 
 		String codeCheckData = HeadNo + MessageLength + MemberCode
-				+ SubMemberCode + TransNo + SendDate + SendTime + UserId +CustId + HashNo + finCode
+				+ SubMemberCode + TransNo + SendDate + SendTime + UserID +CustId + HashNo + finCode
 				+ gap;
 		try {
 			// 서버 접속
@@ -484,12 +456,10 @@ public class PurchaseController extends NdnAbstractController {
 
 			String message = bufReader.readLine();
 			resultCode = message.substring(66,70);
-			System.out.println("Message : " + resultCode);
 
 			resultMap.put("resultCode", resultCode);
 			resultMap.put("returnMsg", message.replaceAll(" ", ""));
 
-			System.out.println("Message : " + message);
 			socket.close();
 			bufReader.close();
 			bufWriter.close();
@@ -537,7 +507,6 @@ public class PurchaseController extends NdnAbstractController {
 		
 		param.put("confirmYn","Y");
 		List purList = purchaseService.getSelectPurchaseBuyList(param);
-		System.out.println("퍼리"+purList);
 		param.put("purList",purList);
 
 		int totalDeposit=0; 
@@ -548,12 +517,10 @@ public class PurchaseController extends NdnAbstractController {
 			HashMap reqMap = new HashMap();
 			map = (HashMap)purList.get(i);
 			String code = map.get("FIN_NUMBER").toString().replaceAll("-", "");
-			System.out.println("map : " + map.toString());
 			
 			if(code.length() > 16){
 				code = code.substring(2);
 			}
-			System.out.println("code : " + code +      "      resultCode메세지값 : " + resultMap.get("resultCode").toString());
 			
 			// 컬저랜치에 결제요청 
 			reqMap = finCodeRequest(code, resultMap.get("resultCode").toString());
@@ -562,16 +529,10 @@ public class PurchaseController extends NdnAbstractController {
 			if("0000".equals(reqMap.get("resultCode"))){
 				param.put("seq", map.get("SEQ"));
 				purchaseService.updateDeposit(param);
-				//System.out.println("성공");
 				//송금금액 = 송금금액 + 이번 핀번호 금액;
 				totalDeposit = totalDeposit + Integer.parseInt(map.get("PURCHASE_MONEY").toString());
-			}else{
-				System.out.println("실패");
 			}
 		}
-		
-		//수수료를 뺀 전체 금액
-		System.out.println("totalDeposit : " + totalDeposit);
 		
 		//은행으로 송금요청
 		Map dataMap = new HashMap();
@@ -585,7 +546,7 @@ public class PurchaseController extends NdnAbstractController {
 		dataMap.put("totalDeposit", totalDeposit);
 		
 		HashMap applyMap = BankingController.transfer(dataMap);
-		System.out.println("나이"+dataMap.toString());
+		
 		//DB insert를 통한 송금요청
 		result = purchaseService.insertTradeRequest(applyMap);
 		
@@ -622,10 +583,15 @@ public class PurchaseController extends NdnAbstractController {
 		//결제요청에 대한 결과값 조회
 		HashMap resultMap = (HashMap)purchaseService.selectTradeRequestTbl(param);
 
+		/*if(resultMap == null){
+			
+			obj.put("result", "delay");
+			return obj.toString();
+		}*/
 		
 		//아직 결과값 받아오지 못할 시
 		if(resultMap.get("RECV_MSG") == null || "".equals(resultMap.get("RECV_MSG"))){
-			obj.put("result", false);
+			obj.put("result", "delay");
 			return obj.toString();
 		}
 		
@@ -634,9 +600,6 @@ public class PurchaseController extends NdnAbstractController {
 				
 		//결과 코드 (0000 : 성공)
 		String revcCode = rcvMsg.substring(51,55);
-		
-		System.out.println("revcCode : " + revcCode);
-		
 		
 		obj.put("revcCode", revcCode);
 		obj.put("result", true);
@@ -709,10 +672,7 @@ public class PurchaseController extends NdnAbstractController {
 				param.put("bankName",paramMap.get("CODE_NAME"));
 
 		param.put("memberNo", user.getMemberNo());
-		
-		
-		System.out.println("대용1"+param);
-		
+	
 		if (device.isMobile()) { // 모바일에서 접속 시
 			return "/mobile/purchase/largeApply";
 		} else {
@@ -737,8 +697,6 @@ public class PurchaseController extends NdnAbstractController {
 
 		final Map<String, MultipartFile> files = multiRequest.getFileMap();
 		MultipartFile file1 = (MultipartFile) multiRequest.getFile("file_0");
-		
-		System.out.println("대용2"+param);
 		
 		try {
 
@@ -768,7 +726,6 @@ public class PurchaseController extends NdnAbstractController {
 			for (int i = 0; i < finCodeList.size(); i++) {
 				HashMap map = new HashMap();
 				map = (HashMap) finCodeList.get(i);
-				System.out.println("map : " + map.toString());
 			}
 
 		
@@ -782,27 +739,20 @@ public class PurchaseController extends NdnAbstractController {
 			UserVO user = (UserVO) request.getSession().getAttribute(
 					PropUtil.get("session.user"));
 			param.put("memberNo", user.getMemberNo());
-
-			HashMap accountInfo = (HashMap) accountService
-					.getSelectAccountDetail(param);
-
-	
-			param.put("acntNumber", accountInfo.get("accountNo"));
-			param.put("bankName", accountInfo.get("bankName"));
-			param.put("memberNo", user.getMemberNo());
 			param.put("memberName", user.getName());
+			
 			// 입금여부(N으로 초기값을 맞춘 이유는 상품권코드 특성 상 코드 확인 즉시 더이상 상품권코드를 입력 할 수 없기 때문에
 			// 매입요청을 완료 시 Y로 수정하기 위해서 이다)
 			// 상품권 코드만 입력하고 화면 종료 시 입금이 안되고 상품권은 더이상 입력이 안되기 때문에 우선 N처리를 한다. 추후
 			// N처리 인것들에 대해서 사용자에게 알림이 필요해 보임
 			param.put("depositYn", "N");
+			param.put("acceptYn", "N");
 			
 			// 매입 신청 등록
+			param.put("accountNo", SeedED.encoding(param.get("accountNo").toString()));
 			purchaseService.insertBuy(param);
 			buySeq = (int) param.get("buySeq");
 			obj.put("buySeq", buySeq);
-			obj.put("accountNo", accountInfo.get("accountNo"));
-			obj.put("bankName", accountInfo.get("bankName"));
 			// 수수료 조회
 			double charge = boardService.selectCharge(param);
 
@@ -838,7 +788,6 @@ public class PurchaseController extends NdnAbstractController {
 				resultMap = finCodeCheck(checkCode); // finCode 인증
 				String resultCode = resultMap.get("resultCode").toString();
 				String returnMsg = resultMap.get("returnMsg").toString();
-				// System.out.println("return returnMsg : " + returnMsg);
 				// 0000은 정상처리 되었기 때문에 실패이유를 조회하지 않는다.
 				if (!"0000".equals(resultCode)) {
 					failText = failCodeStr(resultCode);
@@ -856,7 +805,6 @@ public class PurchaseController extends NdnAbstractController {
 					map.put("purchaseMoney", purMoney);
 				}
 
-				// System.out.println("reqMoney : " + reqMoney);
 				map.put("buySeq", buySeq);
 				map.put("finNumber", excelFinCode);
 				map.put("reqMoney", reqMoney);
@@ -874,7 +822,6 @@ public class PurchaseController extends NdnAbstractController {
 			for (int i = 0; i < finList.size(); i++) {
 				HashMap map = new HashMap();
 				map = (HashMap) finList.get(i);
-				System.out.println(map.toString());
 
 				// 대량 매입 상세 등록하기
 				purchaseService.insertBuyLargeDetail(map);
@@ -903,16 +850,12 @@ public class PurchaseController extends NdnAbstractController {
 		param.put("memberNo", user.getMemberNo());
 
 		// 매입 신청한 회원의 계좌정보
-		HashMap accountInfo = (HashMap) accountService
-				.getSelectAccountDetail(param);
-
-		// System.out.println("param : " + param.toString());
+		HashMap accountInfo = (HashMap) accountService.getSelectAccountDetail(param);
 
 		param.put("largeGubun", "Y");
 
 		// 매입 신청한 핀코드 인증 목록
 		List purList = purchaseService.getSelectPurchaseBuyList(param);
-
 		
 		// 매입 신청한 핀코드 인증 결과
 		HashMap buyResult = (HashMap) purchaseService
@@ -948,7 +891,6 @@ public class PurchaseController extends NdnAbstractController {
 		String codeCheckData = HeadNo + MessageLength + MemberCode
 				+ SubMemberCode + PosCode + code + RequestDate + RequestTime
 				+ gap;
-		System.out.println("socketIp : " + socketIp);
 		try {
 			// 서버 접속
 			Socket socket = new Socket(socketIp, 5984);
@@ -968,12 +910,10 @@ public class PurchaseController extends NdnAbstractController {
 
 			String message = bufReader.readLine();
 			resultCode = message.substring(42,46);
-			System.out.println("Message : " + resultCode);
 
 			resultMap.put("resultCode", resultCode);
 			resultMap.put("returnMsg", message.replaceAll(" ", ""));
 
-			System.out.println("Message : " + message);
 			socket.close();
 			bufReader.close();
 			bufWriter.close();
@@ -1042,10 +982,8 @@ public class PurchaseController extends NdnAbstractController {
 																	// 할
 																	// Workbook
 																	// 객체가 다르다.
-				System.out.println("xlsx!!");
 				workbook = new XSSFWorkbook(new FileInputStream(file));
 			} else {
-				System.out.println("xls!!");
 				workbook = new HSSFWorkbook(new FileInputStream(file));
 			}
 		} catch (FileNotFoundException e) {
@@ -1057,12 +995,9 @@ public class PurchaseController extends NdnAbstractController {
 		Sheet workSheet = workbook.getSheetAt(0); // 첫번째 Sheet
 		Iterator<Row> rowIterator = workSheet.iterator();
 		int rowSize = workSheet.getLastRowNum() + 1; // 행의 총 개수 (행은 0부터 시작함)
-		// System.out.println("rowSize : " + rowSize);
 
 		for (int i = 1; i < rowSize; i++) { // i를 4부터 시작해야 두번째 행부터 데이터가 입력된다.
 			Row row = workSheet.getRow(i);
-			// System.out.println("row : " + row);
-			// System.out.println("row : " + row.toString());
 			HashMap map = new HashMap();
 
 			map.put("fincode", row.getCell(0));
@@ -1088,9 +1023,7 @@ public class PurchaseController extends NdnAbstractController {
 		HttpHeaders headers = new HttpHeaders();	// http 헤더 선언
 		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
 		
-		System.out.println("param123 : " + param.toString());
 		String ksNetSeq = purchaseService.selectKsNetSeq();
-//		purchaseService.updateKsNetSeq();
 		
 		param.put("ksNetSeq", ksNetSeq);
 		HashMap applyMap = BankingController.applyAccount(param);
@@ -1098,14 +1031,8 @@ public class PurchaseController extends NdnAbstractController {
 		purchaseService.insertTradeRequest(applyMap);
 
 		applyMap.put("ksNetSeq", ksNetSeq);
-//		System.out.println("applyMap : " + applyMap.toString());
-		
-		//결과값을 받아오기 위해 1초 딜레이
-//		Thread.sleep(2000);
-//		HashMap resultMap = (HashMap)purchaseService.selectTradeRequestTbl(applyMap);
 		
 		//KSNET 시퀀스 증가
-		
 		purchaseService.updateKsNetSeq();
 		
 		obj.put("result", "success");
@@ -1125,15 +1052,11 @@ public class PurchaseController extends NdnAbstractController {
 		UserVO user = (UserVO)session.getAttribute(PropUtil.get("session.user"));
 		JSONObject obj = new JSONObject();
 		
-//		param.put("memberNo", user.getMemberNo());
-		System.out.println("param : " + param.toString());
-		//결과값을 받아오기 위해 1초 딜레이
-//		Thread.sleep(2000);
 		HashMap resultMap = (HashMap)purchaseService.selectTradeRequestTbl(param);
 		String resultCode = resultMap.toString();
 		
 		if(resultMap == null){
-			obj.put("result", false);
+			obj.put("result", "delay");
 			return obj.toString();
 		}
 		
